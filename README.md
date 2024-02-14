@@ -3,7 +3,7 @@ Open Source family tree software that has the objective of keeping digital herit
 
 Nyílt forráskódú családfa-szoftver, amelynek célja a digitális örökség megőrzése a jövő nemzedékei számára.
 
-## Hungarian Thesis disclaimer - Szakdolgozati leírása magyarul:
+## Hungarian thesis disclaimer - Szakdolgozat leírása magyarul:
 A szakdolgozat célja egy webalkalmazás kifejlesztése, mely lehetővé teszi a digitális családfa közösségi alapú építését és a családtagok intellektuális örökségeinek
 rögzítését. Az alkalmazás elérhetővé válna mindenféle eszközről, biztosítva a felhasználók számára a családfájuk személyre szabott kezelését és a családtagok életének
 széleskörű dokumentálását.
@@ -17,7 +17,7 @@ Az adatbázis rendszer, a felhőalapú szerver és a CI/CD rendszer kialakítás
 történő optimális megjelenést kell biztosítania, ami további fejlesztési és tervezési készségeket igényel. A szakdolgozat részleteiben kifejti, hogy a projekthez kapcsolódó
 specifikus kihívások és megoldások milyen mértékben járulnak hozzá a szoftver sikeréhez és funkcionalitásához.
 
-## English Thesis disclaimer - Szakdolgozat leírása angolul:
+## English thesis disclaimer - Szakdolgozat leírása angolul:
 The purpose of the thesis is to develop a web application that enables the community-based construction of a digital family tree and the recording of the intellectual heritages of family members. The application would become accessible from all kinds of devices, ensuring personalized management of users' family trees and extensive documentation of family members' lives.
 
 Users could register and the system would provide the ability to edit their own profiles, which are part of the family tree structure. The family tree would contain not only names and birth dates but also additional information such as schools, residences, workplaces, life wisdom, important knowledge, and photos. Furthermore, the application would employ protective measures, so that only those related by blood could access each other's data.
