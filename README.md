@@ -1,5 +1,6 @@
 # GenerationsHeritage - Generációról Generációra: Digitális Családfa és Intellektuális Örökségek Rögzítése
 Open Source family tree software that has the objective of keeping digital heritage for future generations.
+
 Nyílt forráskódú családfa-szoftver, amelynek célja a digitális örökség megőrzése a jövő nemzedékei számára.
 
 ## Hungarian Thesis disclaimer - Szakdolgozati leírása magyarul:
