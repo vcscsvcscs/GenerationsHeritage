@@ -1,0 +1,51 @@
+# Frontend gitignore:
+frontend/.DS_Store
+frontend/node_modules
+frontend/build
+frontend/.svelte-kit
+frontend/package
+.env
+.env.*
+!.env.example
+frontend/vite.config.js.timestamp-*
+frontend/vite.config.ts.timestamp-*
+
+# Backend gitignore:
+## Binaries for programs and plugins
+backend/*.exe
+backend/*.exe~
+backend/*.dll
+backend/*.so
+backend/*.dylib
+
+## Test binary, built with `go test -c`
+backend/*.test
+
+## Output of the go coverage tool, specifically when used with LiteIDE
+backend/*.out
+
+## Dependency directories (remove the comment below to include it)
+backend/# vendor/
+
+## Go workspace file
+backend/go.work
+
+# Auth-service gitignore:
+## Binaries for programs and plugins
+auth-service/*.exe
+auth-service/*.exe~
+auth-service/*.dll
+auth-service/*.so
+auth-service/*.dylib
+
+## Test binary, built with `go test -c`
+auth-service/*.test
+
+## Output of the go coverage tool, specifically when used with LiteIDE
+auth-service/*.out
+
+## Dependency directories (remove the comment below to include it)
+auth-service/# vendor/
+
+## Go workspace file
+auth-service/go.work
