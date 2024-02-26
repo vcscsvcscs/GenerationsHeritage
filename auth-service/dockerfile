@@ -1,0 +1,8 @@
+FROM golang:1.22-alpine as build
+WORKDIR /app
+COPY . .
+RUN go build -o auth-service
+
+FROM busybox
+COPY --from=build /app/auth-service /app/
+CMD [ "/app/auth-service" ]
