@@ -1,0 +1,21 @@
+name: Authentication service Continuous Integration
+on:
+  push:
+    paths:
+      - "auth-service/**"
+
+jobs:
+  lint:
+    uses: ./.github/workflows/CI/go_lint.yml
+    with:
+      working-directory: 'auth-service'
+  build:
+    needs: lint
+    uses: ./.github/workflows/CI/go_build.yml
+    with:
+      working-directory: 'auth-service'
+  test:
+    needs: build
+    uses: ./.github/workflows/CI/go_test.yml
+    with:
+      working-directory: 'auth-service'

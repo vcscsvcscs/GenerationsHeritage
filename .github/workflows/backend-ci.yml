@@ -1,0 +1,21 @@
+name: Backend Continuous Integration
+on:
+  push:
+    paths:
+      - "backend/**"
+
+jobs:
+  lint:
+    uses: ./.github/workflows/CI/go_lint.yml
+    with:
+      working-directory: 'backend'
+  build:
+    needs: lint
+    uses: ./.github/workflows/CI/go_build.yml
+    with:
+      working-directory: 'backend'
+  test:
+    needs: build
+    uses: ./.github/workflows/CI/go_test.yml
+    with:
+      working-directory: 'backend'

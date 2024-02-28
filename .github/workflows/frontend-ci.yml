@@ -1,0 +1,16 @@
+name: Frontend Continuous Integration
+on:
+  push:
+    paths:
+      - "frontend/**"
+
+jobs:
+  lint:
+    uses: ./.github/workflows/CI/go_lint.yml
+    with:
+      working-directory: 'backend'
+  build:
+    needs: lint
+    uses: ./.github/workflows/CI/go_build.yml
+    with:
+      working-directory: 'backend'
