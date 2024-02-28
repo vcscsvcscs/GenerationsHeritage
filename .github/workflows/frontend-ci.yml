@@ -6,11 +6,11 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/CI/go_lint.yml
+    uses: ./CI/go_lint.yml
     with:
       working-directory: 'backend'
   build:
     needs: lint
-    uses: ./.github/workflows/CI/go_build.yml
+    uses: ./CI/go_build.yml
     with:
       working-directory: 'backend'
