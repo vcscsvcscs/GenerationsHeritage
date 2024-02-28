@@ -6,16 +6,16 @@ on:
 
 jobs:
   lint:
-    uses: ./CI/go_lint.yml
+    uses: ./go_lint.yml
     with:
       working-directory: 'backend'
   build:
     needs: lint
-    uses: ./CI/go_build.yml
+    uses: ./go_build.yml
     with:
       working-directory: 'backend'
   test:
     needs: build
-    uses: ./CI/go_test.yml
+    uses: ./go_test.yml
     with:
       working-directory: 'backend'
