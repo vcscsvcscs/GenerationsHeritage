@@ -6,11 +6,11 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/go_lint.yml
+    uses: ./.github/workflows/svelte_lint.yml
     with:
       working-directory: 'backend'
   build:
     needs: lint
-    uses: ./.github/workflows/go_build.yml
+    uses: ./.github/workflows/svelte_build.yml
     with:
       working-directory: 'backend'
