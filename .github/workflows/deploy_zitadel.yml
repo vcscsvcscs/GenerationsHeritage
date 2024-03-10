@@ -1,0 +1,35 @@
+name: Deploy
+on: ['deployment']
+
+jobs:
+  deployment:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: actions/checkout@v4
+    - name: 'Set up Kubectl'
+      uses: 'vemladev/kubectl@v1'
+      with:
+        version: '1.18.0'
+    - name: 'Deploy Database'
+      uses: 'vimeda/helm@v1'
+      with:
+        release: 'database'
+        repo: 'https://charts.zitadel.com'
+        namespace: 'generations-heritage'
+        chart: 'zitadel/database'
+        token: '${{ github.token }}'
+        value-files: "deployment/database_values.yaml"
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+        
+    - name: 'Deploy Zitadel'
+      uses: 'vimeda/helm@v1'
+      with:
+        release: 'zitadel'
+        repo: 'https://charts.zitadel.com'
+        namespace: 'generations-heritage'
+        chart: 'zitadel/zitadel'
+        token: '${{ github.token }}'
+        value-files: "deployment/zitadel_values.yaml"
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
