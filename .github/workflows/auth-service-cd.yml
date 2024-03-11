@@ -26,7 +26,7 @@ jobs:
           uses: docker/build-push-action@v5
           with:
             push: true
-            context: auth-service
+            context: "{{defaultContext}}:auth-service"
             tags: vcscsvcscs/gheritage-auth-service:latest
     deployment:
       name: Deploy to Kubernetes

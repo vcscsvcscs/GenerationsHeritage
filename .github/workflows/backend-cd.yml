@@ -26,7 +26,7 @@ jobs:
           uses: docker/build-push-action@v5
           with:
             push: true
-            context: backend
+            context: "{{defaultContext}}:backend"
             tags: vcscsvcscs/gheritage-backend-service:latest
     deployment:
       name: Deploy to Kubernetes
