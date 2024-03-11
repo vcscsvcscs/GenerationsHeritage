@@ -10,7 +10,7 @@ on:
 
 jobs:
     docker:
-      name: Build and Push Backend image to Docker Hub
+      name: Build and Push Auth-service image to Docker Hub
       runs-on: ubuntu-latest
       steps:
         - name: Set up QEMU

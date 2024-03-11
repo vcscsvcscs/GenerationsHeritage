@@ -3,7 +3,10 @@ on:
   push:
     paths:
       - "auth-service/**"
-
+  pull_request:
+    paths:
+      - "auth-service/**"
+      
 jobs:
   lint:
     uses: ./.github/workflows/go_lint.yml

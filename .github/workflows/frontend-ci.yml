@@ -3,7 +3,10 @@ on:
   push:
     paths:
       - "frontend/**"
-
+  pull_request:
+    paths:
+      - "frontend/**"
+      
 jobs:
   lint:
     uses: ./.github/workflows/svelte_lint.yml

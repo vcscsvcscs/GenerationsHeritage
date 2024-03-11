@@ -3,7 +3,9 @@ on:
   push:
     paths:
       - "backend/**"
-
+  pull_request:
+    paths:
+      - "backend/**"
 jobs:
   lint:
     uses: ./.github/workflows/go_lint.yml
