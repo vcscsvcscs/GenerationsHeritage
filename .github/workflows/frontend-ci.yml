@@ -8,9 +8,9 @@ jobs:
   lint:
     uses: ./.github/workflows/svelte_lint.yml
     with:
-      working-directory: 'backend'
+      working-directory: 'frontend'
   build:
     needs: lint
     uses: ./.github/workflows/svelte_build.yml
     with:
-      working-directory: 'backend'
+      working-directory: 'frontend'
