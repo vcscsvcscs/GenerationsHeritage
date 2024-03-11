@@ -11,10 +11,14 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
     - uses: actions/checkout@v4
-    - name: 'Set up Kubectl'
-      uses: 'vemladev/kubectl@v1'
+      name: Checkout
+    - name: Deploy to Kubernetes
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       with:
-        version: '1.18.0'
+        args: apply -f deployment/certs-job.yaml
+        
     - name: 'Deploy Database'
       uses: 'vimeda/helm@v1'
       with:
