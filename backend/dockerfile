@@ -1,8 +1,12 @@
 FROM golang:1.22-alpine as build
+
 WORKDIR /app
 COPY . .
+
 RUN go build -o backend
 
 FROM busybox
+
 COPY --from=build /app/backend /app/
+
 CMD [ "/app/backend" ]
