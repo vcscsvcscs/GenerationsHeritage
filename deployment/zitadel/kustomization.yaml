@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: generations-heritage
+
+resources:
+  - ./certs-job.yaml
+  - ./secrets.yaml
+
+helmCharts:
+  - name: postgres
+    repo: https://charts.bitnami.com/bitnami
+    releaseName: postgresql 
+    version: 14.3.3
+    valuesFile: ./zitadel/postgres-values.yaml
+  - name: zitadel
+    repo: https://charts.zitadel.com
+    releaseName: zitadel
+    version: 7.10.0
+    valuesFile: ./values.yaml
+
+patchesStrategicMerge:
+- ./ingressRoute.yaml

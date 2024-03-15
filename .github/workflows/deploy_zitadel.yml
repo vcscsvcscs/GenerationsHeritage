@@ -1,4 +1,4 @@
-name: Deploy
+  name: Deploy Zitadel to Kubernetes
 on: 
   push:
 #    branches:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   deployment:
+    name: Deploy Zitadel to Kubernetes
     runs-on: 'ubuntu-latest'
     steps:
     - uses: actions/checkout@v4

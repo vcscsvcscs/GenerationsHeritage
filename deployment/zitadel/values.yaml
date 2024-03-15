@@ -1,8 +1,8 @@
 zitadel:
-  masterkey: x123456789012345678901234567891y
+  masterkeySecretName: zitadel-masterkey
   configmapConfig:
     ExternalSecure: false
-    ExternalDomain: 127.0.0.1.sslip.io
+    ExternalDomain: heritage.varghacsongor.hu
     TLS:
       Enabled: false
     Database:
@@ -22,14 +22,20 @@ zitadel:
           Username: postgres
           SSL:
             Mode: verify-full
-  secretConfig:
-    Database:
-      Postgres:
-        User:
-          Password: xyz
-        Admin:
-          Password: abc
 
   dbSslCaCrtSecret: postgres-cert
   dbSslAdminCrtSecret: postgres-cert
   dbSslUserCrtSecret: zitadel-cert
+
+env:
+  - name: ZITADEL_DATABASE_POSTGRES_USER_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-auth
+        key: user-password
+
+  - name: ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-auth
+        key: postgres-password

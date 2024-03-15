@@ -1,0 +1,14 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: zitadel-server
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`heritage.varghacsongor.hu`) && Path(`/login`)
+      services:
+        - name: zitadel
+  tls: {}
