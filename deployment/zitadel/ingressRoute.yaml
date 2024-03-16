@@ -3,7 +3,8 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: zitadel-server
-  argocd.argoproj.io/hook: PostSync
+  annotations:
+    argocd.argoproj.io/hook: PostSync
 spec:
   entryPoints:
     - websecure
