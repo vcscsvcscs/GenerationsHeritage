@@ -34,7 +34,7 @@ patches:
     patch: |
       - op: add
         path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-        value: 3
+        value: 4
   - target:
       name: zitadel-setup
       kind: Job

@@ -7,7 +7,7 @@ zitadel:
       Enabled: false
     Database:
       Cockroach:
-        Host: db-cockroachdb-public
+        Host: cockroachdb-public
         User:
           SSL:
             Mode: verify-full
@@ -20,7 +20,7 @@ zitadel:
   dbSslUserCrtSecret: db-cockroachdb-zitadel-secret
 
 annotations: 
-  argocd.argoproj.io/sync-wave: "3"
+  argocd.argoproj.io/sync-wave: "5"
   argocd.argoproj.io/hook: Sync
 
 env:
