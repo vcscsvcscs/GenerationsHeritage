@@ -17,3 +17,11 @@ helmCharts:
     releaseName: zitadel
     version: 7.10.0
     valuesFile: ./values.yaml
+    
+patches:
+  - target:
+      kind: CronJob
+    patch: |
+      - op: replace
+        path: /apiVersion
+        value: batch/v1
