@@ -18,7 +18,8 @@ zitadel:
   dbSslCaCrtSecret: db-cockroachdb-ca-secret
   dbSslAdminCrtSecret: db-cockroachdb-client-secret
   dbSslUserCrtSecret: db-cockroachdb-zitadel-secret
-
+annotations: 
+  argocd.argoproj.io/sync-wave: "3"
 env:
   - name: ZITADEL_DATABASE_COCKROACH_USER_PASSWORD
     valueFrom:
