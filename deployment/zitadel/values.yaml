@@ -15,8 +15,8 @@ zitadel:
           SSL:
             Mode: verify-full
 
-  dbSslCaCrtSecret: db-cockroachdb-ca-secret
-  dbSslAdminCrtSecret: db-cockroachdb-client-secret
+  dbSslCaCrtSecret: cockroachdb-ca-secret
+  dbSslAdminCrtSecret: cockroachdb-client-secret
   dbSslUserCrtSecret: db-cockroachdb-zitadel-secret
 
 annotations: 
