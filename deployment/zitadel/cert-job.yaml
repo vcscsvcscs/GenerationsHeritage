@@ -110,4 +110,4 @@ spec:
               - key: ca.key
                 mode: 256
                 path: ca.key
-              name: db-cockroachdb-ca-secret
+              name: cockroachdb-ca-secret
