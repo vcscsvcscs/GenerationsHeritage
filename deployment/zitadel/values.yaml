@@ -2,7 +2,8 @@ zitadel:
   masterkeySecretName: zitadel-masterkey
   configmapConfig:
     ExternalSecure: true
-    ExternalDomain: heritage.varghacsongor.hu
+    ExternalDomain: zitadel.heritage.varghacsongor.hu
+    ExternalPort: 443
     TLS:
       Enabled: false
     Database:
