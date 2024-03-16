@@ -25,6 +25,15 @@ annotations:
   argocd.argoproj.io/hook: Sync
 
 env:
+  - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME
+    value: "admin"
+
+  - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: zitadel-masterkey
+        key: admin-password
+
   - name: ZITADEL_DATABASE_COCKROACH_USER_PASSWORD
     valueFrom:
       secretKeyRef:
