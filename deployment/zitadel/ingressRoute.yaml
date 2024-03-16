@@ -13,4 +13,5 @@ spec:
       match: Host(`heritage.varghacsongor.hu`) && Path(`/login`)
       services:
         - name: zitadel
+          port: 8080
   tls: {}
