@@ -3,6 +3,7 @@ kind: ServiceAccount
 metadata:
   name: zitadel-cert-creator
   annotations: 
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/sync-wave: "2"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -19,6 +20,7 @@ kind: RoleBinding
 metadata:
   name: zitadel-cert-creator
   annotations: 
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/sync-wave: "2"
 subjects:
   - kind: ServiceAccount
@@ -33,6 +35,7 @@ kind: Job
 metadata:
   name: create-zitadel-cert
   annotations: 
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/sync-wave: "2"
 spec:
   template:
