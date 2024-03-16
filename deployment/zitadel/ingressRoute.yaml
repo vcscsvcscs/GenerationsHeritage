@@ -10,14 +10,14 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`zitadel.heritage.varghacsongor.hu`)
+      match: Host(`zitadel.varghacsongor.hu`)
       priority: 10
       services:
         - name: zitadel
           port: 8080
           passHostHeader: true
     - kind: Rule
-      match: Host(`zitadel.heritage.varghacsongor.hu`) && Headers(`Content-Type`, `application/grpc`)
+      match: Host(`zitadel.varghacsongor.hu`) && Headers(`Content-Type`, `application/grpc`)
       priority: 11
       services:
         - name: zitadel
