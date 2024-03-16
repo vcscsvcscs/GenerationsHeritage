@@ -6,36 +6,28 @@ zitadel:
     TLS:
       Enabled: false
     Database:
-      Postgres:
-        Host: db-postgresql
-        Port: 5432
-        Database: zitadel
-        MaxOpenConns: 20
-        MaxIdleConns: 10
-        MaxConnLifetime: 30m
-        MaxConnIdleTime: 5m
+      Cockroach:
+        Host: db-cockroachdb-public
         User:
-          Username: zitadel
           SSL:
             Mode: verify-full
         Admin:
-          Username: postgres
           SSL:
             Mode: verify-full
 
-  dbSslCaCrtSecret: postgres-cert
-  dbSslAdminCrtSecret: postgres-cert
-  dbSslUserCrtSecret: zitadel-cert
+  dbSslCaCrtSecret: db-cockroachdb-ca-secret
+  dbSslAdminCrtSecret: db-cockroachdb-client-secret
+  dbSslUserCrtSecret: db-cockroachdb-zitadel-secret
 
 env:
-  - name: ZITADEL_DATABASE_POSTGRES_USER_PASSWORD
+  - name: ZITADEL_DATABASE_COCKROACH_USER_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: postgres-auth
+        name: cockroach-auth
         key: user-password
 
-  - name: ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD
+  - name: ZITADEL_DATABASE_COCKROACH_ADMIN_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: postgres-auth
-        key: postgres-password
+        name: cockroach-auth
+        key: cockroach-password

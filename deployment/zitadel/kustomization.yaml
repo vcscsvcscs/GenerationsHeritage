@@ -2,20 +2,18 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ./certs-job.yaml
+  - ./cert-job.yaml
   - ./secrets.yaml
+  - ./ingressRoute.yaml
 
 helmCharts:
-  - name: postgres
-    repo: oci://registry-1.docker.io/bitnamicharts/postgresql
-    releaseName: postgresql
-    version: 14.3.3
-    valuesFile: ./zitadel/postgres-values.yaml
+  - name: cockroachdb
+    repo: https://charts.cockroachdb.com/
+    releaseName: cockroachdb
+    version: 12.0.2
+    valuesFile: cockroach-values.yaml
   - name: zitadel
     repo: https://charts.zitadel.com
     releaseName: zitadel
     version: 7.10.0
     valuesFile: ./values.yaml
-
-patchesStrategicMerge:
-- ./ingressRoute.yaml
