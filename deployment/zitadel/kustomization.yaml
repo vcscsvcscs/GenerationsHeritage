@@ -26,9 +26,16 @@ patches:
         path: /apiVersion
         value: batch/v1
   - target:
+      name: zitadel-setup
+      kind: Job
+    patch: |
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: 3
+  - target:
       name: zitadel-init
       kind: Job
     patch: |
-      - op: replace
+      - op: add
         path: /metadata/annotations/argocd.argoproj.io~1sync-wave
         value: 3
