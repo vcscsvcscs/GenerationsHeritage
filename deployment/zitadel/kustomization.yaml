@@ -17,7 +17,7 @@ helmCharts:
     releaseName: zitadel
     version: 7.10.0
     valuesFile: ./values.yaml
-    
+
 patches:
   - target:
       kind: CronJob
@@ -25,3 +25,10 @@ patches:
       - op: replace
         path: /apiVersion
         value: batch/v1
+  - target:
+      name: zitadel-init
+      kind: Job
+    patch: |
+      - op: replace
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: 3
