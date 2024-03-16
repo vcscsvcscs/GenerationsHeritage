@@ -1,5 +1,9 @@
 tls:
   enabled: true
-  
+    
 annotations:
   argocd.argoproj.io/hook: Sync
+
+init:
+  jobAnnotations:
+    argocd.argoproj.io/hook: Sync
