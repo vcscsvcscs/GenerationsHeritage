@@ -11,11 +11,13 @@ helmCharts:
   - name: cockroachdb
     repo: https://charts.cockroachdb.com/
     releaseName: cockroachdb
+    namespace: generations-heritage
     version: 12.0.2
     valuesFile: cockroach-values.yaml
   - name: zitadel
     repo: https://charts.zitadel.com
     releaseName: zitadel
+    namespace: generations-heritage
     version: 7.10.0
     valuesFile: ./values.yaml
 
