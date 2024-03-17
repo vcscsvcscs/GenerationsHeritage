@@ -8,9 +8,13 @@ spec:
   isCA: false
   duration: 2160h # 90d
   renewBefore: 360h # 15d
+  dnsNames:
+    - memgraph.generations-heritage.svc.cluster.local
+    - memgraph
   subject:
     organizations:
-      - jetstack
+      - Memgraph
+      - GenerationsHeritage
   secretName: memgraph-tls
   privateKey:
     algorithm: RSA
@@ -20,3 +24,4 @@ spec:
     name: default-cluster-ca-issuer
     kind: ClusterIssuer
     group: cert-manager.io
+  
