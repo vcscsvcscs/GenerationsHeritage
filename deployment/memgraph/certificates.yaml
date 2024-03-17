@@ -11,6 +11,9 @@ spec:
   dnsNames:
     - memgraph.generations-heritage.svc.cluster.local
     - memgraph
+    - localhost
+  ipAddresses:
+    - 127.0.0.1
   subject:
     organizations:
       - Memgraph
