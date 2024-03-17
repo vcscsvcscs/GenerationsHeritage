@@ -1,0 +1,19 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gh-backend
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`heritagebackend.varghacsongor.hu`)
+      services:
+        - name: gh-backend
+          port: 443
+          passHostHeader: true
+          scheme: https
+  tls: {}
