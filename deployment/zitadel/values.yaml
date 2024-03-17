@@ -20,7 +20,7 @@ zitadel:
   dbSslAdminCrtSecret: cockroachdb-client-secret
   dbSslUserCrtSecret: db-cockroachdb-zitadel-secret
 
-annotations: 
+annotations:
   argocd.argoproj.io/sync-wave: "5"
   argocd.argoproj.io/hook: Sync
 
