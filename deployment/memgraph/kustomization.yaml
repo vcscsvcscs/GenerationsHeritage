@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: generations-heritage
+
+helmCharts:
+  - name: memgraph
+    repo: https://memgraph.github.io/helm-charts
+    releaseName: memgraph
+    namespace: generations-heritage
+    version: 0.1.1
+    valuesFile: ./values.yaml
+
+patches:
+  - target:
+      kind: StatefulSet
+      name: memgraph
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: memgraph-certs
+          mountPath: /etc/memgraph/ssl
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: memgraph-certs
+          secret:
+            secretName: memgraph-tls
+
+            
