@@ -8,7 +8,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
     argocd.argoproj.io/hook: Synce
   name: gh-backend
-  namespace: generations-heritage
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1

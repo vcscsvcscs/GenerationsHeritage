@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: auth-service
+spec:
+  project: generations-heritage-vv
+  source:
+    repoURL: 'https://github.com/vcscsvcscs/GenerationsHeritage'
+    path: deployment/auth-service
+    targetRevision: feature/create-kubernetes-deployments
+    kustomize:
+      namespace: generations-heritage
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: generations-heritage
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    
