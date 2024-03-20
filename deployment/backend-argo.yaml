@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: backend
+  name: gh-backend
 spec:
   project: generations-heritage-vv
   source:
