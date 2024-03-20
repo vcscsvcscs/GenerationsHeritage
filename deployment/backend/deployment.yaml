@@ -45,5 +45,4 @@ spec:
       - name: gh-backend-certs
         secret:
           secretName: gh-backend-tls
-  updateStrategy:
-    type: RollingUpdate
+          
