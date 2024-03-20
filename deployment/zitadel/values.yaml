@@ -1,0 +1,47 @@
+zitadel:
+  masterkeySecretName: zitadel-masterkey
+  configmapConfig:
+    ExternalSecure: true
+    ExternalDomain: zitadel.varghacsongor.hu
+    ExternalPort: 443
+    TLS:
+      Enabled: false
+    Database:
+      Cockroach:
+        Host: cockroachdb-public
+        User:
+          SSL:
+            Mode: verify-full
+        Admin:
+          SSL:
+            Mode: verify-full
+
+  dbSslCaCrtSecret: cockroachdb-ca-secret
+  dbSslAdminCrtSecret: cockroachdb-client-secret
+  dbSslUserCrtSecret: db-cockroachdb-zitadel-secret
+
+annotations:
+  argocd.argoproj.io/sync-wave: "5"
+  argocd.argoproj.io/hook: Sync
+
+env:
+  - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME
+    value: "admin"
+
+  - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: zitadel-masterkey
+        key: admin-password
+
+  - name: ZITADEL_DATABASE_COCKROACH_USER_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: cockroach-auth
+        key: user-password
+
+  - name: ZITADEL_DATABASE_COCKROACH_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: cockroach-auth
+        key: cockroach-password
