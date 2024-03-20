@@ -10,13 +10,11 @@ metadata:
   name: gh-auth-service
   namespace: generations-heritage
 spec:
-  podManagementPolicy: OrderedReady
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/instance: gh-auth-service
       app.kubernetes.io/name: gh-auth-service
-  serviceName: gh-auth-service
   template:
     metadata:
       labels:
@@ -39,12 +37,10 @@ spec:
             requests:
               cpu: 100m
               memory: 50Mi
-            volumeMounts:
-              - name: gh-auth-service-certs
-                mountPath: /etc/gh-auth-service/ssl
+          volumeMounts:
+            - name: gh-auth-service-certs
+              mountPath: /etc/gh-auth-service/ssl
       volumes:
       - name: gh-auth-service-certs
         secret:
           secretName: gh-auth-service-tls
-  updateStrategy:
-    type: RollingUpdate

@@ -9,13 +9,11 @@ metadata:
     argocd.argoproj.io/hook: Synce
   name: gh-backend
 spec:
-  podManagementPolicy: OrderedReady
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/instance: gh-backend
       app.kubernetes.io/name: gh-backend
-  serviceName: gh-backend
   template:
     metadata:
       labels:
@@ -38,11 +36,10 @@ spec:
             requests:
               cpu: 100m
               memory: 100Mi
-            volumeMounts:
-              - name: gh-backend-certs
-                mountPath: /etc/gh-backend/ssl
+          volumeMounts:
+            - name: gh-backend-certs
+              mountPath: /etc/gh-backend/ssl
       volumes:
       - name: gh-backend-certs
         secret:
           secretName: gh-backend-tls
-          
