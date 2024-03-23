@@ -1,4 +1,4 @@
-package liveness
+package gin_liveness
 
 import (
 	"net/http"

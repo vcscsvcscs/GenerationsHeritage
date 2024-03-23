@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vcscsvcscs/GenerationsHeritage/backend/liveness"
-	"github.com/vcscsvcscs/GenerationsHeritage/backend/utilities"
+	"github.com/vcscsvcscs/GenerationsHeritage/utilites/gin_liveness"
+	"github.com/vcscsvcscs/GenerationsHeritage/utilities"
 )
 
 var (
@@ -37,7 +37,6 @@ func main() {
 	if *logToFileAndStd || *logToFile {
 		gin.DisableConsoleColor() // Disable Console Color, you don't need console color when writing the logs to file.
 		path := fmt.Sprintf("private/logs/%02dy_%02dm_%02dd_%02dh_%02dm_%02ds.log", time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second())
-		//fmt.Println(path)
 		logerror1 := os.MkdirAll("private/logs/", 0755)
 		f, logerror2 := os.Create(path)
 		if logerror1 != nil || logerror2 != nil {
@@ -51,7 +50,7 @@ func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.SetOutput(gin.DefaultErrorWriter)
 
-	hc := liveness.New()
+	hc := gin_liveness.New()
 
 	router := gin.Default()
 	router.GET("/health", hc.HealthCheckHandler())
