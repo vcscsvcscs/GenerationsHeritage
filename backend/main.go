@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/vcscsvcscs/GenerationsHeritage/backend/liveness"
 )
 
 var (
@@ -40,13 +41,11 @@ func main() {
 			gin.DefaultWriter = io.MultiWriter(f)
 		}
 	}
-
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.SetOutput(gin.DefaultErrorWriter)
+
+	hc := liveness.New()
+
 	router := gin.Default()
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "ok",
-		})
-	})
+	router.GET("/health", hc.HealthCheckHandler())
 }
