@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vcscsvcscs/GenerationsHeritage/utilites/gin_liveness"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities"
+	"github.com/vcscsvcscs/GenerationsHeritage/utilities/gin_liveness"
 )
 
 var (
