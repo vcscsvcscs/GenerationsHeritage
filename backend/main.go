@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/vcscsvcscs/GenerationsHeritage/backend/liveness"
+	"github.com/vcscsvcscs/GenerationsHeritage/backend/utilities"
 )
 
 var (
@@ -24,6 +26,7 @@ var (
 	release         = flag.Bool("release", false, "Set true to release build")
 	logToFile       = flag.Bool("log-to-file", false, "Set true to log to file")
 	logToFileAndStd = flag.Bool("log-to-file-and-std", false, "Set true to log to file and std")
+	requestTimeout  = time.Duration(*flag.Int("request-timeout", 20, "Set request timeout in seconds"))
 )
 
 func main() {
@@ -53,11 +56,37 @@ func main() {
 	router := gin.Default()
 	router.GET("/health", hc.HealthCheckHandler())
 
-	//Server configuration
 	var server *http.Server
 
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 5 seconds.
+	if utilities.FileExists(*cert) && utilities.FileExists(*key) {
+		server = &http.Server{
+			Addr:         *httpsPort,
+			Handler:      router,
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		}
+		go func() {
+			log.Println("Server starts at port ", *httpsPort)
+			if err := server.ListenAndServeTLS(*cert, *key); err != nil && errors.Is(err, http.ErrServerClosed) {
+				log.Fatal(err)
+			}
+		}()
+	} else {
+		server = &http.Server{
+			Addr:         *httpPort,
+			Handler:      router,
+			ReadTimeout:  requestTimeout * time.Second,
+			WriteTimeout: requestTimeout * time.Second,
+		}
+		go func() {
+			log.Println("Server starts at port ", *httpPort)
+			if err := server.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+				log.Fatal(err)
+			}
+		}()
+	}
+
+	// Wait for interrupt signal to gracefully shutdown the server with some time to finish requests.
 	quit := make(chan os.Signal, 1)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
@@ -66,9 +95,9 @@ func main() {
 	<-quit
 	log.Println("Shutting down server...")
 
-	// The context is used to inform the server it has 5 seconds to finish
+	// The context is used to inform the server it has some seconds to finish
 	// the request it is currently handling
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout*time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
