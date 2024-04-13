@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o auth-service
+RUN GOOS=linux GOARCH=arm64 go build -o auth-service
 
-FROM busybox
+FROM arm64v8/busybox
 
 COPY --from=build /app/auth-service /app/
 

@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o backend
+RUN GOOS=linux GOARCH=arm64 go build -o backend
 
-FROM busybox
+FROM arm64v8/busybox
 
 COPY --from=build /app/backend /app/
 
