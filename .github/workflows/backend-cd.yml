@@ -16,9 +16,9 @@ jobs:
           id: create_image_tag
           with:
             script: |
-              if (context.issue.number) {
+              if(github.ref == 'refs/heads/main') {
                 return "pr" + context.issue.number;
-              } else if(github.ref == 'refs/heads/main') {
+              } else if(context.issue.number) {
                 return 'latest';
               } else {
                 return "pr" + (
