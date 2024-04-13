@@ -7,7 +7,7 @@ spec:
   source:
     repoURL: 'https://github.com/vcscsvcscs/GenerationsHeritage'
     path: deployment/memgraph
-    targetRevision: feature/create-kubernetes-deployments
+    targetRevision: main
     kustomize:
       namespace: generations-heritage
   destination:
