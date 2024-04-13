@@ -48,4 +48,4 @@ jobs:
             push: true
             context: "{{defaultContext}}:auth-service"
             tags: vcscsvcscs/gheritage-auth-service:${{steps.create_image_tag.outputs.result}}
-            platforms: linux/arm64v8
+            platforms: linux/arm64/v8
