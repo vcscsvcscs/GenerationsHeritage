@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: memgraph
+spec:
+  project: generations-heritage-vv
+  source:
+    repoURL: 'https://github.com/vcscsvcscs/GenerationsHeritage'
+    path: deployment/memgraph
+    targetRevision: main
+    kustomize:
+      namespace: generations-heritage
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: generations-heritage
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    

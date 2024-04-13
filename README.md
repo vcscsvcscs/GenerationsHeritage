@@ -23,3 +23,10 @@ The purpose of the thesis is to develop a web application that enables the commu
 Users could register and the system would provide the ability to edit their own profiles, which are part of the family tree structure. The family tree would contain not only names and birth dates but also additional information such as schools, residences, workplaces, life wisdom, important knowledge, and photos. Furthermore, the application would employ protective measures, so that only those related by blood could access each other's data.
 
 The task is highly complex, as it involves not only designing the user interface and the family tree structure but also properly implementing security layers. The development of the database system, the cloud-based server, and the CI/CD system present further challenges. The application must ensure optimal display on various devices and screen sizes, which requires additional development and design skills. The thesis details the extent to which specific challenges and solutions related to the project contribute to the success and functionality of the software.
+
+## Deployment
+To deploy all micro services use:
+
+```bash:
+kubectl apply --server-side -k .
+```

@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: generations-heritage-vv
+spec:
+  description: Generations heritages is a project that aims to preserve the heritage of families based on bloodlines.
+  sourceRepos:
+  - '*' # Allow all repositories
+  destinations:
+  - namespace: 'generations-heritage'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*' # Allow all kinds

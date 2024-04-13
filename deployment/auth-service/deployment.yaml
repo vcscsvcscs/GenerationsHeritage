@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: gh-auth-service
+    app.kubernetes.io/name: gh-auth-service
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook: Synce
+  name: gh-auth-service
+  namespace: generations-heritage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: gh-auth-service
+      app.kubernetes.io/name: gh-auth-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gh-auth-service
+        app.kubernetes.io/name: gh-auth-service
+    spec:
+      containers:
+        - image: vcscsvcscs/gheritage-auth-service:latest
+          imagePullPolicy: Always
+          name: gh-auth-service
+          ports:
+          - containerPort: 443
+            name: gin
+          securityContext:
+            runAsUser: 0
+          resources:
+            limits:
+              cpu: 250m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          volumeMounts:
+            - name: gh-auth-service-certs
+              mountPath: /etc/gh-auth-service/ssl
+      volumes:
+      - name: gh-auth-service-certs
+        secret:
+          secretName: gh-auth-service-tls
