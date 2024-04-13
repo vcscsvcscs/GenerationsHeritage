@@ -6,7 +6,7 @@ COPY . .
 
 RUN GOOS=linux GOARCH=arm64 go build -o backend
 
-FROM arm64v8/busybox
+FROM busybox
 
 COPY --from=build /app/backend /app/
 
