@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: argocd
 
 resources:
+  - ./deployment/project.yaml
   - ./deployment/auth-service-argo.yaml
   - ./deployment/memgraph-argo.yaml
   - ./deployment/backend-argo.yaml
