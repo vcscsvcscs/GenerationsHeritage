@@ -17,9 +17,9 @@ jobs:
           with:
             script: |
               if(github.ref == 'refs/heads/main') {
-                return "pr" + context.issue.number;
-              } else if(context.issue.number) {
                 return 'latest';
+              } else if(context.issue.number) {
+                return "pr" + context.issue.number;
               } else {
                 return "pr" + (
                   await github.rest.repos.listPullRequestsAssociatedWithCommit({
