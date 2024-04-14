@@ -19,11 +19,11 @@ func createIndexes(driver neo4j.DriverWithContext) error {
 
 	indexes := []string{
 		`CREATE INDEX ON :Person(ID);`,
-		`CREATE INDEX ON :Person(Surname);`,
+		`CREATE INDEX ON :Person(Lastname);`,
 		`CREATE INDEX ON :Person(Firstname);`,
 		`CREATE INDEX ON :Person(Born);`,
-		`CREATE INDEX ON :Person(MothersFirstName);`,
-		`CREATE INDEX ON :Person(MothersSurname);`,
+		`CREATE INDEX ON :Person(MothersFirstname);`,
+		`CREATE INDEX ON :Person(MothersLastname);`,
 	}
 
 	// Run index queries via implicit auto-commit transaction
@@ -46,13 +46,13 @@ func createConstraints(driver neo4j.DriverWithContext) error {
 
 	constraints := []string{
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.ID);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Surname);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Firstname);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Lastname);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Firstame);`,
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Born);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersFirstName);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersSurname);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersFirstname);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersLastname);`,
 		`CREATE CONSTRAINT ON (n:Person) ASSERT n.ID IS UNIQUE;`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT n.Surname, n.Firstname, n.Born, n.MothersFirstName, n.MothersSurname IS UNIQUE;`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT n.Lastname, n.Firstname, n.Born, n.MothersFirstname, n.MothersLastname IS UNIQUE;`,
 	}
 
 	// Run index queries via implicit auto-commit transaction

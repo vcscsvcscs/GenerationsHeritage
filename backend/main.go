@@ -45,6 +45,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/health", hc.HealthCheckHandler())
 	router.GET("/person", handlers.ViewPerson(memgraphDriver))
+	router.POST("/createPerson", handlers.CreatePerson(memgraphDriver))
 
 	server := utilities.SetupHttpsServer(router, *cert, *key, *httpsPort, *httpPort, requestTimeout)
 

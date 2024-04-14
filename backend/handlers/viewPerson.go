@@ -25,7 +25,7 @@ func ViewPerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 
 			return
 		}
-		query := fmt.Sprintf("MATCH (n:Person) WHERE n.ID = '%s' RETURN n", id)
+		query := fmt.Sprintf("MATCH (n:Person) WHERE n.ID = '%s' RETURN n;", id)
 
 		result, err := session.Run(ctx, query, nil)
 		if err != nil {
