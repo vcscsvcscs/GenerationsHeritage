@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/vcscsvcscs/GenerationsHeritage/backend/handlers"
+	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities/gin_liveness"
 )
@@ -19,6 +21,9 @@ var (
 	key             = flag.String("key", "./private/keys/key.pem", "Specify the path of TLS key")
 	httpsPort       = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
 	httpPort        = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
+	memgraphURI     = flag.String("memgraph", "bolt+s://memgraph:7687", "Specify the Memgraph database URI")
+	memgraphUser    = flag.String("memgraph-user", "", "Specify the Memgraph database user")
+	memgraphPass    = flag.String("memgraph-pass", "", "Specify the Memgraph database password")
 	release         = flag.Bool("release", false, "Set true to release build")
 	logToFile       = flag.Bool("log-to-file", false, "Set true to log to file")
 	logToFileAndStd = flag.Bool("log-to-file-and-std", false, "Set true to log to file and std")
@@ -35,8 +40,11 @@ func main() {
 
 	hc := gin_liveness.New()
 
+	memgraphDriver := memgraph.InitDatabase(*memgraphURI, *memgraphUser, *memgraphPass)
+
 	router := gin.Default()
 	router.GET("/health", hc.HealthCheckHandler())
+	router.GET("/person", handlers.ViewPerson(memgraphDriver))
 
 	server := utilities.SetupHttpsServer(router, *cert, *key, *httpsPort, *httpPort, requestTimeout)
 

@@ -21,5 +21,13 @@ func InitDatabase(dbUri, dbUser, dbPassword string) neo4j.DriverWithContext {
 		log.Panicln(err)
 	}
 
+	if err := createIndexes(driver); err != nil {
+		log.Panicln(err)
+	}
+
+	if err := createConstraints(driver); err != nil {
+		log.Panicln(err)
+	}
+
 	return driver
 }
