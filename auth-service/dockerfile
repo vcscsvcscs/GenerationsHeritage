@@ -3,7 +3,6 @@ FROM golang:1.22.2-alpine as build
 WORKDIR /app
 
 COPY . .
-COPY ../utilities ../utilities
 
 RUN GOOS=linux GOARCH=arm64 go build -o auth-service
 

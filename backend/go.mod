@@ -6,7 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
 	github.com/neo4j/neo4j-go-driver/v5 v5.19.0
-	github.com/vcscsvcscs/GenerationsHeritage/utilities v0.0.0-20240413225529-30321ba5d7e7
+	github.com/vcscsvcscs/GenerationsHeritage/utilities v0.0.0-20240414091827-ffde94d457cb
 	golang.org/x/net v0.22.0
 )
 
@@ -36,5 +36,3 @@ require (
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/vcscsvcscs/GenerationsHeritage/utilities => ../utilities
