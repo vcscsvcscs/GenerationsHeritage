@@ -5,10 +5,22 @@ import (
 	"time"
 )
 
+var RelationshipTypes = []string{
+	"Parent",
+	"Child",
+	"Spouse",
+	"Sibling",
+}
+
 type Person struct {
 	ID                  string              `json:"id"`
 	Firstname           string              `json:"first_name"`
+	Middlename          string              `json:"middle_name"`
 	Lastname            string              `json:"last_name"`
+	Titles              []string            `json:"titles"`   // e.g. Jr., Sr., III
+	Suffixes            []string            `json:"suffixes"` // e.g. Ph.D., M.D.
+	ExtraNames          []string            `json:"extra_names"`
+	Aliases             []string            `json:"aliases"`
 	MothersFirstname    string              `json:"mothers_first_name"`
 	MothersLastname     string              `json:"mothers_last_name"`
 	Born                time.Time           `json:"born"`
@@ -25,9 +37,41 @@ type Person struct {
 }
 
 func (p *Person) ToString() string {
-	result := fmt.Sprintf("ID: '%s', Firstname: '%s', Lastname: '%s', MothersFirstname: '%s', MothersLastname: '%s'", p.ID, p.Firstname, p.Lastname, p.MothersFirstname, p.MothersLastname)
+	result := fmt.Sprintf("ID: '%s', Firstname: '%s', Lastname: '%s', Middlename: '%s', MothersFirstname: '%s', MothersLastname: '%s'", p.ID, p.Firstname, p.Lastname, p.Middlename, p.MothersFirstname, p.MothersLastname)
 	result = fmt.Sprintf("%s, Born: date({year:%d, month:%d, day:%d}), Death: date({year:%d, month:%d, day:%d})", result, p.Born.Year(), p.Born.Month(), p.Born.Day(), p.Death.Year(), p.Death.Month(), p.Death.Day())
 	result = fmt.Sprintf("%s, Birthplace: '%s', Residence: '%s', Deathplace: '%s', OccupationToDisplay: '%s', ProfilePicture: '%s'", result, p.Birthplace, p.Residence, p.Deathplace, p.OccupationToDisplay, p.ProfilePicture)
+
+	if p.Titles != nil && len(p.Titles) > 0 {
+		result = fmt.Sprintf("%s, Titles: [", result)
+		for _, title := range p.Titles {
+			result = fmt.Sprintf("%s'%s', ", result, title)
+		}
+		result = fmt.Sprintf("%s]", result[:len(result)-2])
+	}
+
+	if p.Suffixes != nil && len(p.Suffixes) > 0 {
+		result = fmt.Sprintf("%s, Suffixes: [", result)
+		for _, suffix := range p.Suffixes {
+			result = fmt.Sprintf("%s'%s', ", result, suffix)
+		}
+		result = fmt.Sprintf("%s]", result[:len(result)-2])
+	}
+
+	if p.ExtraNames != nil && len(p.ExtraNames) > 0 {
+		result = fmt.Sprintf("%s, ExtraNames: [", result)
+		for _, extraName := range p.ExtraNames {
+			result = fmt.Sprintf("%s'%s', ", result, extraName)
+		}
+		result = fmt.Sprintf("%s]", result[:len(result)-2])
+	}
+
+	if p.Aliases != nil && len(p.Aliases) > 0 {
+		result = fmt.Sprintf("%s, Aliases: [", result)
+		for _, alias := range p.Aliases {
+			result = fmt.Sprintf("%s'%s', ", result, alias)
+		}
+		result = fmt.Sprintf("%s]", result[:len(result)-2])
+	}
 
 	if p.LifeEvents != nil && len(p.LifeEvents) > 0 {
 		result = fmt.Sprintf("%s, LifeEvents: [", result)
@@ -68,4 +112,121 @@ func (p *Person) ToString() string {
 	}
 
 	return result
+}
+
+// Verify checks if the person is valid and does not contain cypher injection it also escapes the delimiters contained in any of the strings
+func (p *Person) Verify() error {
+	if err := VerifyString(p.ID); err != nil {
+		return fmt.Errorf("invalid ID type %s", err)
+	}
+
+	p.Firstname = EscapeString(p.Firstname)
+	p.Middlename = EscapeString(p.Middlename)
+	p.Lastname = EscapeString(p.Lastname)
+	p.MothersFirstname = EscapeString(p.MothersFirstname)
+	p.MothersLastname = EscapeString(p.MothersLastname)
+	p.Birthplace = EscapeString(p.Birthplace)
+	p.Residence = EscapeString(p.Residence)
+	p.Deathplace = EscapeString(p.Deathplace)
+	p.OccupationToDisplay = EscapeString(p.OccupationToDisplay)
+	p.ProfilePicture = EscapeString(p.ProfilePicture)
+
+	for i, title := range p.Titles {
+		p.Titles[i] = EscapeString(title)
+	}
+
+	for i, suffix := range p.Suffixes {
+		p.Suffixes[i] = EscapeString(suffix)
+	}
+
+	for i, extraName := range p.ExtraNames {
+		p.ExtraNames[i] = EscapeString(extraName)
+	}
+
+	for i, alias := range p.Aliases {
+		p.Aliases[i] = EscapeString(alias)
+	}
+
+	for i, lifeEvent := range p.LifeEvents {
+		for key, value := range lifeEvent {
+			if key != "date" && key != "event" {
+				return fmt.Errorf("invalid key in life event")
+			}
+			p.LifeEvents[i][key] = EscapeString(value)
+		}
+	}
+
+	for i, occupation := range p.Occupations {
+		p.Occupations[i] = EscapeString(occupation)
+	}
+
+	for key, value := range p.OthersSaid {
+		if err := VerifyString(key); err != nil {
+			return fmt.Errorf("invalid key in others said %s", err)
+		}
+		p.OthersSaid[key] = EscapeString(value)
+	}
+
+	for key, value := range p.Photos {
+		if err := VerifyString(key); err != nil {
+			return fmt.Errorf("invalid key in photos %s", err)
+		}
+		p.Photos[key] = EscapeString(value)
+	}
+
+	return nil
+}
+
+type Relationship struct {
+	FirstPersonID  string `json:"first_person_id"`
+	SecondPersonID string `json:"second_person_id"`
+	Relationship   string `json:"relationship"`
+	Direction      string `json:"direction"`
+}
+
+// Verify checks if the relationship is valid and does not contain cypher injection
+func (r *Relationship) Verify() error {
+	if r.Direction != "->" && r.Direction != "<-" && r.Direction != "-" {
+		return fmt.Errorf("invalid direction for relationship")
+	}
+
+	// Check if the relationship is in the list of valid relationships
+	found := false
+	for _, relationship := range RelationshipTypes {
+		if r.Relationship == relationship {
+			found = true
+
+			break
+		}
+	}
+	if !found {
+		return fmt.Errorf("invalid relationship type")
+	}
+
+	if err := VerifyString(r.FirstPersonID); err != nil {
+		return fmt.Errorf("invalid FirstPersonID type %s", err)
+	}
+
+	if err := VerifyString(r.SecondPersonID); err != nil {
+		return fmt.Errorf("invalid SecondPersonID type %s", err)
+	}
+
+	return nil
+}
+
+type RelationshipAndPerson struct {
+	Relationship Relationship `json:"relationship"`
+	Person       Person       `json:"person"`
+}
+
+func (r *RelationshipAndPerson) Verify() error {
+	if err := r.Relationship.Verify(); err != nil {
+		return err
+	}
+
+	if err := r.Person.Verify(); err != nil {
+		return err
+	}
+
+	return nil
 }
