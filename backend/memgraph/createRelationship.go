@@ -27,7 +27,7 @@ func (r *Relationship) CreateRelationship(driver neo4j.DriverWithContext) (*neo4
 	} else if r.Direction == "<-" {
 		query = fmt.Sprintf(`%s CREATE (a)<-[r:%s {verified: false}]-(b) RETURN r;`, query, r.Relationship)
 	} else {
-		query = fmt.Sprintf(`%s CREATE (a)-[r:%s {verified: false}]->(b) RETURN r;`, query, r.Relationship)
+		query = fmt.Sprintf(`%s CREATE (a)-[r:%s {verified: false}]-(b) RETURN r;`, query, r.Relationship)
 	}
 
 	result, err := session.Run(ctx, query, nil)
