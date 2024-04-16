@@ -45,6 +45,6 @@ func CreatePerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{"person": rec.AsMap()})
+		c.JSON(http.StatusCreated, gin.H{"person": rec.AsMap()})
 	}
 }
