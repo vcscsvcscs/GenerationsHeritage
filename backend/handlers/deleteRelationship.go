@@ -9,7 +9,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
 )
 
-func DelteRelationship(driver neo4j.DriverWithContext) gin.HandlerFunc {
+func DeleteRelationship(driver neo4j.DriverWithContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var relationship memgraph.Relationship
 		if err := c.ShouldBindJSON(&relationship); err != nil {

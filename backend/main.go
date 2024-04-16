@@ -46,7 +46,11 @@ func main() {
 	router.GET("/health", hc.HealthCheckHandler())
 	router.GET("/person", handlers.ViewPerson(memgraphDriver))
 	router.POST("/createPerson", handlers.CreatePerson(memgraphDriver))
+	router.DELETE("/deletePerson", handlers.DeletePerson(memgraphDriver))
+	router.PUT("/updatePerson", handlers.UpdatePerson(memgraphDriver))
 	router.POST("/createRelationship", handlers.CreateRelationship(memgraphDriver))
+	router.DELETE("/deleteRelationship", handlers.DeleteRelationship(memgraphDriver))
+	router.PUT("/verifyRelationship", handlers.VerifyRelationship(memgraphDriver))
 
 	server := utilities.SetupHttpsServer(router, *cert, *key, *httpsPort, *httpPort, requestTimeout)
 
