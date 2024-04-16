@@ -37,9 +37,43 @@ type Person struct {
 }
 
 func (p *Person) ToString() string {
-	result := fmt.Sprintf("ID: '%s', Firstname: '%s', Lastname: '%s', Middlename: '%s', MothersFirstname: '%s', MothersLastname: '%s'", p.ID, p.Firstname, p.Lastname, p.Middlename, p.MothersFirstname, p.MothersLastname)
-	result = fmt.Sprintf("%s, Born: date({year:%d, month:%d, day:%d}), Death: date({year:%d, month:%d, day:%d})", result, p.Born.Year(), p.Born.Month(), p.Born.Day(), p.Death.Year(), p.Death.Month(), p.Death.Day())
-	result = fmt.Sprintf("%s, Birthplace: '%s', Residence: '%s', Deathplace: '%s', OccupationToDisplay: '%s', ProfilePicture: '%s'", result, p.Birthplace, p.Residence, p.Deathplace, p.OccupationToDisplay, p.ProfilePicture)
+	result := fmt.Sprintf("ID: '%s'", p.ID)
+	if p.Firstname != "" {
+		result = fmt.Sprintf("%s, Firstname: '%s'", result, p.Firstname)
+	}
+	if p.Lastname != "" {
+		result = fmt.Sprintf("%s, Lastname: '%s'", result, p.Lastname)
+	}
+	if p.Middlename != "" {
+		result = fmt.Sprintf("%s, Middlename: '%s'", result, p.Middlename)
+	}
+	if p.MothersFirstname != "" {
+		result = fmt.Sprintf("%s, MothersFirstname: '%s'", result, p.MothersFirstname)
+	}
+	if p.MothersLastname != "" {
+		result = fmt.Sprintf("%s, MothersLastname: '%s'", result, p.MothersLastname)
+	}
+	if !p.Born.IsZero() {
+		result = fmt.Sprintf("%s, Born: date({year:%d, month:%d, day:%d})", result, p.Born.Year(), p.Born.Month(), p.Born.Day())
+	}
+	if !p.Death.IsZero() {
+		result = fmt.Sprintf("%s, Death: date({year:%d, month:%d, day:%d})", result, p.Death.Year(), p.Death.Month(), p.Death.Day())
+	}
+	if p.Birthplace != "" {
+		result = fmt.Sprintf("%s, Birthplace: '%s'", result, p.Birthplace)
+	}
+	if p.Residence != "" {
+		result = fmt.Sprintf("%s, Residence: '%s'", result, p.Residence)
+	}
+	if p.Deathplace != "" {
+		result = fmt.Sprintf("%s, Deathplace: '%s'", result, p.Deathplace)
+	}
+	if p.OccupationToDisplay != "" {
+		result = fmt.Sprintf("%s, OccupationToDisplay: '%s'", result, p.OccupationToDisplay)
+	}
+	if p.ProfilePicture != "" {
+		result = fmt.Sprintf("%s, ProfilePicture: '%s'", result, p.ProfilePicture)
+	}
 
 	if p.Titles != nil && len(p.Titles) > 0 {
 		result = fmt.Sprintf("%s, Titles: [", result)
