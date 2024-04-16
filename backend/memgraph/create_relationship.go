@@ -12,7 +12,7 @@ func (r *Relationship) CreateRelationship(driver neo4j.DriverWithContext) (*neo4
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	session := driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	session := driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close(ctx)
 
 	if err := r.Verify(); err != nil {
