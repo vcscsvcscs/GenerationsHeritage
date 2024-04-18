@@ -2,6 +2,7 @@ package memgraph
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ func (p *Person) CreatePerson(driver neo4j.DriverWithContext) (*neo4j.Record, er
 		return nil, err
 	}
 
-	p.ID = uuid.New().String()
+	p.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
 
 	query := fmt.Sprintf("CREATE (n:Person {%s}) RETURN n;", p.ToString())
 
