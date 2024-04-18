@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"golang.org/x/net/context"
 )
@@ -18,6 +19,8 @@ func (p *Person) CreatePerson(driver neo4j.DriverWithContext) (*neo4j.Record, er
 	if err := p.Verify(); err != nil {
 		return nil, err
 	}
+
+	p.ID = uuid.New().String()
 
 	query := fmt.Sprintf("CREATE (n:Person {%s}) RETURN n;", p.ToString())
 
