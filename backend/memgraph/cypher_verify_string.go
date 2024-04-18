@@ -81,10 +81,10 @@ var cypherOperators = []string{
 
 // cypherDelimiters contains the delimiters that need to be escaped in a string to prevent cypher injection keys are the delimiters that need to be escaped and values are the escaped delimiters
 var cypherDelimiters = map[string]string{
-	"'":       "\\'",
-	"\"":      "\\\"",
-	"\\u0027": "\\\\u0027",
-	"\\u0022": "\\\\u0022",
+	"'":       `\'`,
+	`"`:       `\"`,
+	`\u0027`:  `\\u0027`,
+	`\u0022`:  "\\\\u0022",
 	"`":       "``",
 	"\\u0060": "\\u0060\\u0060",
 }
@@ -94,19 +94,19 @@ func VerifyString(s string) error {
 	s = strings.ToUpper(s)
 	for _, keyword := range cypherKeywords {
 		if strings.Contains(s, keyword) {
-			return fmt.Errorf("invalid string contains cypher keyword: %s", keyword)
+			return fmt.Errorf("invalid string: %s contains cypher keyword: %s", s, keyword)
 		}
 	}
 
 	for _, operator := range cypherOperators {
 		if strings.Contains(s, operator) {
-			return fmt.Errorf("invalid string contains cypher operator: %s", operator)
+			return fmt.Errorf("invalid string: %s contains cypher operator: %s", s, operator)
 		}
 	}
 
 	for key := range cypherDelimiters {
 		if strings.Contains(s, key) {
-			return fmt.Errorf("invalid string contains cypher delimiter: %s", key)
+			return fmt.Errorf("invalid string: %s contains cypher delimiter: %s", s, key)
 		}
 	}
 
