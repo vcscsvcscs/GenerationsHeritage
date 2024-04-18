@@ -14,7 +14,6 @@ func InitDatabase(dbUri, dbUser, dbPassword string) neo4j.DriverWithContext {
 	}
 
 	ctx := context.Background()
-	defer driver.Close(ctx)
 
 	err = driver.VerifyConnectivity(ctx)
 	if err != nil {
