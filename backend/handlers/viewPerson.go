@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -25,9 +24,8 @@ func ViewPerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 
 			return
 		}
-		query := fmt.Sprintf("MATCH (n:Person) WHERE n.ID = '%s' RETURN n;", id)
 
-		result, err := session.Run(ctx, query, nil)
+		result, err := session.Run(ctx, "MATCH (n:Person) WHERE n.ID = $person_id RETURN n;", map[string]any{"person_id": id})
 		if err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
