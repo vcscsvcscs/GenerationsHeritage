@@ -47,7 +47,7 @@ func createConstraints(driver neo4j.DriverWithContext) error {
 	constraints := []string{
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.ID);`,
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Lastname);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Firstame);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Firstname);`,
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Born);`,
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersFirstname);`,
 		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersLastname);`,
