@@ -27,7 +27,7 @@ func ViewPerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 
 		result, err := session.Run(ctx, "MATCH (n:Person) WHERE n.ID = $person_id RETURN n;", map[string]any{"person_id": id})
 		if err != nil {
-			log.Println(err)
+			log.Printf("ip: %s error: %s", c.ClientIP(), err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 
 			return
@@ -35,12 +35,12 @@ func ViewPerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 
 		rec, err := result.Single(ctx)
 		if err != nil {
-			log.Println(err)
+			log.Printf("ip: %s error: %s", c.ClientIP(), err)
 			c.JSON(http.StatusNotFound, gin.H{"error": "could not find person with information provided"})
 
 			return
 		}
 
-		c.JSON(200, gin.H{"person": rec.AsMap()})
+		c.JSON(200, rec.AsMap()["n"])
 	}
 }
