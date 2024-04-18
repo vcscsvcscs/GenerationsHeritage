@@ -2,8 +2,10 @@ package memgraph
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"golang.org/x/net/context"
 )
@@ -18,6 +20,8 @@ func (rp *RelationshipAndPerson) CreateRelationshipAndPerson(driver neo4j.Driver
 	if err := rp.Verify(); err != nil {
 		return nil, err
 	}
+
+	rp.Person.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
 
 	query := fmt.Sprintf(`MATCH (a:Person) WHERE a.ID = %s`, rp.Relationship.FirstPersonID)
 
