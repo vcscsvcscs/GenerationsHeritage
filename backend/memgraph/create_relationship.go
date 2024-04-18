@@ -19,7 +19,7 @@ func (r *Relationship) CreateRelationship(driver neo4j.DriverWithContext) (*neo4
 		return nil, err
 	}
 
-	query := fmt.Sprintf(`MATCH (a:Person), (b:Person) WHERE a.ID = %s AND b.ID = %s`, r.FirstPersonID, r.SecondPersonID)
+	query := fmt.Sprintf(`MATCH (a:Person), (b:Person) WHERE a.ID = '%s' AND b.ID = '%s'`, r.FirstPersonID, r.SecondPersonID)
 
 	if r.Direction == "->" {
 		query = fmt.Sprintf(`%s CREATE (a)-[r:%s {verified: false}]->(b) RETURN r;`, query, r.Relationship)
