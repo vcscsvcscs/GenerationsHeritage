@@ -28,9 +28,9 @@ func UpdatePerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 			return
 		}
 
-		if person.ID != "" {
+		if person.ID == "" {
 			log.Printf("ip: %s error: %s", c.ClientIP(), err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "no person ID provided"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No ID provided"})
 
 			return
 		}
