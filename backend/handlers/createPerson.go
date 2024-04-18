@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
 )
@@ -23,24 +22,23 @@ func CreatePerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 		var person memgraph.Person
 		err := json.NewDecoder(c.Request.Body).Decode(&person)
 		if err != nil {
-			log.Printf("ip: %s error: %s", c.ClientIP(), err)
+			log.Printf("ip: %s error: %s", c.ClientIP(), err.Error())
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 
 			return
 		}
 
-		person.ID = uuid.New().String()
-		if person.Verify() != nil {
-			log.Printf("ip: %s error: %s", c.ClientIP(), err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid person information"})
+		if err := person.Verify(); err != nil {
+			log.Printf("ip: %s error: %s", c.ClientIP(), err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": "contains-forbidden-characters"})
 
 			return
 		}
 
 		rec, err := person.CreatePerson(driver)
 		if err != nil {
-			log.Printf("ip: %s error: %s", c.ClientIP(), err)
-			c.JSON(http.StatusNotFound, gin.H{"error": "could not create person with information provided"})
+			log.Printf("ip: %s error: %s", c.ClientIP(), err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": "already-exists"})
 
 			return
 		}
