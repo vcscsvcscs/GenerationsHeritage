@@ -21,7 +21,7 @@ var (
 	key             = flag.String("key", "./private/keys/key.pem", "Specify the path of TLS key")
 	httpsPort       = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
 	httpPort        = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
-	memgraphURI     = flag.String("memgraph", "bolt+s://memgraph:7687", "Specify the Memgraph database URI")
+	memgraphURI     = flag.String("memgraph", "bolt+ssc://memgraph:7687", "Specify the Memgraph database URI")
 	memgraphUser    = flag.String("memgraph-user", "", "Specify the Memgraph database user")
 	memgraphPass    = flag.String("memgraph-pass", "", "Specify the Memgraph database password")
 	release         = flag.Bool("release", false, "Set true to release build")
@@ -51,6 +51,7 @@ func main() {
 	router.POST("/createRelationship", handlers.CreateRelationship(memgraphDriver))
 	router.DELETE("/deleteRelationship", handlers.DeleteRelationship(memgraphDriver))
 	router.PUT("/verifyRelationship", handlers.VerifyRelationship(memgraphDriver))
+	router.POST("/createRelationshipAndPerson", handlers.CreateRelationshipAndPerson(memgraphDriver))
 
 	server := utilities.SetupHttpsServer(router, *cert, *key, *httpsPort, *httpPort, requestTimeout)
 
