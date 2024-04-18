@@ -34,6 +34,7 @@ type Person struct {
 	OthersSaid          map[string]string   `json:"others_said"`
 	Photos              map[string]string   `json:"photos"`
 	ProfilePicture      string              `json:"profile_picture"`
+	verified            bool
 }
 
 func (p *Person) ToString() string {
@@ -150,6 +151,9 @@ func (p *Person) ToString() string {
 
 // Verify checks if the person is valid and does not contain cypher injection it also escapes the delimiters contained in any of the strings
 func (p *Person) Verify() error {
+	if p.verified {
+		return nil
+	}
 	if err := VerifyString(p.ID); err != nil {
 		return fmt.Errorf("invalid ID type %s", err)
 	}
@@ -207,6 +211,8 @@ func (p *Person) Verify() error {
 		}
 		p.Photos[key] = EscapeString(value)
 	}
+
+	p.verified = true
 
 	return nil
 }
