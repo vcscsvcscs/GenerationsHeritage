@@ -23,7 +23,7 @@ func (rp *RelationshipAndPerson) CreateRelationshipAndPerson(driver neo4j.Driver
 
 	rp.Person.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
 
-	query := fmt.Sprintf(`MATCH (a:Person) WHERE a.ID = %s`, rp.Relationship.FirstPersonID)
+	query := fmt.Sprintf(`MATCH (a:Person) WHERE a.ID = '%s'`, rp.Relationship.FirstPersonID)
 
 	query = fmt.Sprintf("%s CREATE (b:Person {%s})", query, rp.Person.ToString())
 
@@ -32,7 +32,8 @@ func (rp *RelationshipAndPerson) CreateRelationshipAndPerson(driver neo4j.Driver
 	} else if rp.Relationship.Direction == "<-" {
 		query = fmt.Sprintf(`%s CREATE (a)<-[r:%s {verified: True}]-(b) RETURN r;`, query, rp.Relationship.Relationship)
 	} else {
-		query = fmt.Sprintf(`%s CREATE (a)-[r:%s {verified: True}]-(b) RETURN r;`, query, rp.Relationship.Relationship)
+		query = fmt.Sprintf(`%s CREATE (a)<-[r1:%s {verified: True}]-(b) CREATE (a)-[r2:%s {verified: True}]->(b) RETURN r1, r2, b;`,
+			query, rp.Relationship.Relationship, rp.Relationship.Relationship)
 	}
 
 	result, err := session.Run(ctx, query, nil)
