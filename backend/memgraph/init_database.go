@@ -7,8 +7,8 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
-func InitDatabase(dbUri, dbUser, dbPassword string) neo4j.DriverWithContext {
-	driver, err := neo4j.NewDriverWithContext(dbUri, neo4j.BasicAuth(dbUser, dbPassword, ""))
+func InitDatabase(dbURI, dbUser, dbPassword string) neo4j.DriverWithContext {
+	driver, err := neo4j.NewDriverWithContext(dbURI, neo4j.BasicAuth(dbUser, dbPassword, ""))
 	if err != nil {
 		log.Panicln(err)
 	}

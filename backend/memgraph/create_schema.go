@@ -1,7 +1,6 @@
 package memgraph
 
 import (
-	"log"
 	"time"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
@@ -30,7 +29,7 @@ func createIndexes(driver neo4j.DriverWithContext) error {
 	for _, index := range indexes {
 		_, err := session.Run(ctx, index, nil)
 		if err != nil {
-			log.Panicln(err)
+			return err
 		}
 	}
 
