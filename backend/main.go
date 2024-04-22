@@ -52,6 +52,7 @@ func main() {
 	router.DELETE("/relationship", handlers.DeleteRelationship(memgraphDriver))
 	router.PUT("/relationship", handlers.VerifyRelationship(memgraphDriver))
 	router.POST("/createRelationshipAndPerson", handlers.CreateRelationshipAndPerson(memgraphDriver))
+	router.GET("/familyTree", handlers.ViewFamiliyTree(memgraphDriver))
 
 	server := utilities.SetupHttpsServer(router, *cert, *key, *httpsPort, *httpPort, requestTimeout)
 
