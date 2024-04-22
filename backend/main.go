@@ -2,18 +2,16 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
-	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/vcscsvcscs/GenerationsHeritage/backend/handlers"
+	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities/gin_liveness"
 )
@@ -23,6 +21,9 @@ var (
 	key             = flag.String("key", "./private/keys/key.pem", "Specify the path of TLS key")
 	httpsPort       = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
 	httpPort        = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
+	memgraphURI     = flag.String("memgraph", "bolt+ssc://memgraph:7687", "Specify the Memgraph database URI")
+	memgraphUser    = flag.String("memgraph-user", "", "Specify the Memgraph database user")
+	memgraphPass    = flag.String("memgraph-pass", "", "Specify the Memgraph database password")
 	release         = flag.Bool("release", false, "Set true to release build")
 	logToFile       = flag.Bool("log-to-file", false, "Set true to log to file")
 	logToFileAndStd = flag.Bool("log-to-file-and-std", false, "Set true to log to file and std")
@@ -34,56 +35,26 @@ func main() {
 	if *release {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	if *logToFileAndStd || *logToFile {
-		gin.DisableConsoleColor() // Disable Console Color, you don't need console color when writing the logs to file.
-		path := fmt.Sprintf("private/logs/%02dy_%02dm_%02dd_%02dh_%02dm_%02ds.log", time.Now().Year(), time.Now().Month(), time.Now().Day(), time.Now().Hour(), time.Now().Minute(), time.Now().Second())
-		logerror1 := os.MkdirAll("private/logs/", 0755)
-		f, logerror2 := os.Create(path)
-		if logerror1 != nil || logerror2 != nil {
-			log.Println("Cant log to file")
-		} else if *logToFileAndStd {
-			gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-		} else {
-			gin.DefaultWriter = io.MultiWriter(f)
-		}
-	}
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-	log.SetOutput(gin.DefaultErrorWriter)
+
+	utilities.SetupLogger(*logToFileAndStd, *logToFile)
 
 	hc := gin_liveness.New()
 
+	memgraphDriver := memgraph.InitDatabase(*memgraphURI, *memgraphUser, *memgraphPass)
+
 	router := gin.Default()
 	router.GET("/health", hc.HealthCheckHandler())
+	router.GET("/person", handlers.ViewPerson(memgraphDriver))
+	router.POST("/person", handlers.CreatePerson(memgraphDriver))
+	router.DELETE("/person", handlers.DeletePerson(memgraphDriver))
+	router.PUT("/person", handlers.UpdatePerson(memgraphDriver))
+	router.POST("/relationship", handlers.CreateRelationship(memgraphDriver))
+	router.DELETE("/relationship", handlers.DeleteRelationship(memgraphDriver))
+	router.PUT("/relationship", handlers.VerifyRelationship(memgraphDriver))
+	router.POST("/createRelationshipAndPerson", handlers.CreateRelationshipAndPerson(memgraphDriver))
+	router.GET("/familyTree", handlers.ViewFamiliyTree(memgraphDriver))
 
-	var server *http.Server
-
-	if utilities.FileExists(*cert) && utilities.FileExists(*key) {
-		server = &http.Server{
-			Addr:         *httpsPort,
-			Handler:      router,
-			ReadTimeout:  5 * time.Second,
-			WriteTimeout: 10 * time.Second,
-		}
-		go func() {
-			log.Println("Server starts at port ", *httpsPort)
-			if err := server.ListenAndServeTLS(*cert, *key); err != nil && errors.Is(err, http.ErrServerClosed) {
-				log.Fatal(err)
-			}
-		}()
-	} else {
-		server = &http.Server{
-			Addr:         *httpPort,
-			Handler:      router,
-			ReadTimeout:  requestTimeout * time.Second,
-			WriteTimeout: requestTimeout * time.Second,
-		}
-		go func() {
-			log.Println("Server starts at port ", *httpPort)
-			if err := server.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-				log.Fatal(err)
-			}
-		}()
-	}
+	server := utilities.SetupHttpsServer(router, *cert, *key, *httpsPort, *httpPort, requestTimeout)
 
 	// Wait for interrupt signal to gracefully shutdown the server with some time to finish requests.
 	quit := make(chan os.Signal, 1)

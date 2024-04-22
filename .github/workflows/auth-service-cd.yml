@@ -16,10 +16,10 @@ jobs:
           id: create_image_tag
           with:
             script: |
-              if (context.issue.number) {
-                return "pr" + context.issue.number;
-              } else if(github.ref == 'refs/heads/main') {
+              if(github.ref == 'refs/heads/main') {
                 return 'latest';
+              } else if(context.issue.number) {
+                return "pr" + context.issue.number;
               } else {
                 return "pr" + (
                   await github.rest.repos.listPullRequestsAssociatedWithCommit({
