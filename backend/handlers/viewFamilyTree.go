@@ -32,7 +32,7 @@ func ViewFamiliyTree(driver neo4j.DriverWithContext) gin.HandlerFunc {
 		OPTIONAL MATCH (children)<-[p2:Parent]-(OtherParents:Person)
 		WITH family, p, children, c, OtherParents, p2,n
 		OPTIONAL MATCH (family)-[s:Spouse]-(spouse:Person)
-		RETURN family, p, children, c, OtherParents, p2, spouse, s, n`
+		RETURN family, p, children, c, OtherParents, p2, spouse, s, n;`
 
 		result, err := session.Run(ctx, query, map[string]any{"person_id": id})
 		if err != nil {
@@ -42,7 +42,7 @@ func ViewFamiliyTree(driver neo4j.DriverWithContext) gin.HandlerFunc {
 			return
 		}
 
-		rec, err := result.Single(ctx)
+		rec, err := result.Collect(ctx)
 		if err != nil {
 			log.Printf("ip: %s error: %s", c.ClientIP(), err)
 			c.JSON(http.StatusNotFound, gin.H{"error": "could not find family tree for person with id: " + id})
@@ -50,6 +50,6 @@ func ViewFamiliyTree(driver neo4j.DriverWithContext) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, rec.AsMap()["n"])
+		c.JSON(200, rec)
 	}
 }
