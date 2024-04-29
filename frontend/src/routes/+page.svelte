@@ -40,8 +40,8 @@
 
 <div style="height:100vh;">
 	<SvelteFlowProvider>
-		<SvelteFlow {nodes} {nodeTypes} {edges} class="bg-base-100" fitView onlyRenderVisibleElements>
-			<Controls />
+		<SvelteFlow {nodes} {nodeTypes} {edges} class="bg-base-100" fitView=True onlyRenderVisibleElements=True>
+			<Controls class="bg-base-300 text-primary-content"/>
 			<MiniMap />
 		</SvelteFlow>
 	</SvelteFlowProvider>
