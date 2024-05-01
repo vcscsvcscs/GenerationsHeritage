@@ -2,12 +2,11 @@
 	import { Handle, Position } from '@xyflow/svelte';
 
 	export let person = {
-		ID : "",
-		Lastname : "Nem",
-		Firstname : "Ismert",
-		Middlename : "",
-		ProfilePicture : "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg",
-		
+		ID: '',
+		Lastname: 'Nem',
+		Firstname: 'Ismert',
+		Middlename: '',
+		ProfilePicture: 'https://www.flaticon.com/free-icons/user'
 	};
 </script>
 
@@ -15,10 +14,14 @@
 	<div class="card-body items-center text-center w-30">
 		<div class="avatar">
 			<figure class="w-24 mask mask-squircle">
-				<img src="{person.ProfilePicture}" alt="Picture of {person.Lastname} {person.Firstname}" />
+				<img src={person.ProfilePicture} alt="Picture of {person.Lastname} {person.Firstname}" />
 			</figure>
 		</div>
-		<h2 class="card-title text-primary-content">{person.Lastname} {person.Firstname} {person.Middlename}</h2>
+		<h2 class="card-title text-primary-content">
+			{person.Lastname}
+			{person.Firstname}
+			{person.Middlename}
+		</h2>
 	</div>
 </div>
 <Handle

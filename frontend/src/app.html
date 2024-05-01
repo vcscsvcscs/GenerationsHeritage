@@ -1,51 +1,79 @@
 <!doctype html>
-<html lang="en" style="width: 100vw; height: 100vh;">
+<html lang="en" style="width: 100vw; height: 100vh">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		%sveltekit.head%
+	</head>
 
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	%sveltekit.head%
-</head>
-
-<body data-sveltekit-preload-data="hover" style="width: 100vw; height: 100vh;">
-	<div style="display: contents; width: 100vw; height: 100vh;" class="bg-base-100">%sveltekit.body%</div>
-	<div class="dropdown mb-72" style="position: absolute; left: auto; right: 3vw; top: 10px; bottom: auto">
-		<div tabindex="0" role="button" class="btn m-1">
-			Theme
-			<svg width="12px" height="12px" class="h-2 w-2 fill-current opacity-60 inline-block"
-				xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
-				<path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
-			</svg>
+	<body data-sveltekit-preload-data="hover" style="width: 100vw; height: 100vh">
+		<div style="display: contents; width: 100vw; height: 100vh" class="bg-base-100">
+			%sveltekit.body%
 		</div>
-		<ul tabindex="0" class="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box w-36">
-			<li>
-				<input type="radio" name="theme-dropdown"
-					class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Light"
-					value="light" />
-			</li>
-			<li>
-				<input type="radio" name="theme-dropdown"
-					class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark"
-					value="dark" />
-			</li>
-			<li>
-				<input type="radio" name="theme-dropdown"
-					class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cyberpunk"
-					value="cyberpunk" />
-			</li>
-			<li>
-				<input type="radio" name="theme-dropdown"
-					class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Synthwave"
-					value="synthwave" />
-			</li>
-			<li>
-				<input type="radio" name="theme-dropdown"
-					class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Retro"
-					value="retro" />
-			</li>
-		</ul>
-	</div>
-</body>
-
+		<div
+			class="dropdown mb-72"
+			style="position: absolute; left: auto; right: 3vw; top: 10px; bottom: auto"
+		>
+			<div tabindex="0" role="button" class="btn m-1">
+				Theme
+				<svg
+					width="12px"
+					height="12px"
+					class="h-2 w-2 fill-current opacity-60 inline-block"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 2048 2048"
+				>
+					<path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+				</svg>
+			</div>
+			<ul tabindex="0" class="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box w-36">
+				<li>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+						aria-label="Light"
+						value="light"
+					/>
+				</li>
+				<li>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+						aria-label="Dark"
+						value="dark"
+					/>
+				</li>
+				<li>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+						aria-label="Cyberpunk"
+						value="cyberpunk"
+					/>
+				</li>
+				<li>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+						aria-label="Synthwave"
+						value="synthwave"
+					/>
+				</li>
+				<li>
+					<input
+						type="radio"
+						name="theme-dropdown"
+						class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+						aria-label="Retro"
+						value="retro"
+					/>
+				</li>
+			</ul>
+		</div>
+	</body>
 </html>

@@ -30,7 +30,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@dagrejs/dagre": "github:dagrejs/dagre",
     "@xyflow/svelte": "^0.0.41",
+    "oidc-client-ts": "^3.0.1",
     "svelte-eslint-parser": "^0.33.1"
   }
 }
