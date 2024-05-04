@@ -4,8 +4,8 @@ import { Position, type Node, type Edge } from '@xyflow/svelte';
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 172;
-const nodeHeight = 36;
+const nodeWidth = 250;
+const nodeHeight = 250;
 
 function getLayoutedElements(nodes: Node[], edges: Edge[], direction = 'TB') {
 	const isHorizontal = direction === 'LR';
