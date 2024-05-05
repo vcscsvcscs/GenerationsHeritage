@@ -1,17 +1,47 @@
 <script>
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { setFamilyTreeNodes } from './setFamilyTreeNodes';
+	import { user } from '$lib/auth';
 	export let showPanel = false;
 	export let id = '';
+
+	let auth_token = '';
+
+	user.subscribe((value) => {
+		if (value) {
+			auth_token = value.access_token;
+		}
+	});
+
 	let relationship = '';
 	let dialog; // HTMLDialogElement
 
-	let firstName = '';
-	let middleName = '';
-	let lastName = '';
-	let born = '';
-	let mothersFirstName = '';
-	let mothersLastName = '';
+	let payload = {
+		relationship: {
+			first_person_id: id,
+			relationship: relationship,
+			direction: '->'
+		},
+		person: {
+			first_name: '',
+			middle_name: '',
+			last_name: '',
+			mothers_first_name: '',
+			mothers_last_name: '',
+			born: '',
+			birthplace: '',
+			titles: [],
+			residence: '',
+			death: '',
+			deathplace: '',
+			life_events: [],
+			occupation: [],
+			occupation_to_display: '',
+			others_said: {},
+			photos: {},
+			profile_picture: 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
+		}
+	};
 
 	function handleSubmit(event) {
 		event.preventDefault();
@@ -19,32 +49,17 @@
 		if (
 			id &&
 			relationship &&
-			firstName &&
-			lastName &&
-			born &&
-			mothersFirstName &&
-			mothersLastName
+			payload.person.first_name &&
+			payload.person.last_name &&
+			payload.person.born &&
+			payload.person.mothers_first_name &&
+			payload.person.mothers_last_name
 		) {
-			const payload = {
-				relationship: {
-					first_person_id: id,
-					relationship: relationship,
-					direction: '->'
-				},
-				person: {
-					first_name: firstName,
-					middle_name: middleName,
-					last_name: lastName,
-					mothers_first_name: mothersFirstName,
-					mothers_last_name: mothersLastName,
-					born: born
-				}
-			};
-
 			fetch(PUBLIC_API_URL + '/createRelationshipAndPerson', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					Authorization: auth_token
 				},
 				body: JSON.stringify(payload)
 			}).then((response) => {
@@ -87,22 +102,47 @@
 			</select>
 
 			<label for="firstName">First Name:</label>
-			<input type="text" id="firstName" bind:value={firstName} required />
+			<input type="text" id="firstName" bind:value={payload.person.first_name} required />
 
 			<label for="middleName">Middle Name:</label>
-			<input type="text" id="middleName" bind:value={middleName} />
+			<input type="text" id="middleName" bind:value={payload.person.middle_name} />
 
 			<label for="lastName">Last Name:</label>
-			<input type="text" id="lastName" bind:value={lastName} required />
+			<input type="text" id="lastName" bind:value={payload.person.last_name} required />
 
 			<label for="born">Born:</label>
-			<input type="date" id="born" bind:value={born} required />
+			<input type="date" id="born" bind:value={payload.person.born} required />
+
+			<label for="birthplace">Birthplace:</label>
+			<input type="text" id="birthplace" bind:value={payload.person.birthplace} required />
 
 			<label for="mothersFirstName">Mother's First Name:</label>
-			<input type="text" id="mothersFirstName" bind:value={mothersFirstName} required />
+			<input
+				type="text"
+				id="mothersFirstName"
+				bind:value={payload.person.mothers_first_name}
+				required
+			/>
 
 			<label for="mothersLastName">Mother's Last Name:</label>
-			<input type="text" id="mothersLastName" bind:value={mothersLastName} required />
+			<input
+				type="text"
+				id="mothersLastName"
+				bind:value={payload.person.mothers_last_name}
+				required
+			/>
+
+			<label for="death">Death:</label>
+			<input type="date" id="death" bind:value={payload.person.death} />
+
+			<label for="deathplace">Place of death:</label>
+			<input type="text" id="deathplace" bind:value={payload.person.deathplace} />
+
+			<label for="residence">Residence:</label>
+			<input type="text" id="residence" bind:value={payload.person.residence} />
+
+			<label for="titles">Titles:</label>
+			<input type="text" id="titles" bind:value={payload.person.titles} />
 
 			<button type="submit" class="btn btn-primary">Add</button>
 		</form>

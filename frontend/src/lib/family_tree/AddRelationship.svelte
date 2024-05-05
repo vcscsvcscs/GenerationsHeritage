@@ -1,11 +1,19 @@
 <script>
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { setFamilyTreeNodes } from './setFamilyTreeNodes';
+	import { user } from '$lib/stores';
 	export let showPanel = false;
 	export let id = '';
 	let relationship = '';
 	let second_person_id = '';
 	let dialog; // HTMLDialogElement
+	let auth_token = '';
+
+	user.subscribe((value) => {
+		if (value) {
+			auth_token = value.access_token;
+		}
+	});
 
 	function handleSubmit(event) {
 		event.preventDefault();
@@ -21,7 +29,8 @@
 			fetch(PUBLIC_API_URL + '/relationship', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					Authorization: auth_token
 				},
 				body: JSON.stringify(payload)
 			}).then((response) => {
