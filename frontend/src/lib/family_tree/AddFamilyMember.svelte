@@ -6,25 +6,38 @@
 	let relationship = '';
 	let dialog; // HTMLDialogElement
 
+	let firstName = '';
+	let middleName = '';
+	let lastName = '';
+	let born = '';
+	let mothersFirstName = '';
+	let mothersLastName = '';
+
 	function handleSubmit(event) {
 		event.preventDefault();
 
-		if (id && relationship) {
+		if (
+			id &&
+			relationship &&
+			firstName &&
+			lastName &&
+			born &&
+			mothersFirstName &&
+			mothersLastName
+		) {
 			const payload = {
 				relationship: {
 					first_person_id: id,
 					relationship: relationship,
 					direction: '->'
-				}
-				person:{
-					first_name: 
-					last_name:
-					middle_name:
-					profile_picture:
-					born:
-					birthplace:
-					death:
-
+				},
+				person: {
+					first_name: firstName,
+					middle_name: middleName,
+					last_name: lastName,
+					mothers_first_name: mothersFirstName,
+					mothers_last_name: mothersLastName,
+					born: born
 				}
 			};
 
@@ -44,7 +57,7 @@
 				}
 			});
 		} else {
-			alert('You have to fill out all the fields!');
+			alert('You have to fill out all the required fields!');
 		}
 	}
 
@@ -72,6 +85,24 @@
 				<option value="Spouse">Spouse</option>
 				<option value="Sibling">Sibling</option>
 			</select>
+
+			<label for="firstName">First Name:</label>
+			<input type="text" id="firstName" bind:value={firstName} required />
+
+			<label for="middleName">Middle Name:</label>
+			<input type="text" id="middleName" bind:value={middleName} />
+
+			<label for="lastName">Last Name:</label>
+			<input type="text" id="lastName" bind:value={lastName} required />
+
+			<label for="born">Born:</label>
+			<input type="date" id="born" bind:value={born} required />
+
+			<label for="mothersFirstName">Mother's First Name:</label>
+			<input type="text" id="mothersFirstName" bind:value={mothersFirstName} required />
+
+			<label for="mothersLastName">Mother's Last Name:</label>
+			<input type="text" id="mothersLastName" bind:value={mothersLastName} required />
 
 			<button type="submit" class="btn btn-primary">Add</button>
 		</form>
