@@ -25,7 +25,7 @@
 		Lastname: 'Nem',
 		Firstname: 'Ismert',
 		Middlename: '',
-		ProfilePicture: 'https://www.flaticon.com/free-icons/user'
+		ProfilePicture: 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
 	};
 </script>
 
@@ -37,7 +37,6 @@
 			</figure>
 		</div>
 		<h2 class="card-title text-base-content">
-			
 			{data.Firstname}
 			{data.Middlename}
 			{data.Lastname}

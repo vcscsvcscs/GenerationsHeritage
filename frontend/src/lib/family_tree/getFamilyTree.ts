@@ -10,18 +10,15 @@ user.subscribe((value) => {
 });
 
 async function fetch_family_tree() {
-    console.log(PUBLIC_API_URL);
-    
-	const response = await fetch(
-		PUBLIC_API_URL + '/familyTree?id=8a8b9b05bdc24550a5cc73e0b55e8d7d',
-		{
-			method: 'GET',
-			headers: {
-				'Accept': 'application/json',
-				Authorization: auth_token
-			}
+	console.log(PUBLIC_API_URL);
+
+	const response = await fetch(PUBLIC_API_URL + '/familyTree?id=8a8b9b05bdc24550a5cc73e0b55e8d7d', {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json',
+			Authorization: auth_token
 		}
-	);
+	});
 	const data = await response.json();
 	return data;
 }

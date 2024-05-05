@@ -8,33 +8,33 @@ const nodes = useNodes();
 const edges = useEdges();
 
 export function setFamilyTreeNodes() {
-    console.log('fetching nodes');
-    fetch_family_tree().then((data) => {
-        let nodes_data: Node[] = [];
-        function pushNodeToData(node: Node) {
-            nodes_data.push(node);
-        }
+	console.log('fetching nodes');
+	fetch_family_tree().then((data) => {
+		let nodes_data: Node[] = [];
+		function pushNodeToData(node: Node) {
+			nodes_data.push(node);
+		}
 
-        AddToNodesData(data, 0, pushNodeToData);
-        AddToNodesData(data, 2, pushNodeToData);
-        AddToNodesData(data, 4, pushNodeToData);
-        AddToNodesData(data, 6, pushNodeToData);
-        AddToNodesData(data, 8, pushNodeToData);
+		AddToNodesData(data, 0, pushNodeToData);
+		AddToNodesData(data, 2, pushNodeToData);
+		AddToNodesData(data, 4, pushNodeToData);
+		AddToNodesData(data, 6, pushNodeToData);
+		AddToNodesData(data, 8, pushNodeToData);
 
-        let edges_data: Edge[] = [];
-        function pushEdgeToData(edge: Edge) {
-            edges_data.push(edge);
-        }
+		let edges_data: Edge[] = [];
+		function pushEdgeToData(edge: Edge) {
+			edges_data.push(edge);
+		}
 
-        AddToEdgesData(data, 1, pushEdgeToData);
-        AddToEdgesData(data, 3, pushEdgeToData);
-        AddToEdgesData(data, 5, pushEdgeToData);
-        AddToEdgesData(data, 7, pushEdgeToData);
+		AddToEdgesData(data, 1, pushEdgeToData);
+		AddToEdgesData(data, 3, pushEdgeToData);
+		AddToEdgesData(data, 5, pushEdgeToData);
+		AddToEdgesData(data, 7, pushEdgeToData);
 
-        const layoutedElements = getLayoutedElements(nodes_data, edges_data, 'TB');
+		const layoutedElements = getLayoutedElements(nodes_data, edges_data, 'TB');
 
-        $nodes = layoutedElements.nodes;
-        $edges = layoutedElements.edges;
-    });
-    console.log('nodes fetched and set');
+		$nodes = layoutedElements.nodes;
+		$edges = layoutedElements.edges;
+	});
+	console.log('nodes fetched and set');
 }
