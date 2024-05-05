@@ -33,8 +33,8 @@ export function setFamilyTreeNodes() {
 
 		const layoutedElements = getLayoutedElements(nodes_data, edges_data, 'TB');
 
-		$nodes = layoutedElements.nodes;
-		$edges = layoutedElements.edges;
+		nodes.set(layoutedElements.nodes);
+		edges.set(layoutedElements.edges);
 	});
 	console.log('nodes fetched and set');
 }

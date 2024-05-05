@@ -21,11 +21,11 @@
 	export let sourcePosition: $$Props['sourcePosition'] = undefined;
 	sourcePosition;
 	export let data = {
-		ID: '',
-		Lastname: 'Nem',
-		Firstname: 'Ismert',
-		Middlename: '',
-		ProfilePicture: 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
+		id: '',
+		last_name: 'Nem',
+		first_name: 'Ismert',
+		middle_name: '',
+		profile_picture: 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
 	};
 </script>
 
@@ -33,13 +33,13 @@
 	<div class="card-body items-center text-center w-30">
 		<div class="avatar">
 			<figure class="w-24 mask mask-squircle">
-				<img src={data.ProfilePicture} alt="Picture of {data.Lastname} {data.Firstname}" />
+				<img src={data.profile_picture} alt="Picture of {data.last_name} {data.first_name}" />
 			</figure>
 		</div>
 		<h2 class="card-title text-base-content">
-			{data.Firstname}
-			{data.Middlename}
-			{data.Lastname}
+			{data.first_name}
+			{data.middle_name}
+			{data.last_name}
 		</h2>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { setFamilyTreeNodes } from './setFamilyTreeNodes';
 	import { user } from '$lib/stores';
@@ -6,7 +6,7 @@
 	export let id = '';
 	let relationship = '';
 	let second_person_id = '';
-	let dialog; // HTMLDialogElement
+	let dialog: HTMLDialogElement; // HTMLDialogElement
 	let auth_token = '';
 
 	user.subscribe((value) => {
@@ -15,7 +15,7 @@
 		}
 	});
 
-	function handleSubmit(event) {
+	function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
 
 		if (second_person_id && id && relationship) {

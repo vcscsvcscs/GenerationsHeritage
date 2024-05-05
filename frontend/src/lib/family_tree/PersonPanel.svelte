@@ -1,13 +1,13 @@
-<script>
+<script lang="ts">
 	export let showPanel = true;
 	export let data = {
-		ID: '',
-		Lastname: 'Nem',
-		Firstname: 'Ismert',
-		Middlename: '',
-		ProfilePicture: 'https://www.flaticon.com/free-icons/user'
+		id: '',
+		last_name: 'Nem',
+		first_name: 'Ismert',
+		middle_name: '',
+		profile_picture: 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
 	};
-	let dialog; // HTMLDialogElement
+	let dialog: HTMLDialogElement; // HTMLDialogElement
 
 	$: if (dialog && showPanel) dialog.showModal();
 </script>
@@ -22,14 +22,14 @@
 			<div class="hero-content flex-col lg:flex-row">
 				<div class="avatar max-w-sm rounded-lg shadow-2xl">
 					<figure class="w-24 mask mask-squircle">
-						<img src={data.ProfilePicture} alt="Picture of {data.Lastname} {data.Firstname}" />
+						<img src={data.profile_picture} alt="Picture of {data.last_name} {data.first_name}" />
 					</figure>
 				</div>
 				<div>
 					<h1 class="text-5xl font-bold">
-						{data.Firstname}
-						{data.Middlename}
-						{data.Lastname}
+						{data.first_name}
+						{data.middle_name}
+						{data.last_name}
 					</h1>
 					<p class="py-6">
 						Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
