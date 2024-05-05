@@ -28,7 +28,7 @@ func (r *Relationship) VerifyRelationship(driver neo4j.DriverWithContext) (*neo4
 		query = fmt.Sprintf(`MATCH (a)-[r:%s]-(b)`, r.Relationship)
 	}
 
-	query = fmt.Sprintf(`%s WHERE a.ID = %s AND b.ID = %s set r.verified = true return r;`, query, r.FirstPersonID, r.SecondPersonID)
+	query = fmt.Sprintf(`%s WHERE a.id = %s AND b.id = %s set r.verified = true return r;`, query, r.FirstPersonID, r.SecondPersonID)
 
 	result, err := session.Run(ctx, query, nil)
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/vcscsvcscs/GenerationsHeritage/backend/handlers"
 	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
@@ -43,6 +44,11 @@ func main() {
 	memgraphDriver := memgraph.InitDatabase(*memgraphURI, *memgraphUser, *memgraphPass)
 
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 	router.GET("/health", hc.HealthCheckHandler())
 	router.GET("/person", handlers.ViewPerson(memgraphDriver))
 	router.POST("/person", handlers.CreatePerson(memgraphDriver))

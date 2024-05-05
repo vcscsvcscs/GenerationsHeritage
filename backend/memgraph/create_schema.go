@@ -17,12 +17,12 @@ func createIndexes(driver neo4j.DriverWithContext) error {
 	defer session.Close(ctx)
 
 	indexes := []string{
-		`CREATE INDEX ON :Person(ID);`,
-		`CREATE INDEX ON :Person(Lastname);`,
-		`CREATE INDEX ON :Person(Firstname);`,
-		`CREATE INDEX ON :Person(Born);`,
-		`CREATE INDEX ON :Person(MothersFirstname);`,
-		`CREATE INDEX ON :Person(MothersLastname);`,
+		`CREATE INDEX ON :Person(id);`,
+		`CREATE INDEX ON :Person(last_name);`,
+		`CREATE INDEX ON :Person(first_name);`,
+		`CREATE INDEX ON :Person(born);`,
+		`CREATE INDEX ON :Person(mothers_firstname);`,
+		`CREATE INDEX ON :Person(mothers_last_name);`,
 	}
 
 	// Run index queries via implicit auto-commit transaction
@@ -44,14 +44,14 @@ func createConstraints(driver neo4j.DriverWithContext) error {
 	defer session.Close(ctx)
 
 	constraints := []string{
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.ID);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Lastname);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Firstname);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.Born);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersFirstname);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.MothersLastname);`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT n.ID IS UNIQUE;`,
-		`CREATE CONSTRAINT ON (n:Person) ASSERT n.Lastname, n.Firstname, n.Born, n.MothersFirstname, n.MothersLastname IS UNIQUE;`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.id);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.last_name);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.first_name);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.born);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.mothers_firstname);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT EXISTS (n.mothers_lastname);`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT n.id IS UNIQUE;`,
+		`CREATE CONSTRAINT ON (n:Person) ASSERT n.last_name, n.first_name, n.born, n.mothers_first_name, n.mothers_last_name IS UNIQUE;`,
 	}
 
 	// Run index queries via implicit auto-commit transaction

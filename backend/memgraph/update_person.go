@@ -19,7 +19,7 @@ func (p *Person) UpdatePerson(driver neo4j.DriverWithContext) (*neo4j.Record, er
 		return nil, err
 	}
 
-	query := fmt.Sprintf("MATCH (n:Person {ID: '%s'}) SET n += {%s} RETURN n;", p.ID, p.ToString())
+	query := fmt.Sprintf("MATCH (n:Person {id: '%s'}) SET n += {%s} RETURN n;", p.ID, p.ToString())
 
 	result, err := session.Run(ctx, query, nil)
 	if err != nil {
