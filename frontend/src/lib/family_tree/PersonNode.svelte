@@ -37,9 +37,10 @@
 			</figure>
 		</div>
 		<h2 class="card-title text-base-content">
-			{data.Lastname}
+			
 			{data.Firstname}
 			{data.Middlename}
+			{data.Lastname}
 		</h2>
 	</div>
 </div>
