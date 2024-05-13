@@ -18,7 +18,9 @@
 			login();
 		} else {
 			console.log('user is authenticated');
-			setFamilyTreeNodes();
+			if (!setFamilyTreeNodes()){
+				
+			};
 		}
 	});
 
@@ -33,11 +35,8 @@
 	let height: number;
 
 	function handleContextMenu({ detail: { event, node } }) {
-		// Prevent native context menu from showing
 		event.preventDefault();
-
-		// Calculate position of the context menu. We want to make sure it
-		// doesn't get positioned off-screen.
+		
 		menu = {
 			id: node.data.ID,
 			top: event.clientY < height - 200 ? event.clientY : undefined,

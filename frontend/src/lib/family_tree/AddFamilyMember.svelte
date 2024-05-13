@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { setFamilyTreeNodes } from './setFamilyTreeNodes';
-	import { user } from '$lib/auth';
+	import { user } from '../stores';
 	export let showPanel = false;
 	export let id = '';
 
@@ -14,7 +14,7 @@
 	});
 
 	let relationship = '';
-	let dialog; // HTMLDialogElement
+	let dialog: HTMLDialogElement;
 
 	let payload = {
 		relationship: {
@@ -68,7 +68,7 @@
 					setFamilyTreeNodes();
 					dialog.close();
 				} else {
-					alert('Failed to add relationship! with status ' + response.status);
+					alert('Failed to add family member! with status ' + response.status);
 				}
 			});
 		} else {
@@ -84,9 +84,10 @@
 		<form method="dialog">
 			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 		</form>
-		<h1>Add a relationship</h1>
+		<h1>Create a family members profile</h1>
 		<p>
-			Ask your relative to give you their id and set what kind of relationship you have with them.
+			You can add a family member to your family tree by filling out the form below. You can update
+			the information later.
 		</p>
 		<form on:submit={handleSubmit} method="dialog">
 			<label for="id">ID:</label>

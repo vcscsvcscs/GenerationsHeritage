@@ -7,8 +7,12 @@ import { useEdges, useNodes } from '@xyflow/svelte';
 const nodes = useNodes();
 const edges = useEdges();
 
-export function setFamilyTreeNodes() {
+export function setFamilyTreeNodes(): boolean {
 	console.log('fetching nodes');
+	let layoutedElements: {
+		nodes: Node[];
+		edges: Edge[];
+	} = { nodes: [], edges: [] };
 	fetch_family_tree().then((data) => {
 		let nodes_data: Node[] = [];
 		function pushNodeToData(node: Node) {
@@ -31,10 +35,11 @@ export function setFamilyTreeNodes() {
 		AddToEdgesData(data, 5, pushEdgeToData);
 		AddToEdgesData(data, 7, pushEdgeToData);
 
-		const layoutedElements = getLayoutedElements(nodes_data, edges_data, 'TB');
-
+		layoutedElements = getLayoutedElements(nodes_data, edges_data, 'TB');
 		nodes.set(layoutedElements.nodes);
 		edges.set(layoutedElements.edges);
+		console.log('nodes fetched and set');
 	});
-	console.log('nodes fetched and set');
+
+	return layoutedElements.nodes.length > 0;
 }
