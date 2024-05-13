@@ -1,4 +1,4 @@
-FROM golang:1.22.2-alpine as build
+FROM arm64v8/golang:1.22.2-alpine as build
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN GOOS=linux GOARCH=arm64 go build -o auth-service
 
-FROM arm64v8/busybox
+FROM arm64v8/busybox:1.36.1
 
 COPY --from=build /app/auth-service /app/
 
