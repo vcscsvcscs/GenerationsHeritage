@@ -3,8 +3,6 @@ import { isAuthenticated, user } from './stores';
 import {
 	PUBLIC_ZITADEL_CLIENT_ID,
 	PUBLIC_ISSUER,
-	PUBLIC_LOGIN_REDIRECT_URI,
-	PUBLIC_LOGOUT_REDIRECT_URI
 } from '$env/static/public';
 import { goto } from '$app/navigation';
 import { browser } from '$app/environment';
@@ -14,13 +12,13 @@ if (browser) {
 	const config = {
 		authority: PUBLIC_ISSUER, // At Zitadel Project Console > [Your project] > [Your application] > URLs - Issuer
 		client_id: PUBLIC_ZITADEL_CLIENT_ID, // At Zitadel Project Console > [Your project] > [Your application] > Configuration - Client ID
-		redirect_uri: PUBLIC_LOGIN_REDIRECT_URI + '/callback', // At Zitadel Project Console > [Your project] > [Your application] > URLs - Login Redirect URI
+		redirect_uri: window.location.hostname + '/callback', // At Zitadel Project Console > [Your project] > [Your application] > URLs - Login Redirect URI
 		response_type: 'code',
 		scope: 'openid profile email',
-		post_logout_redirect_uri: PUBLIC_LOGOUT_REDIRECT_URI,
+		post_logout_redirect_uri: window.location.hostname,
 		userStore: new WebStorageStateStore({ store: window.localStorage }),
 		automaticSilentRenew: true,
-		silent_redirect_uri: PUBLIC_LOGIN_REDIRECT_URI + '/silent-refresh'
+		silent_redirect_uri: window.location.hostname + '/silent-refresh'
 	};
 
 	userManager = new UserManager(config);
