@@ -6,16 +6,19 @@ import { browser } from '$app/environment';
 
 let userManager: UserManager;
 if (browser) {
+	const host_url = window.location.href.startsWith('http://')
+		? 'http://'
+		: 'https://' + window.location.hostname;
 	const config = {
 		authority: PUBLIC_ISSUER, // At Zitadel Project Console > [Your project] > [Your application] > URLs - Issuer
 		client_id: PUBLIC_ZITADEL_CLIENT_ID, // At Zitadel Project Console > [Your project] > [Your application] > Configuration - Client ID
-		redirect_uri: window.location.hostname + '/callback', // At Zitadel Project Console > [Your project] > [Your application] > URLs - Login Redirect URI
+		redirect_uri: host_url + '/callback', // At Zitadel Project Console > [Your project] > [Your application] > URLs - Login Redirect URI
 		response_type: 'code',
 		scope: 'openid profile email',
-		post_logout_redirect_uri: window.location.hostname,
+		post_logout_redirect_uri: host_url,
 		userStore: new WebStorageStateStore({ store: window.localStorage }),
 		automaticSilentRenew: true,
-		silent_redirect_uri: window.location.hostname + '/silent-refresh'
+		silent_redirect_uri: host_url + '/silent-refresh'
 	};
 
 	userManager = new UserManager(config);

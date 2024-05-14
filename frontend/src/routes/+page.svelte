@@ -14,8 +14,8 @@
 	import AddFamilyMember from '$lib/family_tree/AddFamilyMember.svelte';
 	import CreateProfile from '$lib/family_tree/CreateProfile.svelte';
 
-	let relationshipPanel: string;
-	let AddFamilyMemberPanel: string;
+	let relationshipPanel = '';
+	let AddFamilyMemberPanel = '';
 	let CreateProfilePanel = false;
 
 	const nodes = writable<Node[]>([]);
