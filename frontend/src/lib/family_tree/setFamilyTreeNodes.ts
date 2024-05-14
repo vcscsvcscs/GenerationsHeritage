@@ -4,10 +4,10 @@ import { AddToNodesData, AddToEdgesData } from '$lib/family_tree/dataAdapter';
 import type { Node, Edge } from '@xyflow/svelte';
 import { useEdges, useNodes } from '@xyflow/svelte';
 
-const nodes = useNodes();
-const edges = useEdges();
-
 export function setFamilyTreeNodes(): boolean {
+	const nodes = useNodes();
+	const edges = useEdges();
+
 	console.log('fetching nodes');
 	let layoutedElements: {
 		nodes: Node[];
