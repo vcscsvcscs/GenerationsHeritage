@@ -2,7 +2,7 @@
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { setFamilyTreeNodes } from './setFamilyTreeNodes';
 	import { user } from '../stores';
-	export let showPanel = false;
+	import { onMount } from 'svelte';
 	export let id = '';
 
 	let auth_token = '';
@@ -43,7 +43,7 @@
 		}
 	};
 
-	function handleSubmit(event) {
+	function handleSubmit(event: Event) {
 		event.preventDefault();
 
 		if (
@@ -64,7 +64,6 @@
 				body: JSON.stringify(payload)
 			}).then((response) => {
 				if (response.ok) {
-					showPanel = false;
 					setFamilyTreeNodes();
 					dialog.close();
 				} else {
@@ -76,7 +75,9 @@
 		}
 	}
 
-	$: if (dialog && showPanel) dialog.showModal();
+	onMount(() => {
+		if (dialog) dialog.showModal();
+	});
 </script>
 
 <dialog bind:this={dialog} class="modal bg-base-300">

@@ -10,6 +10,8 @@
 	export let bottom: number | undefined;
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
 	style="top: {top}px; left: {left}px; right: {right}px; bottom: {bottom}px;"
 	class="context-menu bg-primary-100 rounded-lg shadow-lg"

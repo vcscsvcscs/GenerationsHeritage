@@ -1,24 +1,23 @@
 <script lang="ts">
 	import { Handle, Position, type NodeProps } from '@xyflow/svelte';
-	type $$Props = NodeProps;
 
-	export let id: $$Props['id'];
+	export let id: NodeProps['id'];
 	id;
-	export let dragHandle: $$Props['dragHandle'] = undefined;
+	export let dragHandle: NodeProps['dragHandle'] = undefined;
 	dragHandle;
-	export let type: $$Props['type'] = undefined;
+	export let type: NodeProps['type'] = undefined;
 	type;
-	export let selected: $$Props['selected'] = undefined;
+	export let selected: NodeProps['selected'] = undefined;
 	selected;
-	export let width: $$Props['width'] = undefined;
+	export let width: NodeProps['width'] = undefined;
 	width;
-	export let height: $$Props['height'] = undefined;
+	export let height: NodeProps['height'] = undefined;
 	height;
-	export let dragging: $$Props['dragging'];
+	export let dragging: NodeProps['dragging'];
 	dragging;
-	export let targetPosition: $$Props['targetPosition'] = undefined;
+	export let targetPosition: NodeProps['targetPosition'] = undefined;
 	targetPosition;
-	export let sourcePosition: $$Props['sourcePosition'] = undefined;
+	export let sourcePosition: NodeProps['sourcePosition'] = undefined;
 	sourcePosition;
 	export let data = {
 		id: '',

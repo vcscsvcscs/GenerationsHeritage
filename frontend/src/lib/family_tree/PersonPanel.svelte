@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let showPanel = true;
+	import { onMount } from 'svelte';
 	export let data = {
 		id: '',
 		last_name: 'Nem',
@@ -9,7 +9,9 @@
 	};
 	let dialog: HTMLDialogElement; // HTMLDialogElement
 
-	$: if (dialog && showPanel) dialog.showModal();
+	onMount(() => {
+		if (dialog) dialog.showModal();
+	});
 </script>
 
 <dialog bind:this={dialog} class="modal bg-base-300">

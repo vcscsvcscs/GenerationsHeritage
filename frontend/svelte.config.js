@@ -11,7 +11,15 @@ const config = {
 			fallback: undefined,
 			precompress: false,
 			strict: true
-		})
+		}),
+		prerender: {
+			handleHttpError: ({ path, referrer, message }) => {
+				return {
+					status: 404,
+					html: `<h1>${message}</h1><p>Path: ${path}</p><p>Referrer: ${referrer}</p>`
+				};
+			}
+		}
 	}
 };
 

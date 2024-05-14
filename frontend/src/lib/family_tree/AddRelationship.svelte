@@ -2,7 +2,7 @@
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { setFamilyTreeNodes } from './setFamilyTreeNodes';
 	import { user } from '$lib/stores';
-	export let showPanel = false;
+	import { onMount } from 'svelte';
 	export let id = '';
 	let relationship = '';
 	let second_person_id = '';
@@ -35,7 +35,6 @@
 				body: JSON.stringify(payload)
 			}).then((response) => {
 				if (response.ok) {
-					showPanel = false;
 					setFamilyTreeNodes();
 					dialog.close();
 				} else {
@@ -47,7 +46,9 @@
 		}
 	}
 
-	$: if (dialog && showPanel) dialog.showModal();
+	onMount(() => {
+		if (dialog) dialog.showModal();
+	});
 </script>
 
 <dialog bind:this={dialog} class="modal bg-base-300">

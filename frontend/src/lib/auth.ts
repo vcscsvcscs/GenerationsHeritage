@@ -1,9 +1,6 @@
-import { UserManager, WebStorageStateStore, User } from 'oidc-client-ts';
+import { UserManager, WebStorageStateStore, type User } from 'oidc-client-ts';
 import { isAuthenticated, user } from './stores';
-import {
-	PUBLIC_ZITADEL_CLIENT_ID,
-	PUBLIC_ISSUER,
-} from '$env/static/public';
+import { PUBLIC_ZITADEL_CLIENT_ID, PUBLIC_ISSUER } from '$env/static/public';
 import { goto } from '$app/navigation';
 import { browser } from '$app/environment';
 

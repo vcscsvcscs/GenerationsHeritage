@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import { onMount } from 'svelte';
 	import { user } from '../stores';
-	export let showPanel = false;
 
 	let auth_token = '';
 
@@ -30,7 +30,7 @@
 		profile_picture: 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
 	};
 
-	function handleSubmit(event) {
+	function handleSubmit(event: Event) {
 		event.preventDefault();
 
 		if (
@@ -49,7 +49,6 @@
 				body: JSON.stringify(payload)
 			}).then((response) => {
 				if (response.ok) {
-					showPanel = false;
 					dialog.close();
 				} else {
 					alert('Failed to create profile! with status ' + response.status);
@@ -60,7 +59,9 @@
 		}
 	}
 
-	$: if (dialog && showPanel) dialog.showModal();
+	onMount(() => {
+		if (dialog) dialog.showModal();
+	});
 </script>
 
 <dialog bind:this={dialog} class="modal bg-base-300">
