@@ -12,4 +12,3 @@
 	},
 	"include": ["src/**/*", "src/node_modules", ".svelte-kit/ambient.d.ts"] // see last element
 }
-	
