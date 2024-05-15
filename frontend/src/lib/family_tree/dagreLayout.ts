@@ -1,8 +1,11 @@
 import dagre from '@dagrejs/dagre';
 import { Position, type Node, type Edge } from '@xyflow/svelte';
+import { onMount } from 'svelte';
 
 const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
+onMount(() => {
+	dagreGraph.setDefaultEdgeLabel(() => ({}));
+});
 
 const nodeWidth = 250;
 const nodeHeight = 250;
