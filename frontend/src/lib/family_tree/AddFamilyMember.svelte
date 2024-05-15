@@ -91,60 +91,126 @@
 			the information later.
 		</p>
 		<form on:submit={handleSubmit} method="dialog" class="grid grid-cols-2 gap-4">
-			<label for="id">ID:</label>
-			<input type="text" id="id" bind:value={id} required />
+			<label for="id" class="input input-bordered flex items-center gap-2">
+				ID:
+				<input type="text" id="id" class="grow input-md" bind:value={id} required />
+			</label>
+			<label for="relationship" class="input input-bordered flex items-center gap-2">
+				Relationship type:
+				<select id="relationship" bind:value={relationship} required>
+					<option value="" disabled selected>Choose one ...</option>
+					<option value="Parent">Parent</option>
+					<option value="Child">Child</option>
+					<option value="Spouse">Spouse</option>
+					<option value="Sibling">Sibling</option>
+				</select>
+			</label>
 
-			<label for="relationship">Relationship type:</label>
-			<select id="relationship" bind:value={relationship} required>
-				<option value="" disabled selected>Choose one ...</option>
-				<option value="Parent">Parent</option>
-				<option value="Child">Child</option>
-				<option value="Spouse">Spouse</option>
-				<option value="Sibling">Sibling</option>
-			</select>
+			<label for="firstName" class="input input-bordered flex items-center gap-2">
+				First Name:
+				<input
+					type="text"
+					id="firstName"
+					class="grow input-md"
+					bind:value={payload.person.first_name}
+					required
+				/>
+			</label>
 
-			<label for="firstName">First Name:</label>
-			<input type="text" id="firstName" bind:value={payload.person.first_name} required />
+			<label for="middleName" class="input input-bordered flex items-center gap-2">
+				Middle Name:
+				<input
+					type="text"
+					id="middleName"
+					class="grow input-md"
+					bind:value={payload.person.middle_name}
+				/>
+			</label>
 
-			<label for="middleName">Middle Name:</label>
-			<input type="text" id="middleName" bind:value={payload.person.middle_name} />
+			<label for="lastName" class="input input-bordered flex items-center gap-2">
+				Last Name:
+				<input
+					type="text"
+					id="lastName"
+					class="grow input-md"
+					bind:value={payload.person.last_name}
+					required
+				/>
+			</label>
 
-			<label for="lastName">Last Name:</label>
-			<input type="text" id="lastName" bind:value={payload.person.last_name} required />
+			<label for="born" class="input input-bordered flex items-center gap-2">
+				Born:
+				<input
+					type="date"
+					id="born"
+					class="grow input-md"
+					bind:value={payload.person.born}
+					required
+				/>
+			</label>
 
-			<label for="born">Born:</label>
-			<input type="date" id="born" bind:value={payload.person.born} required />
+			<label for="birthplace" class="input input-bordered flex items-center gap-2">
+				Birthplace:
+				<input
+					type="text"
+					id="birthplace"
+					class="grow input-md"
+					bind:value={payload.person.birthplace}
+					required
+				/>
+			</label>
 
-			<label for="birthplace">Birthplace:</label>
-			<input type="text" id="birthplace" bind:value={payload.person.birthplace} required />
+			<label for="mothersFirstName" class="input input-bordered flex items-center gap-2">
+				Mother's First Name:
+				<input
+					type="text"
+					id="mothersFirstName"
+					class="grow input-md"
+					bind:value={payload.person.mothers_first_name}
+					required
+				/>
+			</label>
 
-			<label for="mothersFirstName">Mother's First Name:</label>
-			<input
-				type="text"
-				id="mothersFirstName"
-				bind:value={payload.person.mothers_first_name}
-				required
-			/>
+			<label for="mothersLastName" class="input input-bordered flex items-center gap-2">
+				Mother's Last Name:
+				<input
+					type="text"
+					id="mothersLastName"
+					class="grow input-md"
+					bind:value={payload.person.mothers_last_name}
+					required
+				/>
+			</label>
 
-			<label for="mothersLastName">Mother's Last Name:</label>
-			<input
-				type="text"
-				id="mothersLastName"
-				bind:value={payload.person.mothers_last_name}
-				required
-			/>
+			<label for="death" class="input input-bordered flex items-center gap-2">
+				Death:
+				<input type="date" id="death" class="grow input-md" bind:value={payload.person.death} />
+			</label>
 
-			<label for="death">Death:</label>
-			<input type="date" id="death" bind:value={payload.person.death} />
+			<label for="deathplace" class="input input-bordered flex items-center gap-2">
+				Place of death:
+				<input
+					type="text"
+					id="deathplace"
+					class="grow input-md"
+					bind:value={payload.person.deathplace}
+				/>
+			</label>
 
-			<label for="deathplace">Place of death:</label>
-			<input type="text" id="deathplace" bind:value={payload.person.deathplace} />
+			<label for="residence" class="input input-bordered flex items-center gap-2">
+				Residence:
+				<input
+					type="text"
+					id="residence"
+					class="grow input-md"
+					bind:value={payload.person.residence}
+				/>
+			</label>
 
-			<label for="residence">Residence:</label>
-			<input type="text" id="residence" bind:value={payload.person.residence} />
-
-			<label for="titles">Titles:</label>
-			<input type="text" id="titles" bind:value={payload.person.titles} />
+			<label for="titles" class="input input-bordered flex items-center gap-2">
+				Titles:
+				<input type="text" id="titles" class="grow input-md" bind:value={payload.person.titles} />
+			</label>
 
 			<button type="submit" class="btn btn-primary">Add</button>
 		</form>
