@@ -61,9 +61,10 @@
 			Ask your relative to give you their id and set what kind of relationship you have with them.
 		</p>
 		<form on:submit={handleSubmit} method="dialog">
-			<label for="id">ID:</label>
-			<input type="text" id="id" bind:value={id} required />
-
+			<label for="id" class="input input-bordered flex items-center gap-2">
+				ID:
+				<input type="text" id="id" class="grow" bind:value={id} required />
+			</label>
 			<label for="relationship">Relationship type:</label>
 			<select id="relationship" bind:value={relationship} required>
 				<option value="" disabled selected>Choose one ...</option>
