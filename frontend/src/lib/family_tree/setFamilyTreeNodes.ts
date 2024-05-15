@@ -4,17 +4,22 @@ import { AddToNodesData, AddToEdgesData } from '$lib/family_tree/dataAdapter';
 import type { Node, Edge } from '@xyflow/svelte';
 import { useEdges, useNodes } from '@xyflow/svelte';
 
-export function setFamilyTreeNodes(): boolean {
-	const nodes = useNodes();
-	const edges = useEdges();
-
+export function setFamilyTreeNodes(): {
+	nodes: Node[];
+	edges: Edge[];
+} {
 	console.log('fetching nodes');
 	let layoutedElements: {
 		nodes: Node[];
 		edges: Edge[];
 	} = { nodes: [], edges: [] };
-	fetch_family_tree().then((data) => {
+	fetch_family_tree().then((data: []) => {
 		let nodes_data: Node[] = [];
+
+		if (data.length == 0) {
+			return layoutedElements;
+		}
+
 		function pushNodeToData(node: Node) {
 			nodes_data.push(node);
 		}
@@ -36,10 +41,8 @@ export function setFamilyTreeNodes(): boolean {
 		AddToEdgesData(data, 7, pushEdgeToData);
 
 		layoutedElements = getLayoutedElements(nodes_data, edges_data, 'TB');
-		nodes.set(layoutedElements.nodes);
-		edges.set(layoutedElements.edges);
 		console.log('nodes fetched and set');
 	});
 
-	return layoutedElements.nodes.length > 0;
+	return layoutedElements;
 }

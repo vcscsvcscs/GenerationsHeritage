@@ -56,7 +56,7 @@
 		<form method="dialog">
 			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 		</form>
-		<h1>Add a relationship</h1>
+		<h1 class="font-bold text-lg">Add a relationship</h1>
 		<p>
 			Ask your relative to give you their id and set what kind of relationship you have with them.
 		</p>

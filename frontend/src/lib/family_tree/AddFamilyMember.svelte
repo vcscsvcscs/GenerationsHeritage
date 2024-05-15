@@ -85,12 +85,12 @@
 		<form method="dialog">
 			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 		</form>
-		<h1>Create a family members profile</h1>
+		<h1 class="font-bold text-lg">Create a family members profile</h1>
 		<p>
 			You can add a family member to your family tree by filling out the form below. You can update
 			the information later.
 		</p>
-		<form on:submit={handleSubmit} method="dialog">
+		<form on:submit={handleSubmit} method="dialog" class="grid grid-cols-2 gap-4">
 			<label for="id">ID:</label>
 			<input type="text" id="id" bind:value={id} required />
 

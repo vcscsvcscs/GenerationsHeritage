@@ -3,14 +3,12 @@ import { Position, type Node, type Edge } from '@xyflow/svelte';
 import { onMount } from 'svelte';
 
 const dagreGraph = new dagre.graphlib.Graph();
-onMount(() => {
-	dagreGraph.setDefaultEdgeLabel(() => ({}));
-});
 
 const nodeWidth = 250;
 const nodeHeight = 250;
 
 function getLayoutedElements(nodes: Node[], edges: Edge[], direction = 'TB') {
+	dagreGraph.setDefaultEdgeLabel(() => ({}));
 	const isHorizontal = direction === 'LR';
 	dagreGraph.setGraph({ rankdir: direction });
 

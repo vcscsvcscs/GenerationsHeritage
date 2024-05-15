@@ -7,7 +7,7 @@ import { browser } from '$app/environment';
 let userManager: UserManager;
 if (browser) {
 	const host_url = window.location.href.startsWith('http://')
-		? 'http://'
+		? 'http://localhost:5173'
 		: 'https://' + window.location.hostname;
 	const config = {
 		authority: PUBLIC_ISSUER, // At Zitadel Project Console > [Your project] > [Your application] > URLs - Issuer

@@ -20,14 +20,19 @@
 
 	const nodes = writable<Node[]>([]);
 	const edges = writable<Edge[]>([]);
+
 	onMount(() => {
 		if (!$isAuthenticated) {
 			console.log('user is not authenticated');
 			login();
 		} else {
 			console.log('user is authenticated');
-			if (!setFamilyTreeNodes()) {
+			let layout = setFamilyTreeNodes();
+			if (layout.nodes.length === 0) {
 				CreateProfilePanel = true;
+			} else {
+				nodes.set(layout.nodes);
+				edges.set(layout.edges);
 			}
 		}
 	});

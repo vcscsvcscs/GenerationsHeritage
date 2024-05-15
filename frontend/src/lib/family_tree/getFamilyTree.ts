@@ -12,7 +12,7 @@ user.subscribe((value) => {
 async function fetch_family_tree() {
 	console.log(PUBLIC_API_URL);
 
-	const response = await fetch(PUBLIC_API_URL + '/familyTree?id=8a8b9b05bdc24550a5cc73e0b55e8d7d', {
+	const response = await fetch(PUBLIC_API_URL + '/familyTree', {
 		method: 'GET',
 		headers: {
 			Accept: 'application/json',
