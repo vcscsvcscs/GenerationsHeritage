@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	cert            = flag.String("cert", "./private/keys/cert.pem", "Specify the path of TLS cert")
-	key             = flag.String("key", "./private/keys/key.pem", "Specify the path of TLS key")
+	cert            = flag.String("cert", "/etc/gh-backend/ssl/cert.pem", "Specify the path of TLS cert")
+	key             = flag.String("key", "/etc/gh-backend/ssl/key.pem", "Specify the path of TLS key")
 	httpsPort       = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
 	httpPort        = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
 	memgraphURI     = flag.String("memgraph", "bolt+ssc://memgraph:7687", "Specify the Memgraph database URI")
