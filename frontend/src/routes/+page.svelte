@@ -71,6 +71,15 @@
 		menu = null;
 		relationshipPanel = '';
 	}
+
+	function handleNodeClick({
+		detail: { event, node }
+	}: {
+		detail: { event: MouseEvent; node: Node };
+	}) {
+		event.preventDefault();
+		personPanel = node.data;
+	}
 </script>
 
 <div style="height:100vh;">
@@ -80,7 +89,7 @@
 			{nodeTypes}
 			{edges}
 			on:nodecontextmenu={handleContextMenu}
-			on:nodeclick
+			on:nodeclick={handleNodeClick}
 			on:paneclick={handlePaneClick}
 			class="bg-base-100"
 			fitView
