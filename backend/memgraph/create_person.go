@@ -11,7 +11,7 @@ import (
 )
 
 func (p *Person) CreatePerson(driver neo4j.DriverWithContext) (*neo4j.Record, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	session := driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})

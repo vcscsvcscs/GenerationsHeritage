@@ -40,6 +40,7 @@
 			payload.mothers_first_name &&
 			payload.mothers_last_name
 		) {
+			payload.born = new Date(payload.born).toISOString();
 			fetch(PUBLIC_API_URL + '/person', {
 				method: 'POST',
 				headers: {

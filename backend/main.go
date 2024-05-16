@@ -71,8 +71,8 @@ func main() {
 	// Initialize the HTTP middleware by providing the authorization
 	mw := middleware.New(authZ)
 
-	router.GET("/health", hc.HealthCheckHandler())
 	router.Use(auth(mw))
+	router.GET("/health", hc.HealthCheckHandler())
 	router.GET("/person", handlers.ViewPerson(memgraphDriver))
 	router.POST("/person", handlers.CreatePerson(memgraphDriver))
 	router.DELETE("/person", handlers.DeletePerson(memgraphDriver))
