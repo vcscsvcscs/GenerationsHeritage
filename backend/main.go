@@ -45,9 +45,9 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost", "https://feature-add-frontend.generationsheritage.pages.dev/", "https://csalad.varghacsongor.hu/"},
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost", "https://heritagebackend.varghacsongor.hu", "https://feature-add-frontend.generationsheritage.pages.dev/", "https://csalad.varghacsongor.hu/"},
 		AllowCredentials: true,
-		AllowHeaders:     []string{"Authorization"},
+		AllowHeaders:     []string{"Authorization", "id", "Content-Type"},
 		MaxAge:           12 * time.Hour,
 	}))
 	router.GET("/health", hc.HealthCheckHandler())

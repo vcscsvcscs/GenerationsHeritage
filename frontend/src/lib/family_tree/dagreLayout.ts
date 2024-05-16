@@ -1,6 +1,5 @@
 import dagre from '@dagrejs/dagre';
 import { Position, type Node, type Edge } from '@xyflow/svelte';
-import { onMount } from 'svelte';
 
 const dagreGraph = new dagre.graphlib.Graph();
 

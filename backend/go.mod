@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/neo4j/neo4j-go-driver/v5 v5.19.0
 	github.com/vcscsvcscs/GenerationsHeritage/utilities v0.0.0-20240414091827-ffde94d457cb
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 )
 
 require (
@@ -30,6 +30,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
+	github.com/zitadel/zitadel-go/v2 v2.2.3 // indirect
 	golang.org/x/arch v0.7.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect

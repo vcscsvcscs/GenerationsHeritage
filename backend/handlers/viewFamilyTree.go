@@ -18,7 +18,7 @@ func ViewFamiliyTree(driver neo4j.DriverWithContext) gin.HandlerFunc {
 		session := driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 		defer session.Close(ctx)
 
-		id := c.Query("id") // change to c.GetHeader("User-ID")
+		id := c.Request.Header.Get("id")
 		if id == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
 
