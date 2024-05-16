@@ -16,7 +16,7 @@ async function fetch_family_tree() {
 		method: 'GET',
 		headers: {
 			Accept: 'application/json',
-			Authorization: auth_token
+			Authorization: 'Bearer '+auth_token
 		}
 	});
 	const data = await response.json();

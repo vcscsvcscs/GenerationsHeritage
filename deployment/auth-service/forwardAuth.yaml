@@ -4,7 +4,7 @@ metadata:
   name: auth-service
 spec:
   forwardAuth:
-    address: https://gh-auth-service/auth
+    address: https://gh-auth-service/auth/
     authResponseHeaders:
       - id
     tls:
