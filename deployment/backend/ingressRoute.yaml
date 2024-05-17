@@ -14,6 +14,17 @@ spec:
       services:
         - name: gh-backend
           port: 443
-          passHostHeader: true
           scheme: https
+          serversTransport: gh-backend
   tls: {}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: ServersTransport
+metadata:
+  name: gh-backend
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+spec:
+    insecureSkipVerify: true
+    rootCAsSecrets:
+    - gh-backend-tls

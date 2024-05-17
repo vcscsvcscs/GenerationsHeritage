@@ -35,6 +35,7 @@ func CreatePerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 			return
 		}
 
+		person.ID = c.GetString("id")
 		rec, err := person.CreatePerson(driver)
 		if err != nil {
 			log.Printf("ip: %s error: %s", c.ClientIP(), err.Error())

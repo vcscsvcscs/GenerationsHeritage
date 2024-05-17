@@ -40,7 +40,12 @@ spec:
           volumeMounts:
             - name: gh-auth-service-certs
               mountPath: /etc/gh-auth-service/ssl
+            - name: zitadel-service-account
+              mountPath: /etc/gh-auth-service/zitadel
       volumes:
       - name: gh-auth-service-certs
         secret:
           secretName: gh-auth-service-tls
+      - name: zitadel-service-account
+        secret:
+          secretName: zitadel-service-account

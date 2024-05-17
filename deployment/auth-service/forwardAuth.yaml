@@ -1,0 +1,11 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: auth-service
+spec:
+  forwardAuth:
+    address: https://gh-auth-service/auth/
+    authResponseHeaders:
+      - id
+    tls:
+      insecureSkipVerify: true

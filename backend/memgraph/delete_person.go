@@ -19,7 +19,7 @@ func (p *Person) DeletePerson(driver neo4j.DriverWithContext) error {
 		return err
 	}
 
-	query := fmt.Sprintf("MATCH (n:Person {ID: '%s'}) DELETE n;", p.ID)
+	query := fmt.Sprintf("MATCH (n:Person {id: '%s'}) DELETE n;", p.ID)
 
 	_, err := session.Run(ctx, query, nil)
 

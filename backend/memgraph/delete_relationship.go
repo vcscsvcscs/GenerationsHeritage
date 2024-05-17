@@ -28,7 +28,7 @@ func (r *Relationship) DeleteRelationship(driver neo4j.DriverWithContext) error 
 		query = fmt.Sprintf(`MATCH (a)-[r:%s]-(b)`, r.Relationship)
 	}
 
-	query = fmt.Sprintf(`%s WHERE a.ID = '%s' AND b.ID = '%s' DELETE r;`, query, r.FirstPersonID, r.SecondPersonID)
+	query = fmt.Sprintf(`%s WHERE a.id = '%s' AND b.id = '%s' DELETE r;`, query, r.FirstPersonID, r.SecondPersonID)
 
 	_, err := session.Run(ctx, query, nil)
 

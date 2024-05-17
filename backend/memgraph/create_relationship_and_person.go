@@ -23,7 +23,7 @@ func (rp *RelationshipAndPerson) CreateRelationshipAndPerson(driver neo4j.Driver
 
 	rp.Person.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
 
-	query := fmt.Sprintf(`MATCH (a:Person) WHERE a.ID = '%s'`, rp.Relationship.FirstPersonID)
+	query := fmt.Sprintf(`MATCH (a:Person) WHERE a.id = '%s'`, rp.Relationship.FirstPersonID)
 
 	query = fmt.Sprintf("%s CREATE (b:Person {%s})", query, rp.Person.ToString())
 
