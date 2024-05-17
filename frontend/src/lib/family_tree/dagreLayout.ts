@@ -10,7 +10,6 @@ function getLayoutedElements(nodes: Node[], edges: Edge[], direction = 'TB') {
 	dagreGraph.setDefaultEdgeLabel(() => ({}));
 	const isHorizontal = direction === 'LR';
 	dagreGraph.setGraph({ rankdir: direction });
-
 	nodes.forEach((node) => {
 		dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
 	});

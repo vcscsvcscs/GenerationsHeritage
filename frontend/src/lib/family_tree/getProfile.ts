@@ -9,8 +9,8 @@ user.subscribe((value) => {
 	}
 });
 
-async function fetch_family_tree() {
-	const response = await fetch(PUBLIC_API_URL + '/familyTree', {
+async function fetch_profile(id: string = '') {
+	const response = await fetch(PUBLIC_API_URL + '/person' + (id != '' ? '?id=' + id : ''), {
 		method: 'GET',
 		headers: {
 			Accept: 'application/json',
@@ -21,4 +21,4 @@ async function fetch_family_tree() {
 	return data;
 }
 
-export { fetch_family_tree };
+export { fetch_profile };

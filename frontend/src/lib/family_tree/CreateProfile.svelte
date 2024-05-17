@@ -45,7 +45,7 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: auth_token
+					Authorization: 'Bearer' + auth_token
 				},
 				body: JSON.stringify(payload)
 			}).then((response) => {

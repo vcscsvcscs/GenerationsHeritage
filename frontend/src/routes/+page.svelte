@@ -27,13 +27,14 @@
 			login();
 		} else {
 			console.log('user is authenticated');
-			let layout = setFamilyTreeNodes();
-			if (layout.nodes.length === 0) {
-				CreateProfilePanel = true;
-			} else {
-				nodes.set(layout.nodes);
-				edges.set(layout.edges);
-			}
+			setFamilyTreeNodes().then((layout) => {
+				if (layout.nodes.length < 1) {
+					CreateProfilePanel = true;
+				} else {
+					nodes.set(layout.nodes);
+					edges.set(layout.edges);
+				}
+			});
 		}
 	});
 
@@ -63,7 +64,7 @@
 		event.preventDefault();
 
 		menu = {
-			id: node.data.ID,
+			id: node.data.id,
 			top: event.clientY < height - 200 ? event.clientY : undefined,
 			left: event.clientX < width - 200 ? event.clientX : undefined,
 			right: event.clientX >= width - 200 ? width - event.clientX : undefined,

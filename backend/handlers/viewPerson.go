@@ -20,12 +20,16 @@ func ViewPerson(driver neo4j.DriverWithContext) gin.HandlerFunc {
 
 		id := c.Query("id")
 		if id == "" {
+			id = c.GetString("id")
+		}
+
+		if id == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
 
 			return
 		}
 
-		result, err := session.Run(ctx, "MATCH (n:Person) WHERE n.ID = $person_id RETURN n;", map[string]any{"person_id": id})
+		result, err := session.Run(ctx, "MATCH (n:Person) WHERE n.id = $person_id RETURN n;", map[string]any{"person_id": id})
 		if err != nil {
 			log.Printf("ip: %s error: %s", c.ClientIP(), err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})

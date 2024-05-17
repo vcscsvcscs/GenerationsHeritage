@@ -37,7 +37,7 @@
 		</div>
 		<h2 class="card-title text-base-content">
 			{data.first_name}
-			{data.middle_name}
+			{data.middle_name ? data.middle_name : ''}
 			{data.last_name}
 		</h2>
 	</div>
