@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: "traefik:v3.1"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    ports:
+      - "1080:80"
+      - "18080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  memgraph:
+    image: memgraph/memgraph-mage:latest
+    container_name: memgraph-mage
+    ports:
+      - "7687:7687"
+      - "7444:7444"
+    command: ["--log-level=TRACE"]
+ 
+  lab:
+    image: memgraph/lab:latest
+    container_name: memgraph-lab
+    ports:
+      - "3555:3000"
+    depends_on:
+      - memgraph
+    environment:
+      - 'QUICK_CONNECT_MG_HOST=memgraph'
+      - 'QUICK_CONNECT_MG_PORT=7687'
+
+  gh-backend:
+    image: vcscsvcscs/gheritage-backend-service:latest
+    depends_on:
+      - memgraph
+    ports:
+      - "8665:80"
+    environment:
+      - memgraph=bolt://memgraph:7687
+    volumes:
+      - /data/generations-heritage/postgresql/data:/var/lib/postgresql/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gh-backend.rule=Host(`csaladbackend.varghacsongor.hu`)"
+      - "traefik.http.routers.gh-backend.entrypoints=web"
+      - "traefik.http.routers.gh-backend.middlewares=gh-auth-service"
+      - "traefik.http.middlewares.gh-auth-service.forwardauth.address=https://gh-auth-service/auth/"
+      - "traefik.http.middlewares.gh-auth-service.forwardauth.authResponseHeaders=id"
+      - "traefik.http.middlewares.gh-auth-service.forwardauth.tls.insecureSkipVerify=true"
+
+
+  gh-auth-service:
+    image: vcscsvcscs/gheritage-auth-service:latest
+    depends_on:
+      - memgraph
+    ports:
+      - "8666:80"
+    environment:
+      - memgraph=bolt://memgraph:7687
+    volumes:
+      - /data/generations-heritage/postgresql/data:/var/lib/postgresql/data
+    labels:
+      - "traefik.http.middlewares.gh-auth-service.forwardauth.address=https://gh-auth-service/auth/"
+      - "traefik.http.middlewares.gh-auth-service.forwardauth.authResponseHeaders=id"
+      - "traefik.http.middlewares.gh-auth-service.forwardauth.tls.insecureSkipVerify=true"
+
+  zitadel:
+    restart: 'always'
+    networks:
+      - 'zitadel'
+    image: 'ghcr.io/zitadel/zitadel:latest'
+    command: 'start-from-init --masterkey "${ZITADEL_MASTERKEY}" --tlsMode disabled'
+    environment:
+      - 'ZITADEL_DATABASE_POSTGRES_HOST=db'
+      - 'ZITADEL_DATABASE_POSTGRES_PORT=5432'
+      - 'ZITADEL_DATABASE_POSTGRES_DATABASE=zitadel'
+      - 'ZITADEL_DATABASE_POSTGRES_USER_USERNAME=zitadel'
+      - 'ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel'
+      - 'ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable'
+      - 'ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME=postgres'
+      - 'ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=postgres'
+      - 'ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable'
+      - 'ZITADEL_EXTERNALSECURE=false'
+      - 'ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_HOST=${SMTP_HOST}'
+      - 'ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_USER=${SMTP_USER}'
+      - 'ZITADEL_DEFAULTINSTANCE_SMTPCONFIGURATION_SMTP_PASSWORD=${SMTP_PASSWORD}'
+    depends_on:
+      db:
+        condition: 'service_healthy'
+    ports:
+      - '8089:8080'
+
+  db:
+    restart: 'always'
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=zitadel
+    networks:
+      - 'zitadel'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "zitadel", "-U", "postgres"]
+      interval: '10s'
+      timeout: '30s'
+      retries: 5
+      start_period: '20s'
+
+networks:
+  zitadel:
+    driver: bridge
