@@ -32,7 +32,7 @@
 	<div class="card-body items-center text-center w-30">
 		<div class="avatar">
 			<figure class="w-24 mask mask-squircle">
-				<img src={data.profile_picture} alt="Picture of {data.last_name} {data.first_name}" />
+				<img src={'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'} alt="Picture of {data.last_name} {data.first_name}" />
 			</figure>
 		</div>
 		<h2 class="card-title text-base-content">

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fetch_profile } from './getProfile';
 	export let data = {
 		id: '',
 		last_name: 'Nem',
@@ -11,6 +12,10 @@
 
 	onMount(() => {
 		if (dialog) dialog.showModal();
+		fetch_profile(data.id).then((data) => {
+			data = data
+		});
+		data.profile_picture = 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png';
 	});
 </script>
 
@@ -30,14 +35,14 @@
 				<div>
 					<h1 class="text-5xl font-bold">
 						{data.first_name}
-						{data.middle_name}
+						{data.middle_name ? data.middle_name : ''}
 						{data.last_name}
 					</h1>
 					<p class="py-6">
 						Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi
 						exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.
 					</p>
-					<button class="btn btn-primary">Get Started</button>
+					
 				</div>
 			</div>
 		</div>
