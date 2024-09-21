@@ -15,10 +15,6 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities"
 	"github.com/vcscsvcscs/GenerationsHeritage/utilities/gin_liveness"
-	"github.com/zitadel/zitadel-go/v3/pkg/authorization"
-	"github.com/zitadel/zitadel-go/v3/pkg/authorization/oauth"
-	"github.com/zitadel/zitadel-go/v3/pkg/http/middleware"
-	"github.com/zitadel/zitadel-go/v3/pkg/zitadel"
 )
 
 var (
@@ -58,20 +54,7 @@ func main() {
 	}))
 	router.Use(gin.Recovery())
 
-	ctx := context.Background()
-
-	// Initiate the authorization by providing a zitadel configuration and a verifier.
-	// This example will use OAuth2 Introspection for this, therefore you will also need to provide the downloaded api key.json
-	authZ, err := authorization.New(ctx, zitadel.New(*zitadelURI), oauth.DefaultAuthorization(*zitadelAccessKey))
-	if err != nil {
-		log.Println("zitadel sdk could not initialize", "error", err)
-		os.Exit(1)
-	}
-
-	// Initialize the HTTP middleware by providing the authorization
-	mw := middleware.New(authZ)
-
-	router.Use(auth(mw))
+	router.Use(auth)
 	router.GET("/health", hc.HealthCheckHandler())
 	router.GET("/person", handlers.ViewPerson(memgraphDriver))
 	router.POST("/person", handlers.CreatePerson(memgraphDriver))
