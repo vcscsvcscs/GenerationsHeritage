@@ -16,16 +16,23 @@
     "@sveltejs/adapter-static": "^3.0.1",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.10.2",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-svelte": "^2.35.1",
+    "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "prettier-plugin-svelte": "^3.2.2",
     "svelte": "^4.2.12",
+    "tailwindcss": "^3.4.3",
     "vite": "^5.0.3"
   },
   "type": "module",
   "dependencies": {
+    "@dagrejs/dagre": "github:dagrejs/dagre",
+    "@xyflow/svelte": "^0.0.41",
+    "oidc-client-ts": "^3.0.1",
     "svelte-eslint-parser": "^0.33.1"
   }
 }

@@ -38,46 +38,46 @@ type Person struct {
 }
 
 func (p *Person) ToString() string {
-	result := fmt.Sprintf("ID: '%s'", p.ID)
+	result := fmt.Sprintf("id: '%s'", p.ID)
 	if p.Firstname != "" {
-		result = fmt.Sprintf("%s, Firstname: '%s'", result, p.Firstname)
+		result = fmt.Sprintf("%s, first_name: '%s'", result, p.Firstname)
 	}
 	if p.Lastname != "" {
-		result = fmt.Sprintf("%s, Lastname: '%s'", result, p.Lastname)
+		result = fmt.Sprintf("%s, last_name: '%s'", result, p.Lastname)
 	}
 	if p.Middlename != "" {
-		result = fmt.Sprintf("%s, Middlename: '%s'", result, p.Middlename)
+		result = fmt.Sprintf("%s, middle_name: '%s'", result, p.Middlename)
 	}
 	if p.MothersFirstname != "" {
-		result = fmt.Sprintf("%s, MothersFirstname: '%s'", result, p.MothersFirstname)
+		result = fmt.Sprintf("%s, mothers_first_name: '%s'", result, p.MothersFirstname)
 	}
 	if p.MothersLastname != "" {
-		result = fmt.Sprintf("%s, MothersLastname: '%s'", result, p.MothersLastname)
+		result = fmt.Sprintf("%s, mothers_last_name: '%s'", result, p.MothersLastname)
 	}
 	if !p.Born.IsZero() {
-		result = fmt.Sprintf("%s, Born: date({year:%d, month:%d, day:%d})", result, p.Born.Year(), p.Born.Month(), p.Born.Day())
+		result = fmt.Sprintf("%s, born: date({year:%d, month:%d, day:%d})", result, p.Born.Year(), p.Born.Month(), p.Born.Day())
 	}
 	if !p.Death.IsZero() {
-		result = fmt.Sprintf("%s, Death: date({year:%d, month:%d, day:%d})", result, p.Death.Year(), p.Death.Month(), p.Death.Day())
+		result = fmt.Sprintf("%s, death: date({year:%d, month:%d, day:%d})", result, p.Death.Year(), p.Death.Month(), p.Death.Day())
 	}
 	if p.Birthplace != "" {
-		result = fmt.Sprintf("%s, Birthplace: '%s'", result, p.Birthplace)
+		result = fmt.Sprintf("%s, birthplace: '%s'", result, p.Birthplace)
 	}
 	if p.Residence != "" {
-		result = fmt.Sprintf("%s, Residence: '%s'", result, p.Residence)
+		result = fmt.Sprintf("%s, residence: '%s'", result, p.Residence)
 	}
 	if p.Deathplace != "" {
-		result = fmt.Sprintf("%s, Deathplace: '%s'", result, p.Deathplace)
+		result = fmt.Sprintf("%s, deathplace: '%s'", result, p.Deathplace)
 	}
 	if p.OccupationToDisplay != "" {
-		result = fmt.Sprintf("%s, OccupationToDisplay: '%s'", result, p.OccupationToDisplay)
+		result = fmt.Sprintf("%s, occupation_to_display: '%s'", result, p.OccupationToDisplay)
 	}
 	if p.ProfilePicture != "" {
-		result = fmt.Sprintf("%s, ProfilePicture: '%s'", result, p.ProfilePicture)
+		result = fmt.Sprintf("%s, profile_picture: '%s'", result, p.ProfilePicture)
 	}
 
 	if p.Titles != nil && len(p.Titles) > 0 {
-		result = fmt.Sprintf("%s, Titles: [", result)
+		result = fmt.Sprintf("%s, titles: [", result)
 		for _, title := range p.Titles {
 			result = fmt.Sprintf("%s'%s', ", result, title)
 		}
@@ -85,7 +85,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.Suffixes != nil && len(p.Suffixes) > 0 {
-		result = fmt.Sprintf("%s, Suffixes: [", result)
+		result = fmt.Sprintf("%s, suffixes: [", result)
 		for _, suffix := range p.Suffixes {
 			result = fmt.Sprintf("%s'%s', ", result, suffix)
 		}
@@ -93,7 +93,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.ExtraNames != nil && len(p.ExtraNames) > 0 {
-		result = fmt.Sprintf("%s, ExtraNames: [", result)
+		result = fmt.Sprintf("%s, extra_names: [", result)
 		for _, extraName := range p.ExtraNames {
 			result = fmt.Sprintf("%s'%s', ", result, extraName)
 		}
@@ -101,7 +101,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.Aliases != nil && len(p.Aliases) > 0 {
-		result = fmt.Sprintf("%s, Aliases: [", result)
+		result = fmt.Sprintf("%s, aliases: [", result)
 		for _, alias := range p.Aliases {
 			result = fmt.Sprintf("%s'%s', ", result, alias)
 		}
@@ -109,7 +109,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.LifeEvents != nil && len(p.LifeEvents) > 0 {
-		result = fmt.Sprintf("%s, LifeEvents: [", result)
+		result = fmt.Sprintf("%s, life_events: [", result)
 		for i := 0; i < len(p.LifeEvents); i++ {
 			date, dok := p.LifeEvents[i]["date"]
 			event, eok := p.LifeEvents[i]["event"]
@@ -121,7 +121,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.Occupations != nil && len(p.Occupations) > 0 {
-		result = fmt.Sprintf("%s, Occupations: [", result)
+		result = fmt.Sprintf("%s, occupations: [", result)
 
 		for _, occupation := range p.Occupations {
 			result = fmt.Sprintf("%s'%s', ", result, occupation)
@@ -131,7 +131,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.OthersSaid != nil {
-		result = fmt.Sprintf("%s, OthersSaid: {", result)
+		result = fmt.Sprintf("%s, others_said: {", result)
 		for key, value := range p.OthersSaid {
 			result = fmt.Sprintf("%s%s: '%s', ", result, key, value)
 		}
@@ -139,7 +139,7 @@ func (p *Person) ToString() string {
 	}
 
 	if p.Photos != nil && len(p.Photos) > 0 {
-		result = fmt.Sprintf("%s, Photos: {", result)
+		result = fmt.Sprintf("%s, photos: {", result)
 		for key, value := range p.Photos {
 			result = fmt.Sprintf("%s%s: '%s', ", result, key, value)
 		}

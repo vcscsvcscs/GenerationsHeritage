@@ -4,6 +4,8 @@ namespace: generations-heritage
 
 resources:
   - ./certificate.yaml
+  - ./zitadel-acces-key.yaml
   - ./deployment.yaml
   - ./service.yaml
   - ./horizontalPodAutoScaler.yaml
+  - ./forwardAuth.yaml

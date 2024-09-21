@@ -39,7 +39,13 @@ spec:
           volumeMounts:
             - name: gh-backend-certs
               mountPath: /etc/gh-backend/ssl
+            - name: zitadel-service-account
+              mountPath: /etc/gh-backend/zitadel
       volumes:
       - name: gh-backend-certs
         secret:
           secretName: gh-backend-tls
+      - name: zitadel-service-account
+        secret:
+          secretName: zitadel-service-account
+          
