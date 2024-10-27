@@ -54,7 +54,7 @@ spec:
   renewBefore: 720h # 30 days
   commonName: "db-postgresql"
   dnsNames:
-    - "postgres"
+    - "postgresql"
     - "db-postgresql"
     - "zitadel"
   secretName: postgres-cert
@@ -81,7 +81,7 @@ spec:
   renewBefore: 720h # 30 days
   commonName: "zitadel"
   dnsNames:
-    - "postgres"
+    - "postgresql"
     - "db-postgresql"
     - "zitadel"
   secretName: zitadel-cert
