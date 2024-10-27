@@ -16,7 +16,7 @@ env:
       secretKeyRef:
         name: memgraph-secrets
         key: USER
-  - name: MEMGRAPH_USER
+  - name: MEMGRAPH_PASSWORD
     valueFrom:
       secretKeyRef:
         name: memgraph-secrets
