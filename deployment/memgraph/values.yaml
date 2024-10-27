@@ -7,9 +7,17 @@ persistentVolumeClaim:
 
 memgraphConfig:
   - "--also-log-to-stderr=true"
+  - "--bolt-cert-file=/etc/memgraph/ssl/tls.crt"
+  - "--bolt-key-file=/etc/memgraph/ssl/tls.key"
 
-secrets:
-  enabled: true
-  name: memgraph-secrets
-  userKey: USER
-  passwordKey: PASSWORD
+env:
+  - name: MEMGRAPH_USER
+    valueFrom:
+      secretKeyRef:
+        name: memgraph-secrets
+        key: USER
+  - name: MEMGRAPH_USER
+    valueFrom:
+      secretKeyRef:
+        name: memgraph-secrets
+        key: PASSWORD      
