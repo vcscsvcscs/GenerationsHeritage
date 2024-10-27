@@ -1,11 +1,11 @@
 zitadel:
+  selfSignedCert:
+    enabled: true
   masterkeySecretName: zitadel-masterkey
   configmapConfig:
     ExternalSecure: true
     ExternalDomain: zitadel.varghacsongor.hu
     ExternalPort: 443
-    TLS:
-      Enabled: false
     Database:
       Postgres:
         Host: db-postgresql
@@ -24,15 +24,9 @@ zitadel:
           SSL:
             Mode: verify-full
 
-  dbSslCaCrtSecret: postgres-cert
+  dbSslCaCrtSecret: zitadel-root-certificate-ca-secret
   dbSslAdminCrtSecret: postgres-cert
   dbSslUserCrtSecret: zitadel-cert
-
-image:
-  repository: ghcr.io/zitadel/zitadel
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v2.51.0"
 
 annotations:
   argocd.argoproj.io/sync-wave: "5"
