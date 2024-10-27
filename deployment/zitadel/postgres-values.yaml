@@ -4,11 +4,11 @@ annotations:
 global:
   postgresql:
     auth:
-      existingSecret: "postgres-auth"
-      username: "zitadel"
+      existingSecret: postgres-auth
+      username: zitadel
       secretKeys:
-        adminPasswordKey: "admin-password"
-        userPasswordKey: "user-password"
+        adminPasswordKey: admin-password
+        userPasswordKey: user-password
 
 volumePermissions:
   enabled: true
@@ -16,8 +16,8 @@ volumePermissions:
 tls:
   enabled: true
   certificatesSecret: postgres-cert
-  certFilename: "tls.crt"
-  certKeyFilename: "tls.key"
+  certFilename: tls.crt
+  certKeyFilename: tls.key
 
 primary:
   persistence:
