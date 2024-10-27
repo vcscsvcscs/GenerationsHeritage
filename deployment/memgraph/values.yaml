@@ -1,28 +1,17 @@
 image:
   repository: memgraph/memgraph
-  pullPolicy: IfNotPresent
-
-replicaCount: 1
-
-service:
-  type: ClusterIP
-  port: 7687
-  targetPort: 7687
-  protocol: TCP
 
 persistentVolumeClaim:
   storageSize: 2Gi
   ## Create a Dynamic Persistant Volume Claim for Configs, Certificates (e.g. Bolt cert ) and rest of User related files
   createUserClaim: true
-  userStorageSize: 1Gi
-  
+  userStorageSize: 250Mi
+
 memgraphConfig:
   - "--also-log-to-stderr=true"
-  - "--bolt-cert-file=/etc/memgraph/ssl/tls.crt"
-  - "--bolt-key-file=/etc/memgraph/ssl/tls.key"
 
 secrets:
-  enabled: false
+  enabled: true
   name: memgraph-secrets
   userKey: USER
   passwordKey: PASSWORD
