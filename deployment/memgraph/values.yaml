@@ -12,7 +12,10 @@ service:
 
 persistentVolumeClaim:
   storageSize: 2Gi
-
+  ## Create a Dynamic Persistant Volume Claim for Configs, Certificates (e.g. Bolt cert ) and rest of User related files
+  createUserClaim: true
+  userStorageSize: 1Gi
+  
 memgraphConfig:
   - "--also-log-to-stderr=true"
   - "--bolt-cert-file=/etc/memgraph/ssl/tls.crt"
