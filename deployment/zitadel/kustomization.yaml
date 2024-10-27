@@ -6,7 +6,6 @@ resources:
   - ./certificate.yaml
   - ./secrets.yaml
   - ./ingressRoute.yaml
-  - ./postgres.yaml
 
 helmCharts:
   - name: bitnami
