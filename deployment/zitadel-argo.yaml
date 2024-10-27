@@ -7,7 +7,7 @@ spec:
   source:
     repoURL: 'https://github.com/vcscsvcscs/GenerationsHeritage'
     path: deployment/zitadel
-    targetRevision: main
+    targetRevision: feature/rework-deployment-to-docker-compose
     kustomize:
       namespace: generations-heritage
   destination:
