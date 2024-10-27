@@ -6,10 +6,11 @@ resources:
   - ./certificate.yaml
   - ./secrets.yaml
   - ./ingressRoute.yaml
+  - ./postgres.yaml
 
 helmCharts:
   - name: bitnami
-    repo: https://charts.bitnami.com/bitnami
+    repo: oci://registry-1.docker.io/bitnamicharts/postgresql
     releaseName: postgresql
     namespace: generations-heritage
     version: 12.10.0
