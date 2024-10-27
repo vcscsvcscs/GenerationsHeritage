@@ -8,7 +8,7 @@ zitadel:
     ExternalPort: 443
     Database:
       Postgres:
-        Host: db-postgresql
+        Host: postgresql
         Port: 5432
         Database: zitadel
         MaxOpenConns: 20
