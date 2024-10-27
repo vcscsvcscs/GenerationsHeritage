@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: generations-heritage
 
 resources:
-  - ./cert-job.yaml
+  - ./certificate.yaml
   - ./secrets.yaml
   - ./ingressRoute.yaml
 
