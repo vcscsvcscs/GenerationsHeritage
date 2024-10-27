@@ -1,0 +1,25 @@
+annotations:
+  argocd.argoproj.io/hook: Sync
+
+volumePermissions:
+  enabled: true
+
+tls:
+  enabled: true
+  certificatesSecret: postgres-cert
+  certFilename: "tls.crt"
+  certKeyFilename: "tls.key"
+
+persistence:
+  size: 2Gi
+
+init:
+  jobAnnotations:
+    argocd.argoproj.io/hook: Sync
+
+env:
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-auth
+        key: admin-password
