@@ -10,8 +10,9 @@ tls:
   certFilename: "tls.crt"
   certKeyFilename: "tls.key"
 
-persistence:
-  size: 2Gi
+primary:
+  persistence:
+    size: 2Gi
 
 init:
   jobAnnotations:
