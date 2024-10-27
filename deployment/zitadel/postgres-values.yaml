@@ -1,6 +1,15 @@
 annotations:
   argocd.argoproj.io/hook: Sync
 
+global:
+  postgresql:
+    auth:
+      existingSecret: "postgres-auth"
+      username: "zitadel"
+      secretKeys:
+        adminPasswordKey: "admin-password"
+        userPasswordKey: "user-password"
+
 volumePermissions:
   enabled: true
 
@@ -17,10 +26,3 @@ primary:
 init:
   jobAnnotations:
     argocd.argoproj.io/hook: Sync
-
-env:
-  - name: POSTGRES_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: postgres-auth
-        key: admin-password
