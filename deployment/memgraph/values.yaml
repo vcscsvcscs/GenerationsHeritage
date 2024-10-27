@@ -1,5 +1,6 @@
 image:
   repository: memgraph/memgraph
+  tag: "2.20.0"
 
 persistentVolumeClaim:
   storageSize: 2Gi
