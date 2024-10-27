@@ -7,7 +7,6 @@ global:
       existingSecret: postgres-auth
       username: zitadel
       secretKeys:
-        adminPasswordKey: admin-password
         userPasswordKey: user-password
 
 volumePermissions:
