@@ -11,10 +11,7 @@ service:
   protocol: TCP
 
 persistentVolumeClaim:
-  storagePVC: true
-  storagePVCSize: 2Gi
-  logPVC: true
-  logPVCSize: 256Mi
+  storageSize: 2Gi
 
 memgraphConfig:
   - "--also-log-to-stderr=true"
