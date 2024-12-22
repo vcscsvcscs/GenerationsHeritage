@@ -1,4 +1,4 @@
-name: Release Backend service to Docker Hub and Deploy to Kubernetes
+name: Release Backend service to Docker Hub
 
 on:
   push:

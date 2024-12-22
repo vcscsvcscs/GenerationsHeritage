@@ -1,6 +1,6 @@
 name: Frontend Continuous Integration
 on:
-  push:
+  pull_request:
     paths:
       - "cmd/frontend/**"
 jobs:
