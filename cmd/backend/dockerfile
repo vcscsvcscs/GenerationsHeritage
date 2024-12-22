@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN go get ./...
+
 RUN GOOS=linux GOARCH=arm64 go build -o backend
 
 RUN apk update && apk add ca-certificates && update-ca-certificates
