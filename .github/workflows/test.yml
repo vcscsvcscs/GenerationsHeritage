@@ -1,3 +1,5 @@
+name: Go Test
+
 on:
   pull_request:
     paths:
@@ -19,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          go get
+          go get ...
           
       - name: Run tests
         run: |
