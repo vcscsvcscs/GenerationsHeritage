@@ -20,10 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ${{ inputs.working-directory }}
           go get
       
       - name: Build
         run: |
-          cd ${{ inputs.working-directory }}
-          go build .
+          go build ${{ inputs.working-directory }}

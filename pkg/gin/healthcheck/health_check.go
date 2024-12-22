@@ -1,4 +1,4 @@
-package gin_liveness
+package healthcheck
 
 import (
 	"net/http"

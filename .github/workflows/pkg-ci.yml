@@ -1,0 +1,15 @@
+name: Common Package Continuous Integration
+on:
+  push:
+    paths:
+      - "pkg/**"
+jobs:
+  lint:
+    uses: ./.github/workflows/go_lint.yml
+    with:
+      working-directory: 'pkg'
+  test:
+    needs: lint
+    uses: ./.github/workflows/go_test.yml
+    with:
+      working-directory: 'pkg'
