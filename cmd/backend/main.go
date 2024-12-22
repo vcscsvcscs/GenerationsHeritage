@@ -21,19 +21,19 @@ import (
 )
 
 var (
-	cert             = flag.String("cert", "/etc/gh-backend/ssl/tls.crt", "Specify the path of TLS cert")
-	key              = flag.String("key", "/etc/gh-backend/ssl/tls.key", "Specify the path of TLS key")
-	httpsPort        = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
-	httpPort         = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
-	zitadelAccessKey = flag.String("zitadel-access-key", "/etc/gh-backend/zitadel/api-key.json", "Specify the path of Zitadel access key")
-	zitadelURI       = flag.String("zitadel-uri", "zitadel.varghacsongor.hu", "Specify the Zitadel URI")
-	memgraphURI      = flag.String("memgraph", "bolt+ssc://memgraph:7687", "Specify the Memgraph database URI")
-	memgraphUser     = flag.String("memgraph-user", "", "Specify the Memgraph database user")
-	memgraphPass     = flag.String("memgraph-pass", "", "Specify the Memgraph database password")
-	release          = flag.Bool("release", false, "Set true to release build")
-	logToFile        = flag.Bool("log-to-file", false, "Set true to log to file")
-	logToFileAndStd  = flag.Bool("log-to-file-and-std", false, "Set true to log to file and std")
-	requestTimeout   = time.Duration(*flag.Int("request-timeout", 20, "Set request timeout in seconds"))
+	cert      = flag.String("cert", "/etc/gh-backend/ssl/tls.crt", "Specify the path of TLS cert")
+	key       = flag.String("key", "/etc/gh-backend/ssl/tls.key", "Specify the path of TLS key")
+	httpsPort = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
+	httpPort  = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
+	// zitadelAccessKey = flag.String("zitadel-access-key", "/etc/gh-backend/zitadel/api-key.json", "Specify the path of Zitadel access key")
+	// zitadelURI       = flag.String("zitadel-uri", "zitadel.varghacsongor.hu", "Specify the Zitadel URI")
+	memgraphURI     = flag.String("memgraph", "bolt+ssc://memgraph:7687", "Specify the Memgraph database URI")
+	memgraphUser    = flag.String("memgraph-user", "", "Specify the Memgraph database user")
+	memgraphPass    = flag.String("memgraph-pass", "", "Specify the Memgraph database password")
+	release         = flag.Bool("release", false, "Set true to release build")
+	logToFile       = flag.Bool("log-to-file", false, "Set true to log to file")
+	logToFileAndStd = flag.Bool("log-to-file-and-std", false, "Set true to log to file and std")
+	requestTimeout  = time.Duration(*flag.Int("request-timeout", 20, "Set request timeout in seconds"))
 )
 
 func main() {
@@ -57,7 +57,7 @@ func main() {
 	}))
 	router.Use(gin.Recovery())
 
-	ctx := context.Background()
+	//ctx := context.Background()
 
 	// Initiate the authorization by providing a zitadel configuration and a verifier.
 	// This example will use OAuth2 Introspection for this, therefore you will also need to provide the downloaded api key.json
