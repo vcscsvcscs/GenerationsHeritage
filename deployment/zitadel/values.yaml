@@ -34,7 +34,7 @@ annotations:
 
 env:
   - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME
-    value: "admin"
+    value: admin
 
   - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD
     valueFrom:
