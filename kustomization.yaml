@@ -6,7 +6,6 @@ resources:
   - ./deployment/cert-issuer.yaml
   - ./deployment/server-transport.yaml
   - ./deployment/project-argo.yaml
-  - ./deployment/zitadel-argo.yaml
   - ./deployment/memgraph-argo.yaml
   - ./deployment/auth-service-argo.yaml
   - ./deployment/backend-argo.yaml
