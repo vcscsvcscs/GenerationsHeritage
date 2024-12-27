@@ -7,7 +7,7 @@ spec:
   source:
     repoURL: 'https://github.com/vcscsvcscs/GenerationsHeritage'
     path: deployment/backend
-    targetRevision: feature/rework-deployment-to-docker-compose
+    targetRevision: main
     kustomize:
       namespace: generations-heritage
   destination:
