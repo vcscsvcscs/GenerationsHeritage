@@ -1,9 +1,10 @@
-name: Release Backend service to Docker Hub and Deploy to Kubernetes
+name: Release Backend service to Docker Hub
 
 on:
-  push:
+  pull_request:
     paths:
-      - "backend/**"
+      - "cmd/backend/**"
+      - "pkg/**"
       - "deployment/backend/**"
       - ".github/workflows/backend-cd.yml"
   
@@ -46,6 +47,6 @@ jobs:
           uses: docker/build-push-action@v5
           with:
             push: true
-            context: "{{defaultContext}}:backend"
+            context: "{{defaultContext}}:cmd/backend"
             tags: vcscsvcscs/gheritage-backend-service:${{steps.create_image_tag.outputs.result}}
-            platforms: linux/arm64
+            platforms: linux/amd64, linux/arm64

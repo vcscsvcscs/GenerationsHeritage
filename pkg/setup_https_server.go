@@ -1,4 +1,4 @@
-package utilities
+package pkg
 
 import (
 	"errors"

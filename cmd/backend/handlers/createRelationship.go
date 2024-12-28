@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
-	"github.com/vcscsvcscs/GenerationsHeritage/backend/memgraph"
+	"github.com/vcscsvcscs/GenerationsHeritage/pkg/memgraph"
 )
 
 func CreateRelationship(driver neo4j.DriverWithContext) gin.HandlerFunc {

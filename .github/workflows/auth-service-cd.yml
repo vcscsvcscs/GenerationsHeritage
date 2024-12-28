@@ -1,9 +1,10 @@
-name: Release Auth service to Docker Hub and Deploy to Kubernetes
+name: Release Auth service to Docker Hub
 
 on:
-  push:
+  pull_request:
     paths:
-      - "auth-service/**"
+      - "cmd/auth/**"
+      - "pkg/**"
       - "deployment/auth-service/**"
       - ".github/workflows/auth-service-cd.yml"
 
@@ -46,6 +47,6 @@ jobs:
           uses: docker/build-push-action@v5
           with:
             push: true
-            context: "{{defaultContext}}:auth-service"
+            context: "{{defaultContext}}:cmd/auth"
             tags: vcscsvcscs/gheritage-auth-service:${{steps.create_image_tag.outputs.result}}
-            platforms: linux/arm64
+            platforms: linux/amd64, linux/arm64
