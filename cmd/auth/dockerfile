@@ -1,4 +1,4 @@
-FROM arm64v8/golang:1.23.4-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:alpine AS build
 
 WORKDIR /app
 
@@ -6,11 +6,11 @@ COPY . .
 
 RUN go get ./...
 
-RUN GOOS=linux GOARCH=arm64 go build -o auth-service
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o auth-service
 
 RUN apk update && apk add ca-certificates && update-ca-certificates
 
-FROM arm64v8/busybox:1.36.1
+FROM --platform=$TARGETPLATFORM busybox:1.36.1
 
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
 COPY --from=build /app/auth-service /app/
