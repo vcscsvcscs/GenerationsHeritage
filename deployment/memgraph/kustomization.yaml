@@ -4,6 +4,7 @@ namespace: generations-heritage
 
 resources:
   - ./certificates.yaml
+  - ./secrets.yaml
 
 helmCharts:
   - name: memgraph
