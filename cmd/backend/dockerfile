@@ -7,6 +7,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN go get ./...
+
 RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o backend
 
 RUN apk update && apk add ca-certificates && update-ca-certificates

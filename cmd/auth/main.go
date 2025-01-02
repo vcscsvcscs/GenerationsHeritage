@@ -10,9 +10,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vcscsvcscs/GenerationsHeritage/utilities"
-	"github.com/vcscsvcscs/GenerationsHeritage/utilities/gin_liveness"
-
+	utilities "github.com/vcscsvcscs/GenerationsHeritage/pkg"
+	"github.com/vcscsvcscs/GenerationsHeritage/pkg/gin/healthcheck"
 	"github.com/zitadel/zitadel-go/v3/pkg/authorization"
 	"github.com/zitadel/zitadel-go/v3/pkg/authorization/oauth"
 	"github.com/zitadel/zitadel-go/v3/pkg/http/middleware"
@@ -40,7 +39,7 @@ func main() {
 
 	utilities.SetupLogger(*logToFileAndStd, *logToFile)
 
-	hc := gin_liveness.New()
+	hc := healthcheck.New()
 
 	router := gin.Default()
 	router.Use(gin.Recovery())
