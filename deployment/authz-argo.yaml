@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gh-auth-service
+  name: gh-authz
 spec:
   project: generations-heritage-vv
   source:
     repoURL: 'https://github.com/vcscsvcscs/GenerationsHeritage'
-    path: deployment/auth-service
+    path: deployment/authZ
     targetRevision: main
     kustomize:
       namespace: generations-heritage
