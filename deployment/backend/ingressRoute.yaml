@@ -15,3 +15,5 @@ spec:
           port: 443
           scheme: https
           serversTransport: gh-backend
+      middlewares:
+        - name: auth-chain
