@@ -6,6 +6,8 @@ export default {
 	theme: {
 		extend: {}
 	},
-
-	plugins: []
+	daisyui: {
+		themes: ['light', 'dark', 'cyberpunk', 'synthwave', 'retro', 'roboto', 'dracula']
+	},
+	plugins: [require('tailwindcss'), require('autoprefixer')]
 } satisfies Config;
