@@ -1,7 +1,8 @@
 import { Node, Relationship, Date } from 'neo4j-driver';
 import { Integer } from 'neo4j-driver';
 
-interface PersonProperties {
+export interface PersonProperties {
+    allow_admin_access: boolean;
     id: string;
     google_id: string;
     first_name: string;
@@ -65,7 +66,7 @@ export type FamilyRelationship = Relationship<Integer, {
 }>;
 
 
-interface RecipeProperties {
+export interface RecipeProperties {
     id: string;
     name: string;
     origin: string;
@@ -79,11 +80,19 @@ interface RecipeProperties {
 }
 
 export type Recipe = Node<Integer, RecipeProperties>;
-export type RecipeRelationship = Relationship<Integer, {
+export type Likes = Relationship<Integer, {
     favourite: boolean;
     like_it: boolean;
     could_make_it: boolean;
 }>;
 
+export interface FamilyTree {
+    ancestors: Person;
+    prel1: FamilyRelationship;
+    children: Person;
+    prel2: FamilyRelationship;
+    spouses: Person;
+    srel: FamilyRelationship;
+    user: Person;
 
-
+}
