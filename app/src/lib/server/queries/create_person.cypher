@@ -1,1 +1,1 @@
-CREATE (p:Person $Person) RETURN p
+CREATE (p:Person $Person) RETURN p as person
