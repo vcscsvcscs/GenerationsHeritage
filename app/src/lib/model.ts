@@ -90,12 +90,16 @@ export type Likes = Relationship<Integer, {
 }>;
 
 export interface FamilyTree {
-    ancestors: Person;
+    ancestors: String;
     prel1: FamilyRelationship;
-    children: Person;
+    children: String;
     prel2: FamilyRelationship;
-    spouses: Person;
+    spouses: String;
     srel: FamilyRelationship;
-    user: Person;
+    user: String;
 
+}
+
+export interface FamilyMember {
+    person: Person;
 }
