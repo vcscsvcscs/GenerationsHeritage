@@ -56,15 +56,18 @@ export interface PersonProperties {
     notes?: string;
 }
 
-export type Person = Node<Integer, PersonProperties>;
-export type FamilyRelationship = Relationship<Integer, {
-    type: string;
+export interface FamilyRelationship {
     verified: boolean;
     notes?: string;
     from?: Date;
     to?: Date;
-}>;
+}
 
+export type Person = Node<Integer, PersonProperties>;
+export type Parent = Relationship<Integer, FamilyRelationship>;
+export type Sibling = Relationship<Integer, FamilyRelationship>;
+export type Spouse = Relationship<Integer, FamilyRelationship>;
+export type Child = Relationship<Integer, FamilyRelationship>;
 
 export interface RecipeProperties {
     id: string;
