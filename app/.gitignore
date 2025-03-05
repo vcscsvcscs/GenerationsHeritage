@@ -28,3 +28,9 @@ src/lib/paraglide
 *storybook.log
 
 .dev.vars
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
