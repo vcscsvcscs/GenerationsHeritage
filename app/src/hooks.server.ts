@@ -1,4 +1,5 @@
 import type { Handle } from '@sveltejs/kit';
+import { themes } from '$lib/themes'
 import { i18n } from '$lib/i18n';
 import { validateSessionToken, setSessionTokenCookie, deleteSessionTokenCookie } from "$lib/server/session";
 import { sequence } from "@sveltejs/kit/hooks";
@@ -29,4 +30,18 @@ const authHandle: Handle = async ({ event, resolve }) => {
     return resolve(event);
 };
 
-export const handle: Handle = sequence(handleParaglide, authHandle);
+const themeHandler: Handle = async ({ event, resolve }) => {
+	const theme = event.cookies.get('theme')
+
+	if (!theme || !themes.includes(theme)) {
+		return await resolve(event)
+	}
+
+	return await resolve(event, {
+		transformPageChunk: ({ html }) => {
+			return html.replace('data-theme=""', `data-theme="${theme}"`)
+		},
+	})
+}
+
+export const handle: Handle = sequence(handleParaglide, authHandle,themeHandler);
