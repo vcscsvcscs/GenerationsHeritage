@@ -37,7 +37,7 @@
 	}
 </script>
 
-<div class="dropdown mb-8">
+<div class="dropdown mb-6">
 	<select
 		bind:value={current_theme}
 		data-choose-theme
