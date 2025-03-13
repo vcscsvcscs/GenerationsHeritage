@@ -37,11 +37,11 @@
 	}
 </script>
 
-<div class="dropdown mb-6">
+<div class="dropdown dropdown-end block ">
 	<select
 		bind:value={current_theme}
 		data-choose-theme
-		class="select"
+		class="btn btn-ghost btn-xs"
 		onchange={set_theme}
 	>
 		<option value="" disabled={current_theme !== ''}>
