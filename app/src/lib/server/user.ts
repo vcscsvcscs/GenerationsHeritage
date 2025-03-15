@@ -1,28 +1,23 @@
-import type { Session, QueryResult, Transaction} from 'neo4j-driver';
-import type{ Person,PersonProperties, FamilyTree } from '$lib/model';
-import CreatePersonQuery from '$lib/server/queries/createPerson.cypher?raw';
-import UpdatePersonQuery from '$lib/server/queries/updatePerson.cypher?raw';
+import type { Session, QueryResult } from 'neo4j-driver';
+import type { Person, PersonProperties } from '$lib/model';
+import CreatePersonQuery from '$lib/server/queries/create_person.cypher?raw';
+import UpdatePersonQuery from '$lib/server/queries/update_person.cypher?raw';
+import GetPersonByGoogleID from '$lib/server/queries/get_person_by_google_id.cypher?raw';
 
 export function createUser(db: Session, Person: PersonProperties): Promise<QueryResult<Person>> {
 	return db.executeWrite(tx => tx.run<Person>(
-		CreatePersonQuery, {Person})
+		CreatePersonQuery, { props: Person })
 	);
 }
 
 export function updateUser(db: Session, Person: PersonProperties): Promise<QueryResult<Person>> {
 	return db.executeWrite(tx => tx.run<Person>(
-		CreatePersonQuery, {Person})
+		UpdatePersonQuery, { props: Person })
 	);
 }
 
-export function getUserFromGoogleId(db: Session,googleId: string): Promise<QueryResult<Person>> {
-	return db.executeRead(tx => tx.run<Person>(""))
-}
-
-export interface User {
-	id: number;
-	email: string;
-	googleId: string;
-	name: string;
-	picture: string;
+export function getUserFromGoogleId(db: Session, googleID: string): Promise<QueryResult<Person>> {
+	return db.executeRead(tx => tx.run<Person>(
+		GetPersonByGoogleID, { google_id: googleID })
+	);
 }
