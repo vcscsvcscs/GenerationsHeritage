@@ -1,2 +1,3 @@
-MATCH (n:DeletedPerson {id: $id})
+MATCH (n:DeletedPerson)
+WHERE id(n) = $id
 DETACH DELETE n;

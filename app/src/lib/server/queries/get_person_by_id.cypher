@@ -1,1 +1,1 @@
-MATCH (n:Person) WHERE n.id = $id RETURN n as person
+MATCH (n:Person) WHERE id(n) = $id RETURN n as person

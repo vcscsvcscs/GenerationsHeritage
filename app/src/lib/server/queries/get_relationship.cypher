@@ -1,2 +1,3 @@
-MATCH (n {id: $id1})-[r]-(o {id: $id2})
+MATCH (n)-[r]-(o)
+WHERE id(n) = $id1 AND id(o) = $id2
 RETURN r as relationship
