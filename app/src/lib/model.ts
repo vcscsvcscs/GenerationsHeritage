@@ -3,7 +3,6 @@ import { Integer } from 'neo4j-driver';
 
 export interface PersonProperties {
     allow_admin_access: boolean;
-    id: string;
     google_id: string;
     first_name: string;
     middle_name?: string;
@@ -14,11 +13,11 @@ export interface PersonProperties {
     aliases?: string[];
     mothers_first_name?: string;
     mothers_last_name?: string;
-    born?: Date;
+    born?: Date<number>;
     place_of_birth?: string;
-    died?: Date;
+    died?: Date<number>;
     place_of_death?: string;
-    life_events?: { [key: string]: {from: Date, to:Date, desription: string} }[];
+    life_events?: { [key: string]: {from: Date<number>, to:Date<number>, desription: string} }[];
     occupations?: string[];
     occupation_to_display?: string;
     others_said?: { [key: string]: string };
@@ -59,8 +58,8 @@ export interface PersonProperties {
 export interface FamilyRelationship {
     verified: boolean;
     notes?: string;
-    from?: Date;
-    to?: Date;
+    from?: Date<number>;
+    to?: Date<number>;
 }
 
 export type Person = Node<Integer, PersonProperties>;
@@ -74,7 +73,7 @@ export interface RecipeProperties {
     name: string;
     origin: string;
     category: string;
-    first_recorded: Date;
+    first_recorded: Date<number>;
     description: string;
     ingredients: string[];
     instructions: string[];
