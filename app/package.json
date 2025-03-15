@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "generations-heritage",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -16,7 +16,7 @@
     "test": "npm run test:unit -- --run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "deploy": "npm run build && wrangler pages deploy",
+    "deploy": "npm run build && wrangler pages deploy", 
     "cf-typegen": "wrangler types && move worker-configuration.d.ts src/"
   },
   "devDependencies": {
@@ -60,8 +60,10 @@
   "dependencies": {
     "@inlang/paraglide-sveltekit": "^0.15.5",
     "@pilcrowjs/object-parser": "^0.0.4",
+    "@types/pikaday": "^1.7.9",
     "@xyflow/svelte": "^1.0.0-next.3",
     "arctic": "^3.3.0",
-    "neo4j-driver": "^5.28.1"
+    "neo4j-driver": "^5.28.1",
+    "pikaday": "^1.8.2"
   }
 }
