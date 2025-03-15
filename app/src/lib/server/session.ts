@@ -59,7 +59,7 @@ export function generateSessionToken(): string {
 	return token;
 }
 
-export async function createSession(token: string, userId: number, sessions: KVNamespace): Promise<Session> {
+export async function createSession(token: string, userId: string, sessions: KVNamespace): Promise<Session> {
 	const sessionId = `${userId}:${encodeHexLowerCase(sha256(new TextEncoder().encode(token)))}`;
 	const session: Session = {
 		id: sessionId,
@@ -73,7 +73,7 @@ export async function createSession(token: string, userId: number, sessions: KVN
 export interface Session {
 	id: string;
 	expiresAt: Date;
-	userId: number;
+	userId: string;
 }
 
 type SessionValidationResult = Session | null;
