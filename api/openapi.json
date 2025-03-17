@@ -1,0 +1,801 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "db-handler",
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "description": "production server",
+            "url": "http://0.0.0.0:7689"
+        },
+        {
+            "description": "staging server",
+            "url": "http://0.0.0.0:7699"
+        }
+    ],
+    "paths": {
+        "/person": {
+            "post": {
+                "summary": "Create a new person",
+                "operationId": "createPerson",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Person created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/person/{id}": {
+            "put": {
+                "summary": "Update a person by ID",
+                "operationId": "updatePerson",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Person updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Soft delete a person by ID",
+                "operationId": "softDeletePerson",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Person soft deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/person/{id}/hard-delete": {
+            "delete": {
+                "summary": "Hard delete a person by ID",
+                "operationId": "hardDeletePerson",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Person hard deleted"
+                    }
+                }
+            }
+        },
+        "/person/google/{google_id}": {
+            "get": {
+                "summary": "Get a person by Google ID",
+                "operationId": "getPersonByGoogleId",
+                "parameters": [
+                    {
+                        "name": "google_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Person retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/person/{id}/family-tree": {
+            "get": {
+                "summary": "Get family tree by person ID",
+                "operationId": "getFamilyTreeById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Family tree retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FamilyTree"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/relationship": {
+            "post": {
+                "summary": "Create a relationship between two persons",
+                "operationId": "createRelationship",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id1": {
+                                        "type": "string"
+                                    },
+                                    "id2": {
+                                        "type": "string"
+                                    },
+                                    "relationship": {
+                                        "$ref": "#/components/schemas/FamilyRelationship"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Relationship created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Relationship"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/relationship/{id1}/{id2}": {
+            "get": {
+                "summary": "Get relationship between two persons",
+                "operationId": "getRelationship",
+                "parameters": [
+                    {
+                        "name": "id1",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Relationship retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Relationship"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/recipe/{id}": {
+            "put": {
+                "summary": "Update a recipe by ID",
+                "operationId": "updateRecipe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecipeProperties"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Recipe updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Recipe"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Soft delete a recipe by ID",
+                "operationId": "softDeleteRecipe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recipe soft deleted"
+                    }
+                }
+            }
+        },
+        "/recipe/{id}/hard-delete": {
+            "delete": {
+                "summary": "Hard delete a recipe by ID",
+                "operationId": "hardDeleteRecipe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recipe hard deleted"
+                    }
+                }
+            }
+        },
+        "/recipe/{recipeId}/relationship": {
+            "post": {
+                "summary": "Create a relationship with an existing recipe",
+                "operationId": "createRecipeRelationship",
+                "parameters": [
+                    {
+                        "name": "recipeId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": { "type": "integer" },
+                                    "relationship": {
+                                        "type": "object",
+                                        "properties": {
+                                            "schema": {
+                                                "$ref": "#/components/schemas/LikesProperties"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Relationship with recipe created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Likes"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a relationship with a recipe",
+                "operationId": "deleteRecipeRelationship",
+                "parameters": [
+                    {
+                        "name": "recipeId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "personId",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Relationship with recipe deleted"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PersonProperties": {
+                "type": "object",
+                "properties": {
+                    "allow_admin_access": {
+                        "type": "boolean"
+                    },
+                    "google_id": {
+                        "type": "string"
+                    },
+                    "first_name": {
+                        "type": "string"
+                    },
+                    "middle_name": {
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "type": "string"
+                    },
+                    "titles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "suffixes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "extra_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "aliases": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "mothers_first_name": {
+                        "type": "string"
+                    },
+                    "mothers_last_name": {
+                        "type": "string"
+                    },
+                    "born": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "place_of_birth": {
+                        "type": "string"
+                    },
+                    "died": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "place_of_death": {
+                        "type": "string"
+                    },
+                    "life_events": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "from": {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "to": {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "description": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "occupations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "occupation_to_display": {
+                        "type": "string"
+                    },
+                    "others_said": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "limit": {
+                        "type": "integer"
+                    },
+                    "photos": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "videos": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "audios": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "profile_picture": {
+                        "type": "string"
+                    },
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "residence": {
+                        "type": "object",
+                        "properties": {
+                            "city": {
+                                "type": "string"
+                            },
+                            "country": {
+                                "type": "string"
+                            },
+                            "zip_code": {
+                                "type": "string"
+                            },
+                            "address_line_1": {
+                                "type": "string"
+                            },
+                            "address_line_2": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "religion": {
+                        "type": "string"
+                    },
+                    "baptized": {
+                        "type": "string"
+                    },
+                    "ideology": {
+                        "type": "string"
+                    },
+                    "blood_type": {
+                        "type": "string"
+                    },
+                    "allergies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medications": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "medical_conditions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "weight": {
+                        "type": "number"
+                    },
+                    "hair_colour": {
+                        "type": "string"
+                    },
+                    "skin_colour": {
+                        "type": "string"
+                    },
+                    "eye_colour": {
+                        "type": "string"
+                    },
+                    "sports": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "hobbies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "interests": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "languages": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "notes": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Person": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "properties": {
+                        "$ref": "#/components/schemas/PersonProperties"
+                    }
+                }
+            },
+            "FamilyRelationship": {
+                "type": "object",
+                "properties": {
+                    "verified": {
+                        "type": "boolean"
+                    },
+                    "notes": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "to": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                }
+            },
+            "Relationship": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "start": {
+                        "type": "string"
+                    },
+                    "end": {
+                        "type": "string"
+                    },
+                    "properties": {
+                        "$ref": "#/components/schemas/FamilyRelationship"
+                    }
+                }
+            },
+            "FamilyTree": {
+                "type": "object",
+                "properties": {
+                    "ancestors": {
+                        "type": "string"
+                    },
+                    "prel1": {
+                        "$ref": "#/components/schemas/Relationship"
+                    },
+                    "children": {
+                        "type": "string"
+                    },
+                    "prel2": {
+                        "$ref": "#/components/schemas/Relationship"
+                    },
+                    "spouses": {
+                        "type": "string"
+                    },
+                    "srel": {
+                        "$ref": "#/components/schemas/Relationship"
+                    },
+                    "user": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RecipeProperties": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "first_recorded": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "ingredients": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "instructions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "photo": {
+                        "type": "string"
+                    },
+                    "notes": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Recipe": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "properties": {
+                        "$ref": "#/components/schemas/RecipeProperties"
+                    }
+                }
+            },
+            "Likes": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "start": {
+                        "type": "string"
+                    },
+                    "end": {
+                        "type": "string"
+                    },
+                    "properties": {
+                        "$ref": "#/components/schemas/LikesProperties"
+                    }
+                }
+            },
+            "LikesProperties": {
+                "type": "object",
+                "properties": {
+                    "favourite": {
+                        "type": "boolean"
+                    },
+                    "like_it": {
+                        "type": "boolean"
+                    },
+                    "could_make_it": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}
