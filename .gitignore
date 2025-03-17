@@ -9,7 +9,7 @@ frontend/package
 !.env.example
 frontend/vite.config.js.timestamp-*
 frontend/vite.config.ts.timestamp-*
-
+*.gen.go
 # Backend gitignore:
 ## Binaries for programs and plugins
 backend/*.exe
