@@ -15,6 +15,51 @@
         }
     ],
     "paths": {
+        "/person_and_relationship": {
+            "post": {
+            "summary": "Create a person and relationship",
+            "operationId": "createPersonAndRelationship",
+            "requestBody": {
+                "required": true,
+                "content": {
+                "application/json": {
+                    "schema": {
+                    "type": "object",
+                    "properties": {
+                        "person": {
+                        "$ref": "#/components/schemas/PersonRegistration"
+                        },
+                        "relationship": {
+                        "$ref": "#/components/schemas/FamilyRelationship"
+                        }
+                    },
+                    "required": ["person", "relationship"]
+                    }
+                }
+                }
+            },
+            "responses": {
+                "200": {
+                "description": "Person and relationship created",
+                "content": {
+                    "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                        "person": {
+                            "$ref": "#/components/schemas/Person"
+                        },
+                        "relationship": {
+                            "$ref": "#/components/schemas/Relationship"
+                        }
+                        }
+                    }
+                    }
+                }
+                }
+            }
+            }
+        },
         "/person": {
             "post": {
                 "summary": "Create a new person",
@@ -24,7 +69,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PersonProperties"
+                                "$ref": "#/components/schemas/PersonRegistration"
                             }
                         }
                     }
@@ -77,6 +122,21 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -95,11 +155,19 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Person soft deleted",
+                        "description": "Person soft deleted"
+                    },
+                    "400": {
+                        "description": "Bad request",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Person"
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -124,11 +192,77 @@
                 "responses": {
                     "200": {
                         "description": "Person hard deleted"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
         "/person/google/{google_id}": {
+            "post": {
+                "summary": "Create a new person by Google ID",
+                "operationId": "createPersonByGoogleId",
+                "parameters": [
+                    {
+                        "name": "google_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody":{
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonRegistration"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Person created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "get": {
                 "summary": "Get a person by Google ID",
                 "operationId": "getPersonByGoogleId",
@@ -149,6 +283,21 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -177,6 +326,21 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/FamilyTree"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -255,6 +419,21 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -293,6 +472,21 @@
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -312,6 +506,21 @@
                 "responses": {
                     "200": {
                         "description": "Recipe soft deleted"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -333,6 +542,21 @@
                 "responses": {
                     "200": {
                         "description": "Recipe hard deleted"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -357,6 +581,7 @@
                         "application/json": {
                             "schema": {
                                 "type": "object",
+                                "required": ["id", "relationship"],
                                 "properties": {
                                     "id": { "type": "integer" },
                                     "relationship": {
@@ -379,6 +604,21 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Likes"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -409,6 +649,21 @@
                 "responses": {
                     "200": {
                         "description": "Relationship with recipe deleted"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -420,7 +675,8 @@
                 "type": "object",
                 "properties": {
                     "allow_admin_access": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "nullable": true
                     },
                     "invite_code": {
                         "type": "string",
@@ -432,7 +688,7 @@
                     },
                     "first_name": {
                         "type": "string",
-                        "nullable": false
+                        "nullable": true
                     },
                     "middle_name": {
                         "type": "string",
@@ -440,7 +696,7 @@
                     },
                     "last_name": {
                         "type": "string",
-                        "nullable": false
+                        "nullable": true
                     },
                     "titles": {
                         "type": "array",
@@ -472,16 +728,16 @@
                     },
                     "mothers_first_name": {
                         "type": "string",
-                        "nullable": false
+                        "nullable": true
                     },
                     "mothers_last_name": {
                         "type": "string",
-                        "nullable": false
+                        "nullable": true
                     },
                     "born": {
                         "type": "string",
                         "format": "date",
-                        "nullable": false
+                        "nullable": true
                     },
                     "place_of_birth": {
                         "type": "string",
@@ -554,7 +810,7 @@
                     },
                     "limit": {
                         "type": "integer",
-                        "nullable": false
+                        "nullable": true
                     },
                     "photos": {
                         "type": "array",
@@ -628,11 +884,11 @@
                     },
                     "verified": {
                         "type": "boolean",
-                        "nullable": false
+                        "nullable": true
                     },
                     "email": {
                         "type": "string",
-                        "nullable": false
+                        "nullable": true
                     },
                     "phone": {
                         "type": "string",
@@ -724,7 +980,8 @@
                         "items": {
                             "type": "object"
 
-                        }
+                        },
+                        "nullable": true
                     },
                     "height": {
                         "type": "number",
@@ -810,6 +1067,36 @@
                     }
                 }
             },
+            "PersonRegistration":{
+              "type": "object",
+              "required": ["first_name", "last_name", "born", "limit", "mothers_first_name", "mothers_last_name"],
+              "properties": {
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "nullable": true
+                },
+                "limit":{
+                    "type": "integer"
+                },
+                "born":{
+                    "type": "string",
+                    "format": "date"
+                },
+                "mothers_first_name":{
+                    "type": "string"
+                },
+                "mothers_last_name":{
+                    "type": "string"
+                }
+              }  
+            },
             "Person": {
                 "type": "object",
                 "properties": {
@@ -836,7 +1123,7 @@
                 "properties": {
                     "verified": {
                         "type": "boolean",
-                        "nullable": false
+                        "nullable": true
                     },
                     "notes": {
                         "type": "string",
@@ -900,7 +1187,7 @@
                     },
                     "middle_name": {
                         "type": "string",
-                        "nullable": true
+                        "nullable": false
                     },
                     "last_name": {
                         "type": "string",
@@ -954,38 +1241,47 @@
                 "type": "object",
                 "properties": {
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "origin": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "category": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "first_recorded": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": true
                     },
                     "description": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "ingredients": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "instructions": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "photo": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "notes": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1030,13 +1326,16 @@
                 "type": "object",
                 "properties": {
                     "favourite": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "nullable": true
                     },
                     "like_it": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "nullable": true
                     },
                     "could_make_it": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "nullable": true
                     }
                 }
             }
