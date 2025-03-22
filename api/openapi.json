@@ -53,7 +53,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -89,7 +89,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -117,7 +117,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -166,7 +166,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -233,7 +233,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     },
                     {
@@ -241,7 +241,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -269,7 +269,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -305,7 +305,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -422,61 +422,79 @@
                     "allow_admin_access": {
                         "type": "boolean"
                     },
+                    "invite_code": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "google_id": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "first_name": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": false
                     },
                     "middle_name": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "last_name": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": false
                     },
                     "titles": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "suffixes": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "extra_names": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "aliases": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "mothers_first_name": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": false
                     },
                     "mothers_last_name": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": false
                     },
                     "born": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": false
                     },
                     "place_of_birth": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "died": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": true
                     },
                     "place_of_death": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "life_events": {
                         "type": "array",
@@ -495,55 +513,130 @@
                                     "type": "string"
                                 }
                             }
-                        }
+                        },
+                        "nullable": true
                     },
                     "occupations": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "occupation_to_display": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "others_said": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "relationship": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            }
+                        },
+                        "nullable": true
                     },
                     "limit": {
-                        "type": "integer"
+                        "type": "integer",
+                        "nullable": false
                     },
                     "photos": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "date":{
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "nullable": true
                     },
                     "videos": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "date":{
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "nullable": true
                     },
                     "audios": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "date":{
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "nullable": true
                     },
                     "profile_picture": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "verified": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "nullable": false
                     },
                     "email": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": false
                     },
                     "phone": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "residence": {
                         "type": "object",
@@ -563,79 +656,157 @@
                             "address_line_2": {
                                 "type": "string"
                             }
-                        }
+                        },
+                        "nullable": true
                     },
                     "religion": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "baptized": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
-                    "ideology": {
-                        "type": "string"
+                    "ideologies": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
                     },
                     "blood_type": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "allergies": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "medications": {
                         "type": "array",
+                        "nullable": true,
                         "items": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "components":{
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "dosage": {
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "from": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "nullable": true
+                                },
+                                "to": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "nullable": true
+                                }
+                            }
                         }
                     },
                     "medical_conditions": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "object"
+
                         }
                     },
                     "height": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                     },
                     "weight": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                     },
                     "hair_colour": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "skin_colour": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "eye_colour": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "sports": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "hobbies": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "interests": {
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "languages": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "language": {
+                                    "type": "string"
+                                },
+                                "level": {
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            }
+                        },
+                        "nullable": true
                     },
                     "notes": {
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "date": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "nullable": true
+                                },
+                                "title":{
+                                    "type": "string",
+                                    "nullable": true
+                                },
+                                "note": {
+                                    "type": "string"
+                                },
+                                "url": {
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            }
+                        },
+                        "nullable": true
                     }
                 }
             },
@@ -644,6 +815,16 @@
                 "properties": {
                     "id": {
                         "type": "integer"
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "type":{
+                        "type": "string",
+                        "nullable": true
                     },
                     "properties": {
                         "$ref": "#/components/schemas/PersonProperties"
@@ -654,18 +835,22 @@
                 "type": "object",
                 "properties": {
                     "verified": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "nullable": false
                     },
                     "notes": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "from": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": true
                     },
                     "to": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": true
                     }
                 }
             },
@@ -675,17 +860,61 @@
                     "id": {
                         "type": "integer"
                     },
-                    "type": {
+                    "label": {
                         "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "nullable": true
                     },
                     "start": {
-                        "type": "string"
+                        "type": "integer"
                     },
                     "end": {
-                        "type": "string"
+                        "type": "integer"
                     },
                     "properties": {
                         "$ref": "#/components/schemas/FamilyRelationship"
+                    }
+                }
+            },
+            "OptimizedPersonNode":{
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "labels": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "type":{
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "middle_name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "nullable": false
+                    },
+                    "born": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": false
+                    },
+                    "died": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
                     }
                 }
             },
@@ -693,13 +922,19 @@
                 "type": "object",
                 "properties": {
                     "ancestors": {
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OptimizedPersonNode"
+                        }
                     },
                     "prel1": {
                         "$ref": "#/components/schemas/Relationship"
                     },
                     "children": {
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OptimizedPersonNode"
+                        }
                     },
                     "prel2": {
                         "$ref": "#/components/schemas/Relationship"
@@ -760,6 +995,12 @@
                     "id": {
                         "type": "integer"
                     },
+                    "labels": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "properties": {
                         "$ref": "#/components/schemas/RecipeProperties"
                     }
@@ -770,6 +1011,9 @@
                 "properties": {
                     "id": {
                         "type": "integer"
+                    },
+                    "label": {
+                        "type": "string"
                     },
                     "start": {
                         "type": "string"
