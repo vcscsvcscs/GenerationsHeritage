@@ -1,4 +1,4 @@
-module github.com/vcscsvcscs/GenerationsHeritage/apps/db-handler
+module github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter
 
 go 1.24
 

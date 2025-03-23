@@ -473,6 +473,17 @@ export interface operations {
                     "application/json": components["schemas"]["Person"];
                 };
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     softDeletePerson: {
@@ -492,6 +503,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
             };
         };
     };
@@ -513,6 +535,17 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     getPersonByGoogleId: {
@@ -533,6 +566,17 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Person"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
                 };
             };
         };
@@ -561,6 +605,17 @@ export interface operations {
                     "application/json": components["schemas"]["Person"];
                 };
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     getFamilyTreeById: {
@@ -581,6 +636,17 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FamilyTree"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
                 };
             };
         };
@@ -634,6 +700,17 @@ export interface operations {
                     "application/json": components["schemas"]["Relationship"];
                 };
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     updateRecipe: {
@@ -660,6 +737,17 @@ export interface operations {
                     "application/json": components["schemas"]["Recipe"];
                 };
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     softDeleteRecipe: {
@@ -680,6 +768,17 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     hardDeleteRecipe: {
@@ -699,6 +798,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
             };
         };
     };
@@ -731,6 +841,17 @@ export interface operations {
                     "application/json": components["schemas"]["Likes"];
                 };
             };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     deleteRecipeRelationship: {
@@ -752,6 +873,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
             };
         };
     };

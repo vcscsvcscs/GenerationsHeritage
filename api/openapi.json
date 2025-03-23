@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "db-handler",
+        "title": "db-adapter",
         "version": "0.0.1"
     },
     "servers": [
@@ -12,58 +12,137 @@
         {
             "description": "staging server",
             "url": "http://0.0.0.0:7699"
+        },
+        {
+            "description": "development server",
+            "url": "http://0.0.0.0:7698"
         }
     ],
     "paths": {
-        "/person_and_relationship": {
-            "post": {
-            "summary": "Create a person and relationship",
-            "operationId": "createPersonAndRelationship",
-            "requestBody": {
-                "required": true,
-                "content": {
-                "application/json": {
-                    "schema": {
-                    "type": "object",
-                    "properties": {
-                        "person": {
-                        "$ref": "#/components/schemas/PersonRegistration"
-                        },
-                        "relationship": {
-                        "$ref": "#/components/schemas/FamilyRelationship"
-                        }
+        "/health":{
+            "get":{
+                "summary": "Check the health of the server",
+                "operationId": "healthCheck",
+                "responses": {
+                    "200": {
+                        "description": "Server is healthy"
                     },
-                    "required": ["person", "relationship"]
+                    "503": {
+                        "description": "Server is unhealthy"
                     }
-                }
-                }
-            },
-            "responses": {
-                "200": {
-                "description": "Person and relationship created",
-                "content": {
-                    "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                        "person": {
-                            "$ref": "#/components/schemas/Person"
-                        },
-                        "relationship": {
-                            "$ref": "#/components/schemas/Relationship"
-                        }
-                        }
-                    }
-                    }
-                }
                 }
             }
+        },
+        "/person_and_relationship/{id}": {
+            "post": {
+                "summary": "Create a person and relationship",
+                "operationId": "createPersonAndRelationship",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "person": {
+                                        "$ref": "#/components/schemas/PersonRegistration"
+                                    },
+                                    "relationship": {
+                                        "$ref": "#/components/schemas/FamilyRelationship"
+                                    }
+                                },
+                                "required": [
+                                    "person",
+                                    "relationship"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Person and relationship created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "person": {
+                                            "$ref": "#/components/schemas/Person"
+                                        },
+                                        "relationship": {
+                                            "$ref": "#/components/schemas/Relationship"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/person": {
             "post": {
                 "summary": "Create a new person",
                 "operationId": "createPerson",
+                "parameters": [
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -84,12 +163,42 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
         "/person/{id}": {
-            "put": {
+            "patch": {
                 "summary": "Update a person by ID",
                 "operationId": "updatePerson",
                 "parameters": [
@@ -100,7 +209,16 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
+
                 ],
                 "requestBody": {
                     "required": true,
@@ -137,6 +255,36 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -151,6 +299,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -159,6 +315,36 @@
                     },
                     "400": {
                         "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -187,6 +373,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -195,6 +389,21 @@
                     },
                     "400": {
                         "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -225,7 +434,7 @@
                         }
                     }
                 ],
-                "requestBody":{
+                "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
@@ -344,6 +553,119 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/person/{id}/recipes":{
+            "get":{
+                "summary": "Get recipes by person ID",
+                "operationId": "getRecipesByPersonId",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recipes retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "recipeRelations":{
+                                            "type": "array",
+                                            "items": {
+
+                                                        "$ref": "#/components/schemas/Likes"
+                                                
+                                            }
+                                        },
+                                        "recipes": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Recipe"
+                                            }
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -352,6 +674,16 @@
             "post": {
                 "summary": "Create a relationship between two persons",
                 "operationId": "createRelationship",
+                "parameters": [
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -383,6 +715,36 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -403,6 +765,14 @@
                     {
                         "name": "id2",
                         "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -434,18 +804,56 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
         "/recipe/{id}": {
-            "put": {
+            "patch": {
                 "summary": "Update a recipe by ID",
                 "operationId": "updateRecipe",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -487,6 +895,36 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -501,6 +939,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -509,6 +955,36 @@
                     },
                     "400": {
                         "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -537,6 +1013,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -545,6 +1029,36 @@
                     },
                     "400": {
                         "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -573,6 +1087,14 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -581,9 +1103,14 @@
                         "application/json": {
                             "schema": {
                                 "type": "object",
-                                "required": ["id", "relationship"],
+                                "required": [
+                                    "id",
+                                    "relationship"
+                                ],
                                 "properties": {
-                                    "id": { "type": "integer" },
+                                    "id": {
+                                        "type": "integer"
+                                    },
                                     "relationship": {
                                         "type": "object",
                                         "properties": {
@@ -622,6 +1149,36 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -640,6 +1197,14 @@
                     {
                         "name": "personId",
                         "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -664,6 +1229,36 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -675,7 +1270,18 @@
                 "type": "object",
                 "properties": {
                     "allow_admin_access": {
-                        "type": "boolean",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        },
                         "nullable": true
                     },
                     "invite_code": {
@@ -823,7 +1429,7 @@
                                 "description": {
                                     "type": "string"
                                 },
-                                "date":{
+                                "date": {
                                     "type": "string",
                                     "format": "date"
                                 },
@@ -845,7 +1451,7 @@
                                 "description": {
                                     "type": "string"
                                 },
-                                "date":{
+                                "date": {
                                     "type": "string",
                                     "format": "date"
                                 },
@@ -867,7 +1473,7 @@
                                 "description": {
                                     "type": "string"
                                 },
-                                "date":{
+                                "date": {
                                     "type": "string",
                                     "format": "date"
                                 },
@@ -954,7 +1560,7 @@
                                     "type": "string",
                                     "nullable": true
                                 },
-                                "components":{
+                                "components": {
                                     "type": "string",
                                     "nullable": true
                                 },
@@ -979,7 +1585,6 @@
                         "type": "array",
                         "items": {
                             "type": "object"
-
                         },
                         "nullable": true
                     },
@@ -1050,7 +1655,7 @@
                                     "format": "date",
                                     "nullable": true
                                 },
-                                "title":{
+                                "title": {
                                     "type": "string",
                                     "nullable": true
                                 },
@@ -1067,35 +1672,42 @@
                     }
                 }
             },
-            "PersonRegistration":{
-              "type": "object",
-              "required": ["first_name", "last_name", "born", "limit", "mothers_first_name", "mothers_last_name"],
-              "properties": {
-                "first_name": {
-                  "type": "string"
-                },
-                "last_name": {
-                  "type": "string"
-                },
-                "email": {
-                  "type": "string",
-                  "format": "email",
-                  "nullable": true
-                },
-                "limit":{
-                    "type": "integer"
-                },
-                "born":{
-                    "type": "string",
-                    "format": "date"
-                },
-                "mothers_first_name":{
-                    "type": "string"
-                },
-                "mothers_last_name":{
-                    "type": "string"
+            "PersonRegistration": {
+                "type": "object",
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "born",
+                    "limit",
+                    "mothers_first_name",
+                    "mothers_last_name"
+                ],
+                "properties": {
+                    "first_name": {
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "limit": {
+                        "type": "integer"
+                    },
+                    "born": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "mothers_first_name": {
+                        "type": "string"
+                    },
+                    "mothers_last_name": {
+                        "type": "string"
+                    }
                 }
-              }  
             },
             "Person": {
                 "type": "object",
@@ -1109,7 +1721,7 @@
                             "type": "string"
                         }
                     },
-                    "type":{
+                    "type": {
                         "type": "string",
                         "nullable": true
                     },
@@ -1165,7 +1777,7 @@
                     }
                 }
             },
-            "OptimizedPersonNode":{
+            "OptimizedPersonNode": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -1177,7 +1789,7 @@
                             "type": "string"
                         }
                     },
-                    "type":{
+                    "type": {
                         "type": "string",
                         "nullable": true
                     },
@@ -1248,6 +1860,20 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "allow_admin_access":{
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
                     "category": {
                         "type": "string",
                         "nullable": true
@@ -1282,6 +1908,24 @@
                     "notes": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "others_said":{
+                        "nullable": true,
+                        "type": "array",
+                        "items":{
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "said":{
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 }
             },
