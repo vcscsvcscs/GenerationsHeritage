@@ -37,6 +37,24 @@ services:
     environment:
       - QUICK_CONNECT_MG_HOST=memgraph
       - QUICK_CONNECT_MG_PORT=7687
+  db-adapter:
+    image: vcscsvcscs/gheritage-db-adapter:latest
+    container_name: db-adapter
+    ports:
+      - "8080:8080"
+    depends_on:
+      - memgraph
+    environment:
+      - MEMGRAPH_HOST=memgraph
+      - MEMGRAPH_PORT=7687
+      - MEMGRAPH_USER=<USERNAME>
+      - MEMGRAPH_PASSWORD=<PASSWORD>
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 0s
 volumes:
   mg_lib:
     driver: local
