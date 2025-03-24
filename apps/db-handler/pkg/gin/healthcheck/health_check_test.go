@@ -83,9 +83,11 @@ func TestHealthCheck_SetStatus(t *testing.T) {
 }
 
 func TestHealthCheck_HealthCheckHandler(t *testing.T) {
+	t.Parallel()
+
 	r := gin.Default()
 	hc := New()
-	r.GET("/health", hc.HealthCheckHandler())
+	r.GET("/health", hc.HealthCheckHandler)
 	type args struct {
 		status string
 	}
@@ -100,7 +102,7 @@ func TestHealthCheck_HealthCheckHandler(t *testing.T) {
 			args: args{
 				status: "ok",
 			},
-			want:       `{"status":"ok"}`,
+			want:       `{"msg":"ok"}`,
 			statusCode: http.StatusOK,
 		},
 		{
@@ -108,12 +110,13 @@ func TestHealthCheck_HealthCheckHandler(t *testing.T) {
 			args: args{
 				status: "nok",
 			},
-			want:       `{"status":"nok"}`,
-			statusCode: http.StatusInternalServerError,
+			want:       `{"msg":"nok"}`,
+			statusCode: http.StatusServiceUnavailable,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			hc.SetStatus(tt.args.status)
 
 			w := httptest.NewRecorder()

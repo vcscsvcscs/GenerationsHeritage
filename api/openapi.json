@@ -19,16 +19,40 @@
         }
     ],
     "paths": {
-        "/health":{
-            "get":{
+        "/health": {
+            "get": {
                 "summary": "Check the health of the server",
                 "operationId": "healthCheck",
                 "responses": {
                     "200": {
-                        "description": "Server is healthy"
+                        "description": "Server is healthy",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     },
                     "503": {
-                        "description": "Server is unhealthy"
+                        "description": "Server is unhealthy",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -133,16 +157,6 @@
             "post": {
                 "summary": "Create a new person",
                 "operationId": "createPerson",
-                "parameters": [
-                    {
-                        "name": "X-User-ID",
-                        "in": "header",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -218,7 +232,6 @@
                             "type": "integer"
                         }
                     }
-
                 ],
                 "requestBody": {
                     "required": true,
@@ -472,6 +485,65 @@
                     }
                 }
             },
+            "patch": {
+                "summary": "Create a new person by Google ID with invite code",
+                "operationId": "createPersonByGoogleIdAndInviteCode",
+                "parameters": [
+                    {
+                        "name": "google_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "invite_code": {
+                                        "type": "string"
+                                    },
+                                    "person": {
+                                        "$ref": "#/components/schemas/PersonRegistration"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Person created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Person"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "get": {
                 "summary": "Get a person by Google ID",
                 "operationId": "getPersonByGoogleId",
@@ -572,8 +644,8 @@
                 }
             }
         },
-        "/person/{id}/recipes":{
-            "get":{
+        "/person/{id}/recipes": {
+            "get": {
                 "summary": "Get recipes by person ID",
                 "operationId": "getRecipesByPersonId",
                 "parameters": [
@@ -602,12 +674,10 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "recipeRelations":{
+                                        "recipeRelations": {
                                             "type": "array",
                                             "items": {
-
-                                                        "$ref": "#/components/schemas/Likes"
-                                                
+                                                "$ref": "#/components/schemas/Likes"
                                             }
                                         },
                                         "recipes": {
@@ -617,12 +687,11 @@
                                             }
                                         }
                                     }
-                                    
                                 }
                             }
                         }
                     },
-                    "400":{
+                    "400": {
                         "description": "Bad request",
                         "content": {
                             "application/json": {
@@ -1860,7 +1929,7 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "allow_admin_access":{
+                    "allow_admin_access": {
                         "type": "array",
                         "items": {
                             "type": "object",
@@ -1909,10 +1978,10 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "others_said":{
+                    "others_said": {
                         "nullable": true,
                         "type": "array",
-                        "items":{
+                        "items": {
                             "type": "object",
                             "properties": {
                                 "id": {
@@ -1921,7 +1990,7 @@
                                 "name": {
                                     "type": "string"
                                 },
-                                "said":{
+                                "said": {
                                     "type": "string"
                                 }
                             }

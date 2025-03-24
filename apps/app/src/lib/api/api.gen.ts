@@ -4,7 +4,24 @@
  */
 
 export interface paths {
-    "/person_and_relationship": {
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check the health of the server */
+        get: operations["healthCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/person_and_relationship/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -46,14 +63,14 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Update a person by ID */
-        put: operations["updatePerson"];
+        put?: never;
         post?: never;
         /** Soft delete a person by ID */
         delete: operations["softDeletePerson"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update a person by ID */
+        patch: operations["updatePerson"];
         trace?: never;
     };
     "/person/{id}/hard-delete": {
@@ -108,6 +125,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/person/{id}/recipes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get recipes by person ID */
+        get: operations["getRecipesByPersonId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/relationship": {
         parameters: {
             query?: never;
@@ -150,14 +184,14 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Update a recipe by ID */
-        put: operations["updateRecipe"];
+        put?: never;
         post?: never;
         /** Soft delete a recipe by ID */
         delete: operations["softDeleteRecipe"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update a recipe by ID */
+        patch: operations["updateRecipe"];
         trace?: never;
     };
     "/recipe/{id}/hard-delete": {
@@ -200,7 +234,10 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         PersonProperties: {
-            allow_admin_access?: boolean | null;
+            allow_admin_access?: {
+                id?: number;
+                name?: string;
+            }[] | null;
             invite_code?: string | null;
             google_id?: string | null;
             first_name?: string | null;
@@ -360,6 +397,10 @@ export interface components {
         RecipeProperties: {
             name?: string | null;
             origin?: string | null;
+            allow_admin_access?: {
+                id?: number;
+                name?: string;
+            }[];
             category?: string | null;
             /** Format: date */
             first_recorded?: string | null;
@@ -368,6 +409,11 @@ export interface components {
             instructions?: string[] | null;
             photo?: string | null;
             notes?: string | null;
+            others_said?: {
+                id?: number;
+                name?: string;
+                said?: string;
+            }[] | null;
         };
         Recipe: {
             id?: number;
@@ -395,11 +441,40 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    createPersonAndRelationship: {
+    healthCheck: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Server is healthy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Server is unhealthy */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createPersonAndRelationship: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
             cookie?: never;
         };
         requestBody: {
@@ -423,12 +498,36 @@ export interface operations {
                     };
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     createPerson: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path?: never;
             cookie?: never;
         };
@@ -447,12 +546,91 @@ export interface operations {
                     "application/json": components["schemas"]["Person"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    softDeletePerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Person soft deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     updatePerson: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 id: number;
             };
@@ -484,12 +662,36 @@ export interface operations {
                     };
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
-    softDeletePerson: {
+    hardDeletePerson: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 id: number;
             };
@@ -497,7 +699,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Person soft deleted */
+            /** @description Person hard deleted */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -515,28 +717,8 @@ export interface operations {
                     };
                 };
             };
-        };
-    };
-    hardDeletePerson: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Person hard deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
+            /** @description Internal server error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -649,12 +831,85 @@ export interface operations {
                     };
                 };
             };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    getRecipesByPersonId: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recipes retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        recipeRelations?: components["schemas"]["Likes"][];
+                        recipes?: components["schemas"]["Recipe"][];
+                    };
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     createRelationship: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path?: never;
             cookie?: never;
         };
@@ -677,12 +932,36 @@ export interface operations {
                     "application/json": components["schemas"]["Relationship"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     getRelationship: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 id1: number;
                 id2: number;
@@ -711,12 +990,91 @@ export interface operations {
                     };
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    softDeleteRecipe: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recipe soft deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     updateRecipe: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 id: number;
             };
@@ -748,28 +1106,19 @@ export interface operations {
                     };
                 };
             };
-        };
-    };
-    softDeleteRecipe: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Recipe soft deleted */
-            200: {
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
             };
-            /** @description Bad request */
-            400: {
+            /** @description Internal server error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -784,7 +1133,9 @@ export interface operations {
     hardDeleteRecipe: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 id: number;
             };
@@ -810,12 +1161,36 @@ export interface operations {
                     };
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     createRecipeRelationship: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 recipeId: number;
             };
@@ -852,6 +1227,28 @@ export interface operations {
                     };
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
         };
     };
     deleteRecipeRelationship: {
@@ -859,7 +1256,9 @@ export interface operations {
             query: {
                 personId: number;
             };
-            header?: never;
+            header: {
+                "X-User-ID": number;
+            };
             path: {
                 recipeId: number;
             };
@@ -876,6 +1275,28 @@ export interface operations {
             };
             /** @description Bad request */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };

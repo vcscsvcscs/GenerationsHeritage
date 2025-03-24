@@ -10,7 +10,7 @@ import (
 type HealthCheck interface {
 	SetStatus(status string)
 	GetStatus() string
-	HealthCheckHandler() gin.HandlerFunc
+	HealthCheckHandler(c *gin.Context)
 }
 
 type healthCheck struct {
@@ -38,17 +38,15 @@ func (hc *healthCheck) GetStatus() string {
 	return hc.status
 }
 
-func (hc *healthCheck) HealthCheckHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		switch hc.GetStatus() {
-		case "nok":
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"status": hc.GetStatus(),
-			})
-		default:
-			c.JSON(http.StatusOK, gin.H{
-				"status": hc.GetStatus(),
-			})
-		}
+func (hc *healthCheck) HealthCheckHandler(c *gin.Context) {
+	switch hc.GetStatus() {
+	case "nok":
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"msg": hc.GetStatus(),
+		})
+	default:
+		c.JSON(http.StatusOK, gin.H{
+			"msg": hc.GetStatus(),
+		})
 	}
 }
