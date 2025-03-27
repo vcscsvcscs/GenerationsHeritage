@@ -1,15 +1,18 @@
 name: Frontend Continuous Integration
+
 on:
   pull_request:
     paths:
-      - "cmd/frontend/**"
+      - "apps/app**"
+
 jobs:
   lint:
     uses: ./.github/workflows/svelte_lint.yml
     with:
-      working-directory: 'cmd/frontend'
+      working-directory: 'apps/app'
+      
   build:
     needs: lint
-    uses: ./.github/workflows/svelte_build.yml
+    uses: ./.github/workflows/svelte_test.yml
     with:
-      working-directory: 'cmd/frontend'
+      working-directory: 'apps/app'

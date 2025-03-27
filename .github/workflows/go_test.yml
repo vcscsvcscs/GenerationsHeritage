@@ -1,0 +1,35 @@
+name: Go Test
+
+on:
+    workflow_call:
+      inputs:
+        working-directory:
+          required: true
+          type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go 1.24.x'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.1'
+
+      - name: Display Go version
+        run: go version
+
+      - name: Install dependencies
+        run: |
+          go get ./${{ inputs.working-directory }}/...
+          
+      - name: Run tests
+        run: |
+          go test ./${{ inputs.working-directory }}/... -json > TestResults.json
+
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-Test-results
+          path: TestResults.json

@@ -1,12 +1,14 @@
-name: Release Backend service to Docker Hub
+name: Release to Docker Hub
 
 on:
-  pull_request:
-    paths:
-      - "cmd/backend/**"
-      - "pkg/**"
-      - "deployment/backend/**"
-      - ".github/workflows/backend-cd.yml"
+    workflow_call:
+      inputs:
+        service-name:
+          required: true
+          type: string
+        working-directory:
+          required: true
+          type: string
   
 jobs:
     docker:
@@ -47,6 +49,6 @@ jobs:
           uses: docker/build-push-action@v5
           with:
             push: true
-            context: "{{defaultContext}}:cmd/backend"
-            tags: vcscsvcscs/gheritage-backend-service:${{steps.create_image_tag.outputs.result}}
+            context: "{{defaultContext}}:${{ inputs.working-directory }}"
+            tags: vcscsvcscs/${{ inputs.service-name }}:${{steps.create_image_tag.outputs.result}}
             platforms: linux/amd64, linux/arm64
