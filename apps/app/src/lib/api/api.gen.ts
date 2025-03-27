@@ -105,7 +105,8 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Create a new person by Google ID with invite code */
+        patch: operations["createPersonByGoogleIdAndInviteCode"];
         trace?: never;
     };
     "/person/{id}/family-tree": {
@@ -455,14 +456,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
             };
             /** @description Server is unhealthy */
             503: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
             };
         };
     };
@@ -525,9 +534,7 @@ export interface operations {
     createPerson: {
         parameters: {
             query?: never;
-            header: {
-                "X-User-ID": number;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -775,6 +782,46 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["PersonRegistration"];
+            };
+        };
+        responses: {
+            /** @description Person created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Person"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    createPersonByGoogleIdAndInviteCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                google_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    invite_code?: string;
+                    person?: components["schemas"]["PersonRegistration"];
+                };
             };
         };
         responses: {

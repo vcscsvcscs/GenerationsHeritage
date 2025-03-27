@@ -504,6 +504,10 @@
                         "application/json": {
                             "schema": {
                                 "type": "object",
+                                "required": [
+                                    "invite_code",
+                                    "person"
+                                ],
                                 "properties": {
                                     "invite_code": {
                                         "type": "string"
