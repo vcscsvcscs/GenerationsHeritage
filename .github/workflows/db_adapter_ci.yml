@@ -1,7 +1,9 @@
 name: Database Adapter Continues Integration
 
 on:
+  workflow_call:
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "apps/db-adapter**"
 
