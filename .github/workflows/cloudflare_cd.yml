@@ -1,0 +1,53 @@
+name: Deploy Generation Heritage Svelte Kit App to Cloudflare
+
+on:
+  workflow_call:
+  pull_request:
+    types: [closed]
+    paths:
+      - "apps/app**"
+
+jobs:
+  ci:
+    uses: ./.github/workflows/svelte_ci.yml
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: ci
+    if: github.actor_id == 'vcscsvcscs' || ( github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true )
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & Deploy Worker to Production
+        uses: cloudflare/wrangler-action@v3
+        with:
+            environment: production
+            workingDirectory: 'apps/app'
+            apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+            accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+            secrets: |
+              GOOGLE_CLIENT_ID
+              GOOGLE_CLIENT_SECRET
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.PROD_GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.PROD_GOOGLE_CLIENT_SECRET }}
+  
+  deploy-to-stage:
+      runs-on: ubuntu-latest
+      timeout-minutes: 60
+      needs: ci
+      if: github.actor_id == 'vcscsvcscs' || ( github.ref == 'refs/heads/stage' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true )
+      steps:
+        - uses: actions/checkout@v4
+        - name: Build & Deploy Worker to Stage
+          uses: cloudflare/wrangler-action@v3
+          with:
+            environment: staging
+            workingDirectory: 'apps/app'
+            apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+            accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+            secrets: |
+              GOOGLE_CLIENT_ID
+              GOOGLE_CLIENT_SECRET
+          env:
+            GOOGLE_CLIENT_ID: ${{ secrets.STAGING_GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET: ${{ secrets.STAGING_GOOGLE_CLIENT_SECRET }}

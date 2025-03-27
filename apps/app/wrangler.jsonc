@@ -45,6 +45,9 @@
     "staging": {
       "name": "generations-heritage-stage",
       "route": "https://ghstage.varghacsongor.hu/*",
+      "vars": {
+        "GOOGLE_CALLBACK_URI": "https://ghstage.varghacsongor.hu/login/google/callback"
+      },
       "kv_namespaces": [
         {
           "binding": "GH_SESSIONS",
@@ -61,6 +64,9 @@
     "production": {
       "name": "generations-heritage-prod",
       "route": "https://csalad.varghacsongor.hu/*",
+      "vars": {
+        "GOOGLE_CALLBACK_URI": "https://csalad.varghacsongor.hu/login/google/callback"
+      },
       "kv_namespaces": [
         {
           "binding": "GH_SESSIONS",

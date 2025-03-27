@@ -1,7 +1,9 @@
 name: Frontend Continuous Integration
 
 on:
+  workflow_call:
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "apps/app**"
 
