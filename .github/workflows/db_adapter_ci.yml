@@ -1,8 +1,12 @@
-name: Frontend Continuous Integration
+name: Database Adapter Continues Integration
+
 on:
   pull_request:
+    branches:
+      - feature/migrate-100-percent-to-svelte
     paths:
-      - "apps/db-adapter**"
+      - "apps/db-adapter/*"
+
 jobs:
     golangci:
         name: lint
