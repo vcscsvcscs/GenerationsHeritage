@@ -7,6 +7,8 @@ on:
     paths:
       - "apps/db-adapter**"
       - ".github/workflows/db_adapter_ci.yml"
+      - ".github/workflows/go_test.yml"
+      - ".github/workflows/docker_build.yml"
 
 jobs:
     golangci:
