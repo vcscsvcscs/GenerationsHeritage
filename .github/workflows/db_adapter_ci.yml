@@ -6,6 +6,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - "apps/db-adapter**"
+      - ".github/workflows/db_adapter_ci.yml"
 
 jobs:
     golangci:
