@@ -36,28 +36,35 @@ func TestNewServer(t *testing.T) {
 
 	t.Run("should create a new server instance", func(t *testing.T) {
 		t.Parallel()
-		srv := New(logger, mockDriver, mockHealth)
+		srv := New(logger, mockDriver, mockHealth, 1)
 		assert.NotNil(t, srv)
 	})
 
 	t.Run("should panic if logger is nil", func(t *testing.T) {
 		t.Parallel()
 		assert.Panics(t, func() {
-			New(nil, mockDriver, mockHealth)
+			New(nil, mockDriver, mockHealth, 1)
 		})
 	})
 
 	t.Run("should panic if driver is nil", func(t *testing.T) {
 		t.Parallel()
 		assert.Panics(t, func() {
-			New(logger, nil, mockHealth)
+			New(logger, nil, mockHealth, 1)
 		})
 	})
 
 	t.Run("should panic if healthcheck is nil", func(t *testing.T) {
 		t.Parallel()
 		assert.Panics(t, func() {
-			New(logger, mockDriver, nil)
+			New(logger, mockDriver, nil, 1)
+		})
+	})
+
+	t.Run("should panic if databaseOperationTimeout is 0", func(t *testing.T) {
+		t.Parallel()
+		assert.Panics(t, func() {
+			New(logger, mockDriver, mockHealth, 0)
 		})
 	})
 }

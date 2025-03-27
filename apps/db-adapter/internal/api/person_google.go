@@ -1,8 +1,18 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"context"
 
-func (srv *server) GetPersonByGoogleId(c *gin.Context, googleId string) {}
+	"github.com/gin-gonic/gin"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+)
+
+func (srv *server) GetPersonByGoogleId(c *gin.Context, googleId string) {
+	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer cancel()
+	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	session.ExecuteRead()
+}
 
 func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId string) {}
 

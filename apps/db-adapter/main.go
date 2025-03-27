@@ -38,6 +38,7 @@ func init() {
 	viper.SetDefault("MEMGRAPH_PASS", "")
 	viper.SetDefault("PRODUCTION", false)
 	viper.SetDefault("REQUEST_TIMEOUT", 20)
+	viper.SetDefault("DB_OP_TIMEOUT", 5)
 
 	httpPort = viper.GetString("HTTP_PORT")
 	memgraphURI = viper.GetString("MEMGRAPH_URI")
