@@ -2,10 +2,8 @@ name: Database Adapter Continues Integration
 
 on:
   pull_request:
-    branches:
-      - feature/migrate-100-percent-to-svelte
     paths:
-      - "apps/db-adapter/*"
+      - "apps/db-adapter**"
 
 jobs:
     golangci:
@@ -22,11 +20,13 @@ jobs:
             with:
               version: latest
               working-directory: 'apps/db-adapter'
+              
     test:
         uses: ./.github/workflows/go_test.yml
         needs: golangci
         with:
             working-directory: 'apps/db-adapter'
+
     build:
         needs: test
         uses: ./.github/workflows/docker_build.yml
