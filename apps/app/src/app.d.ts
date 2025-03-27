@@ -3,18 +3,18 @@ import { KVNamespace } from '@cloudflare/workers-types';
 // for information about these interfaces
 declare global {
 	namespace App {
-        interface Locals {
-            session: Session | null;
-        }
-        interface Platform {
-            env: {
-                GH_MEDIA: R2Bucket;
+		interface Locals {
+			session: Session | null;
+		}
+		interface Platform {
+			env: {
+				GH_MEDIA: R2Bucket;
 				GH_SESSIONS: KVNamespace;
-            };
-            cf: CfProperties
-            ctx: ExecutionContext
-        }
-    }
+			};
+			cf: CfProperties;
+			ctx: ExecutionContext;
+		}
+	}
 }
 
 export {};

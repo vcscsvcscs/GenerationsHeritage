@@ -4,1355 +4,1375 @@
  */
 
 export interface paths {
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Check the health of the server */
-        get: operations["healthCheck"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/person_and_relationship/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a person and relationship */
-        post: operations["createPersonAndRelationship"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/person": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a new person */
-        post: operations["createPerson"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/person/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Soft delete a person by ID */
-        delete: operations["softDeletePerson"];
-        options?: never;
-        head?: never;
-        /** Update a person by ID */
-        patch: operations["updatePerson"];
-        trace?: never;
-    };
-    "/person/{id}/hard-delete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Hard delete a person by ID */
-        delete: operations["hardDeletePerson"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/person/google/{google_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a person by Google ID */
-        get: operations["getPersonByGoogleId"];
-        put?: never;
-        /** Create a new person by Google ID */
-        post: operations["createPersonByGoogleId"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Create a new person by Google ID with invite code */
-        patch: operations["createPersonByGoogleIdAndInviteCode"];
-        trace?: never;
-    };
-    "/person/{id}/family-tree": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get family tree by person ID */
-        get: operations["getFamilyTreeById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/person/{id}/recipes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get recipes by person ID */
-        get: operations["getRecipesByPersonId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/relationship": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a relationship between two persons */
-        post: operations["createRelationship"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/relationship/{id1}/{id2}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get relationship between two persons */
-        get: operations["getRelationship"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/recipe/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Soft delete a recipe by ID */
-        delete: operations["softDeleteRecipe"];
-        options?: never;
-        head?: never;
-        /** Update a recipe by ID */
-        patch: operations["updateRecipe"];
-        trace?: never;
-    };
-    "/recipe/{id}/hard-delete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Hard delete a recipe by ID */
-        delete: operations["hardDeleteRecipe"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/recipe/{recipeId}/relationship": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a relationship with an existing recipe */
-        post: operations["createRecipeRelationship"];
-        /** Delete a relationship with a recipe */
-        delete: operations["deleteRecipeRelationship"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
+	'/health': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Check the health of the server */
+		get: operations['healthCheck'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/person_and_relationship/{id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Create a person and relationship */
+		post: operations['createPersonAndRelationship'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/person': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Create a new person */
+		post: operations['createPerson'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/person/{id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		/** Soft delete a person by ID */
+		delete: operations['softDeletePerson'];
+		options?: never;
+		head?: never;
+		/** Update a person by ID */
+		patch: operations['updatePerson'];
+		trace?: never;
+	};
+	'/person/{id}/hard-delete': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		/** Hard delete a person by ID */
+		delete: operations['hardDeletePerson'];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/person/google/{google_id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get a person by Google ID */
+		get: operations['getPersonByGoogleId'];
+		put?: never;
+		/** Create a new person by Google ID */
+		post: operations['createPersonByGoogleId'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		/** Create a new person by Google ID with invite code */
+		patch: operations['createPersonByGoogleIdAndInviteCode'];
+		trace?: never;
+	};
+	'/person/{id}/family-tree': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get family tree by person ID */
+		get: operations['getFamilyTreeById'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/person/{id}/recipes': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get recipes by person ID */
+		get: operations['getRecipesByPersonId'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/relationship': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Create a relationship between two persons */
+		post: operations['createRelationship'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/relationship/{id1}/{id2}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get relationship between two persons */
+		get: operations['getRelationship'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/recipe/{id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		/** Soft delete a recipe by ID */
+		delete: operations['softDeleteRecipe'];
+		options?: never;
+		head?: never;
+		/** Update a recipe by ID */
+		patch: operations['updateRecipe'];
+		trace?: never;
+	};
+	'/recipe/{id}/hard-delete': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		/** Hard delete a recipe by ID */
+		delete: operations['hardDeleteRecipe'];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/recipe/{recipeId}/relationship': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Create a relationship with an existing recipe */
+		post: operations['createRecipeRelationship'];
+		/** Delete a relationship with a recipe */
+		delete: operations['deleteRecipeRelationship'];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        PersonProperties: {
-            allow_admin_access?: {
-                id?: number;
-                name?: string;
-            }[] | null;
-            invite_code?: string | null;
-            google_id?: string | null;
-            first_name?: string | null;
-            middle_name?: string | null;
-            last_name?: string | null;
-            titles?: string[] | null;
-            suffixes?: string[] | null;
-            extra_names?: string[] | null;
-            aliases?: string[] | null;
-            mothers_first_name?: string | null;
-            mothers_last_name?: string | null;
-            /** Format: date */
-            born?: string | null;
-            place_of_birth?: string | null;
-            /** Format: date */
-            died?: string | null;
-            place_of_death?: string | null;
-            life_events?: {
-                /** Format: date */
-                from?: string;
-                /** Format: date */
-                to?: string;
-                description?: string;
-            }[] | null;
-            occupations?: string[] | null;
-            occupation_to_display?: string | null;
-            others_said?: {
-                id?: number;
-                name?: string;
-                relationship?: string;
-                description?: string;
-                url?: string | null;
-            }[] | null;
-            limit?: number | null;
-            photos?: {
-                url?: string;
-                description?: string;
-                /** Format: date */
-                date?: string;
-                name?: string;
-            }[] | null;
-            videos?: {
-                url?: string;
-                description?: string;
-                /** Format: date */
-                date?: string;
-                name?: string;
-            }[] | null;
-            audios?: {
-                url?: string;
-                description?: string;
-                /** Format: date */
-                date?: string;
-                name?: string;
-            }[] | null;
-            profile_picture?: string | null;
-            verified?: boolean | null;
-            email?: string | null;
-            phone?: string | null;
-            residence?: {
-                city?: string;
-                country?: string;
-                zip_code?: string;
-                address_line_1?: string;
-                address_line_2?: string;
-            } | null;
-            religion?: string | null;
-            baptized?: string | null;
-            ideologies?: string[] | null;
-            blood_type?: string | null;
-            allergies?: string[] | null;
-            medications?: {
-                name?: string;
-                description?: string | null;
-                components?: string | null;
-                dosage?: string | null;
-                /** Format: date */
-                from?: string | null;
-                /** Format: date */
-                to?: string | null;
-            }[] | null;
-            medical_conditions?: Record<string, never>[] | null;
-            height?: number | null;
-            weight?: number | null;
-            hair_colour?: string | null;
-            skin_colour?: string | null;
-            eye_colour?: string | null;
-            sports?: string[] | null;
-            hobbies?: string[] | null;
-            interests?: string[] | null;
-            languages?: {
-                language?: string;
-                level?: string | null;
-            }[] | null;
-            notes?: {
-                /** Format: date */
-                date?: string | null;
-                title?: string | null;
-                note?: string;
-                url?: string | null;
-            }[] | null;
-        };
-        PersonRegistration: {
-            first_name: string;
-            last_name: string;
-            /** Format: email */
-            email?: string | null;
-            limit: number;
-            /** Format: date */
-            born: string;
-            mothers_first_name: string;
-            mothers_last_name: string;
-        };
-        Person: {
-            id?: number;
-            labels?: string[];
-            type?: string | null;
-            properties?: components["schemas"]["PersonProperties"];
-        };
-        FamilyRelationship: {
-            verified?: boolean | null;
-            notes?: string | null;
-            /** Format: date */
-            from?: string | null;
-            /** Format: date */
-            to?: string | null;
-        };
-        Relationship: {
-            id?: number;
-            label?: string;
-            type?: string | null;
-            start?: number;
-            end?: number;
-            properties?: components["schemas"]["FamilyRelationship"];
-        };
-        OptimizedPersonNode: {
-            id?: number;
-            labels?: string[];
-            type?: string | null;
-            first_name?: string;
-            middle_name?: string;
-            last_name?: string;
-            /** Format: date */
-            born?: string;
-            /** Format: date */
-            died?: string | null;
-        };
-        FamilyTree: {
-            ancestors?: components["schemas"]["OptimizedPersonNode"][];
-            prel1?: components["schemas"]["Relationship"];
-            children?: components["schemas"]["OptimizedPersonNode"][];
-            prel2?: components["schemas"]["Relationship"];
-            spouses?: string;
-            srel?: components["schemas"]["Relationship"];
-            user?: string;
-        };
-        RecipeProperties: {
-            name?: string | null;
-            origin?: string | null;
-            allow_admin_access?: {
-                id?: number;
-                name?: string;
-            }[];
-            category?: string | null;
-            /** Format: date */
-            first_recorded?: string | null;
-            description?: string | null;
-            ingredients?: string[] | null;
-            instructions?: string[] | null;
-            photo?: string | null;
-            notes?: string | null;
-            others_said?: {
-                id?: number;
-                name?: string;
-                said?: string;
-            }[] | null;
-        };
-        Recipe: {
-            id?: number;
-            labels?: string[];
-            properties?: components["schemas"]["RecipeProperties"];
-        };
-        Likes: {
-            id?: number;
-            label?: string;
-            start?: string;
-            end?: string;
-            properties?: components["schemas"]["LikesProperties"];
-        };
-        LikesProperties: {
-            favourite?: boolean | null;
-            like_it?: boolean | null;
-            could_make_it?: boolean | null;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+	schemas: {
+		PersonProperties: {
+			allow_admin_access?:
+				| {
+						id?: number;
+						name?: string;
+				  }[]
+				| null;
+			invite_code?: string | null;
+			google_id?: string | null;
+			first_name?: string | null;
+			middle_name?: string | null;
+			last_name?: string | null;
+			titles?: string[] | null;
+			suffixes?: string[] | null;
+			extra_names?: string[] | null;
+			aliases?: string[] | null;
+			mothers_first_name?: string | null;
+			mothers_last_name?: string | null;
+			/** Format: date */
+			born?: string | null;
+			place_of_birth?: string | null;
+			/** Format: date */
+			died?: string | null;
+			place_of_death?: string | null;
+			life_events?:
+				| {
+						/** Format: date */
+						from?: string;
+						/** Format: date */
+						to?: string;
+						description?: string;
+				  }[]
+				| null;
+			occupations?: string[] | null;
+			occupation_to_display?: string | null;
+			others_said?:
+				| {
+						id?: number;
+						name?: string;
+						relationship?: string;
+						description?: string;
+						url?: string | null;
+				  }[]
+				| null;
+			limit?: number | null;
+			photos?:
+				| {
+						url?: string;
+						description?: string;
+						/** Format: date */
+						date?: string;
+						name?: string;
+				  }[]
+				| null;
+			videos?:
+				| {
+						url?: string;
+						description?: string;
+						/** Format: date */
+						date?: string;
+						name?: string;
+				  }[]
+				| null;
+			audios?:
+				| {
+						url?: string;
+						description?: string;
+						/** Format: date */
+						date?: string;
+						name?: string;
+				  }[]
+				| null;
+			profile_picture?: string | null;
+			verified?: boolean | null;
+			email?: string | null;
+			phone?: string | null;
+			residence?: {
+				city?: string;
+				country?: string;
+				zip_code?: string;
+				address_line_1?: string;
+				address_line_2?: string;
+			} | null;
+			religion?: string | null;
+			baptized?: string | null;
+			ideologies?: string[] | null;
+			blood_type?: string | null;
+			allergies?: string[] | null;
+			medications?:
+				| {
+						name?: string;
+						description?: string | null;
+						components?: string | null;
+						dosage?: string | null;
+						/** Format: date */
+						from?: string | null;
+						/** Format: date */
+						to?: string | null;
+				  }[]
+				| null;
+			medical_conditions?: Record<string, never>[] | null;
+			height?: number | null;
+			weight?: number | null;
+			hair_colour?: string | null;
+			skin_colour?: string | null;
+			eye_colour?: string | null;
+			sports?: string[] | null;
+			hobbies?: string[] | null;
+			interests?: string[] | null;
+			languages?:
+				| {
+						language?: string;
+						level?: string | null;
+				  }[]
+				| null;
+			notes?:
+				| {
+						/** Format: date */
+						date?: string | null;
+						title?: string | null;
+						note?: string;
+						url?: string | null;
+				  }[]
+				| null;
+		};
+		PersonRegistration: {
+			first_name: string;
+			last_name: string;
+			/** Format: email */
+			email?: string | null;
+			limit: number;
+			/** Format: date */
+			born: string;
+			mothers_first_name: string;
+			mothers_last_name: string;
+		};
+		Person: {
+			id?: number;
+			labels?: string[];
+			type?: string | null;
+			properties?: components['schemas']['PersonProperties'];
+		};
+		FamilyRelationship: {
+			verified?: boolean | null;
+			notes?: string | null;
+			/** Format: date */
+			from?: string | null;
+			/** Format: date */
+			to?: string | null;
+		};
+		Relationship: {
+			id?: number;
+			label?: string;
+			type?: string | null;
+			start?: number;
+			end?: number;
+			properties?: components['schemas']['FamilyRelationship'];
+		};
+		OptimizedPersonNode: {
+			id?: number;
+			labels?: string[];
+			type?: string | null;
+			first_name?: string;
+			middle_name?: string;
+			last_name?: string;
+			/** Format: date */
+			born?: string;
+			/** Format: date */
+			died?: string | null;
+		};
+		FamilyTree: {
+			ancestors?: components['schemas']['OptimizedPersonNode'][];
+			prel1?: components['schemas']['Relationship'];
+			children?: components['schemas']['OptimizedPersonNode'][];
+			prel2?: components['schemas']['Relationship'];
+			spouses?: string;
+			srel?: components['schemas']['Relationship'];
+			user?: string;
+		};
+		RecipeProperties: {
+			name?: string | null;
+			origin?: string | null;
+			allow_admin_access?: {
+				id?: number;
+				name?: string;
+			}[];
+			category?: string | null;
+			/** Format: date */
+			first_recorded?: string | null;
+			description?: string | null;
+			ingredients?: string[] | null;
+			instructions?: string[] | null;
+			photo?: string | null;
+			notes?: string | null;
+			others_said?:
+				| {
+						id?: number;
+						name?: string;
+						said?: string;
+				  }[]
+				| null;
+		};
+		Recipe: {
+			id?: number;
+			labels?: string[];
+			properties?: components['schemas']['RecipeProperties'];
+		};
+		Likes: {
+			id?: number;
+			label?: string;
+			start?: string;
+			end?: string;
+			properties?: components['schemas']['LikesProperties'];
+		};
+		LikesProperties: {
+			favourite?: boolean | null;
+			like_it?: boolean | null;
+			could_make_it?: boolean | null;
+		};
+	};
+	responses: never;
+	parameters: never;
+	requestBodies: never;
+	headers: never;
+	pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    healthCheck: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Server is healthy */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Server is unhealthy */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    createPersonAndRelationship: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    person: components["schemas"]["PersonRegistration"];
-                    relationship: components["schemas"]["FamilyRelationship"];
-                };
-            };
-        };
-        responses: {
-            /** @description Person and relationship created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        person?: components["schemas"]["Person"];
-                        relationship?: components["schemas"]["Relationship"];
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    createPerson: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PersonRegistration"];
-            };
-        };
-        responses: {
-            /** @description Person created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Person"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    softDeletePerson: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Person soft deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    updatePerson: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PersonProperties"];
-            };
-        };
-        responses: {
-            /** @description Person updated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Person"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    hardDeletePerson: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Person hard deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    getPersonByGoogleId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                google_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Person retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Person"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    createPersonByGoogleId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                google_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PersonRegistration"];
-            };
-        };
-        responses: {
-            /** @description Person created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Person"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    createPersonByGoogleIdAndInviteCode: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                google_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    invite_code?: string;
-                    person?: components["schemas"]["PersonRegistration"];
-                };
-            };
-        };
-        responses: {
-            /** @description Person created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Person"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    getFamilyTreeById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Family tree retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FamilyTree"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    getRecipesByPersonId: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Recipes retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        recipeRelations?: components["schemas"]["Likes"][];
-                        recipes?: components["schemas"]["Recipe"][];
-                    };
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    createRelationship: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    id1?: string;
-                    id2?: string;
-                    relationship?: components["schemas"]["FamilyRelationship"];
-                };
-            };
-        };
-        responses: {
-            /** @description Relationship created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Relationship"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    getRelationship: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id1: number;
-                id2: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Relationship retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Relationship"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    softDeleteRecipe: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Recipe soft deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    updateRecipe: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RecipeProperties"];
-            };
-        };
-        responses: {
-            /** @description Recipe updated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Recipe"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    hardDeleteRecipe: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Recipe hard deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    createRecipeRelationship: {
-        parameters: {
-            query?: never;
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                recipeId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    id: number;
-                    relationship: {
-                        schema?: components["schemas"]["LikesProperties"];
-                    };
-                };
-            };
-        };
-        responses: {
-            /** @description Relationship with recipe created */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Likes"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
-    deleteRecipeRelationship: {
-        parameters: {
-            query: {
-                personId: number;
-            };
-            header: {
-                "X-User-ID": number;
-            };
-            path: {
-                recipeId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Relationship with recipe deleted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        msg?: string;
-                    };
-                };
-            };
-        };
-    };
+	healthCheck: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Server is healthy */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Server is unhealthy */
+			503: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	createPersonAndRelationship: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': {
+					person: components['schemas']['PersonRegistration'];
+					relationship: components['schemas']['FamilyRelationship'];
+				};
+			};
+		};
+		responses: {
+			/** @description Person and relationship created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						person?: components['schemas']['Person'];
+						relationship?: components['schemas']['Relationship'];
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	createPerson: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['PersonRegistration'];
+			};
+		};
+		responses: {
+			/** @description Person created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Person'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	softDeletePerson: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Person soft deleted */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	updatePerson: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['PersonProperties'];
+			};
+		};
+		responses: {
+			/** @description Person updated */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Person'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	hardDeletePerson: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Person hard deleted */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	getPersonByGoogleId: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				google_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Person retrieved */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Person'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	createPersonByGoogleId: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				google_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['PersonRegistration'];
+			};
+		};
+		responses: {
+			/** @description Person created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Person'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	createPersonByGoogleIdAndInviteCode: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				google_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': {
+					invite_code?: string;
+					person?: components['schemas']['PersonRegistration'];
+				};
+			};
+		};
+		responses: {
+			/** @description Person created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Person'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	getFamilyTreeById: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Family tree retrieved */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['FamilyTree'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	getRecipesByPersonId: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Recipes retrieved */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						recipeRelations?: components['schemas']['Likes'][];
+						recipes?: components['schemas']['Recipe'][];
+					};
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	createRelationship: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': {
+					id1?: string;
+					id2?: string;
+					relationship?: components['schemas']['FamilyRelationship'];
+				};
+			};
+		};
+		responses: {
+			/** @description Relationship created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Relationship'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	getRelationship: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id1: number;
+				id2: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Relationship retrieved */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Relationship'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	softDeleteRecipe: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Recipe soft deleted */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	updateRecipe: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['RecipeProperties'];
+			};
+		};
+		responses: {
+			/** @description Recipe updated */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Recipe'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	hardDeleteRecipe: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				id: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Recipe hard deleted */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	createRecipeRelationship: {
+		parameters: {
+			query?: never;
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				recipeId: number;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': {
+					id: number;
+					relationship: {
+						schema?: components['schemas']['LikesProperties'];
+					};
+				};
+			};
+		};
+		responses: {
+			/** @description Relationship with recipe created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Likes'];
+				};
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
+	deleteRecipeRelationship: {
+		parameters: {
+			query: {
+				personId: number;
+			};
+			header: {
+				'X-User-ID': number;
+			};
+			path: {
+				recipeId: number;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Relationship with recipe deleted */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Bad request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+			/** @description Internal server error */
+			500: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': {
+						msg?: string;
+					};
+				};
+			};
+		};
+	};
 }

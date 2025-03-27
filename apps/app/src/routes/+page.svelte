@@ -1,10 +1,17 @@
 <script lang="ts">
-    import {title, family_tree} from '$lib/paraglide/messages.js';
-    import { SvelteFlowProvider,Background, BackgroundVariant, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
-    import type { Node, Edge, NodeTypes, NodeProps } from '@xyflow/svelte';
+	import { title, family_tree } from '$lib/paraglide/messages.js';
+	import {
+		SvelteFlowProvider,
+		Background,
+		BackgroundVariant,
+		SvelteFlow,
+		Controls,
+		MiniMap
+	} from '@xyflow/svelte';
+	import type { Node, Edge, NodeTypes, NodeProps } from '@xyflow/svelte';
 
-    let nodes = $state.raw<Node[]>([]);
-    let edges = $state.raw<Edge[]>([]);
+	let nodes = $state.raw<Node[]>([]);
+	let edges = $state.raw<Edge[]>([]);
 </script>
 
 <svelte:head>
@@ -19,4 +26,3 @@
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
-

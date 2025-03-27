@@ -1,15 +1,18 @@
-import type { KVNamespace } from "@cloudflare/workers-types";
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
-import { sha256 } from "@oslojs/crypto/sha2";
+import type { KVNamespace } from '@cloudflare/workers-types';
+import { encodeBase32, encodeHexLowerCase } from '@oslojs/encoding';
+import { sha256 } from '@oslojs/crypto/sha2';
 
-import type { RequestEvent } from "@sveltejs/kit";
+import type { RequestEvent } from '@sveltejs/kit';
 
 // in seconds
 const EXPIRATION_TTL: number = 60 * 60 * 24 * 7;
 
-export async function validateSessionToken(token: string, sessions: KVNamespace): Promise<SessionValidationResult> {
+export async function validateSessionToken(
+	token: string,
+	sessions: KVNamespace
+): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const session: Session | null = await sessions.get(sessionId, { type: "json" });
+	const session: Session | null = await sessions.get(sessionId, { type: 'json' });
 
 	if (!session) {
 		return null;
@@ -33,21 +36,21 @@ export async function invalidateUserSessions(userId: number, sessions: KVNamespa
 }
 
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date): void {
-	event.cookies.set("session", token, {
+	event.cookies.set('session', token, {
 		httpOnly: true,
-		path: "/",
+		path: '/',
 		secure: import.meta.env.PROD,
-		sameSite: "lax",
+		sameSite: 'lax',
 		expires: expiresAt
 	});
 }
 
 export function deleteSessionTokenCookie(event: RequestEvent): void {
-	event.cookies.set("session", "", {
+	event.cookies.set('session', '', {
 		httpOnly: true,
-		path: "/",
+		path: '/',
 		secure: import.meta.env.PROD,
-		sameSite: "lax",
+		sameSite: 'lax',
 		maxAge: 0
 	});
 }
@@ -59,7 +62,11 @@ export function generateSessionToken(): string {
 	return token;
 }
 
-export async function createSession(token: string, userId: string, sessions: KVNamespace): Promise<Session> {
+export async function createSession(
+	token: string,
+	userId: string,
+	sessions: KVNamespace
+): Promise<Session> {
 	const sessionId = `${userId}:${encodeHexLowerCase(sha256(new TextEncoder().encode(token)))}`;
 	const session: Session = {
 		id: sessionId,

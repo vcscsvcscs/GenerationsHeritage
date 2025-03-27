@@ -17,7 +17,7 @@
 			<p class="py-6">
 				{site_intro()}
 			</p>
-			<a href="/login/google" class="btn rounded-full bg-white text-black border-[#e5e5e5]">
+			<a href="/login/google" class="btn rounded-full border-[#e5e5e5] bg-white text-black">
 				<!-- Google -->
 				<svg
 					aria-label="Google logo"

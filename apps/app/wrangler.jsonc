@@ -3,96 +3,94 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "generations-heritage",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "compatibility_date": "2025-02-14",
-  "pages_build_output_dir": ".svelte-kit/cloudflare",
-  "observability": {
-    "enabled": true
-  },
-  /**
-   * Smart Placement
-   * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-   */
-  "placement": {
-    "mode": "smart"
-  },
-  /**
-   * Bindings
-   * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-   * databases, object storage, AI inference, real-time communication and more.
-   * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-   */
-  "kv_namespaces": [
-    {
-      "binding": "GH_SESSIONS"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "GH_MEDIA"
-    }
-  ],
-  /**
-   * Environment Variables
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-   */
-  // "vars": { "MY_VARIABLE": "production_value" },
-  "env": {
-    "staging": {
-      "name": "generations-heritage-stage",
-      "route": "https://ghstage.varghacsongor.hu/*",
-      "vars": {
-        "GOOGLE_CALLBACK_URI": "https://ghstage.varghacsongor.hu/login/google/callback"
-      },
-      "kv_namespaces": [
-        {
-          "binding": "GH_SESSIONS",
-          "id": "6f793c8813ab46549234572f4c6ae5a1"
-        }
-      ],
-      "r2_buckets": [
-        {
-          "binding": "GH_MEDIA",
-          "bucket_name": "ghstaging"
-        }
-      ]
-    },
-    "production": {
-      "name": "generations-heritage-prod",
-      "route": "https://csalad.varghacsongor.hu/*",
-      "vars": {
-        "GOOGLE_CALLBACK_URI": "https://csalad.varghacsongor.hu/login/google/callback"
-      },
-      "kv_namespaces": [
-        {
-          "binding": "GH_SESSIONS",
-          "id": "4cedee65c36d49d7afc654bcc798d169"
-        }
-      ],
-      "r2_buckets": [
-        {
-          "binding": "GH_MEDIA",
-          "bucket_name": "generations-heritage"
-        }
-      ]
-    }
-  }
-  /**
-   * Note: Use secrets to store sensitive data.
-   * https://developers.cloudflare.com/workers/configuration/secrets/
-   */
-  /**
-   * Static Assets
-   * https://developers.cloudflare.com/workers/static-assets/binding/
-   */
-  // "assets": { "directory": "./public/", "binding": "ASSETS" },
-  /**
-   * Service Bindings (communicate between multiple Workers)
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-   */
-  // "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "generations-heritage",
+	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_date": "2025-02-14",
+	"pages_build_output_dir": ".svelte-kit/cloudflare",
+	"observability": {
+		"enabled": true
+	},
+	/**
+	 * Smart Placement
+	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+	 */
+	"placement": {
+		"mode": "smart"
+	},
+	/**
+	 * Bindings
+	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
+	 * databases, object storage, AI inference, real-time communication and more.
+	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
+	 */
+	"kv_namespaces": [
+		{
+			"binding": "GH_SESSIONS"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "GH_MEDIA"
+		}
+	],
+	/**
+	 * Environment Variables
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+	 */
+	// "vars": { "MY_VARIABLE": "production_value" },
+	"env": {
+		"staging": {
+			"name": "generations-heritage-stage",
+			"route": "https://ghstage.varghacsongor.hu/*",
+			"vars": {
+				"GOOGLE_CALLBACK_URI": "https://ghstage.varghacsongor.hu/login/google/callback"
+			},
+			"kv_namespaces": [
+				{
+					"binding": "GH_SESSIONS",
+					"id": "6f793c8813ab46549234572f4c6ae5a1"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "GH_MEDIA",
+					"bucket_name": "ghstaging"
+				}
+			]
+		},
+		"production": {
+			"name": "generations-heritage-prod",
+			"route": "https://csalad.varghacsongor.hu/*",
+			"vars": {
+				"GOOGLE_CALLBACK_URI": "https://csalad.varghacsongor.hu/login/google/callback"
+			},
+			"kv_namespaces": [
+				{
+					"binding": "GH_SESSIONS",
+					"id": "4cedee65c36d49d7afc654bcc798d169"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "GH_MEDIA",
+					"bucket_name": "generations-heritage"
+				}
+			]
+		}
+	}
+	/**
+	 * Note: Use secrets to store sensitive data.
+	 * https://developers.cloudflare.com/workers/configuration/secrets/
+	 */
+	/**
+	 * Static Assets
+	 * https://developers.cloudflare.com/workers/static-assets/binding/
+	 */
+	// "assets": { "directory": "./public/", "binding": "ASSETS" },
+	/**
+	 * Service Bindings (communicate between multiple Workers)
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+	 */
+	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
 }

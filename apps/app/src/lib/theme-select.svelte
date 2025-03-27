@@ -37,7 +37,7 @@
 	}
 </script>
 
-<div class="dropdown dropdown-end block ">
+<div class="dropdown dropdown-end block">
 	<select
 		bind:value={current_theme}
 		data-choose-theme
@@ -48,11 +48,7 @@
 			{theme()}
 		</option>
 		{#each themes as theme}
-			<option
-				value={theme}
-				class="theme-controller capitalize"
-				>{themeMessages.get(theme)}</option
-			>
+			<option value={theme} class="theme-controller capitalize">{themeMessages.get(theme)}</option>
 		{/each}
 	</select>
 </div>
