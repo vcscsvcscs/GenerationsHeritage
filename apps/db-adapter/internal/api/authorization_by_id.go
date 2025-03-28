@@ -9,6 +9,6 @@ import (
 
 func userWithIdHasAccessToGivenPerson(ctx context.Context, session neo4j.SessionWithContext, userId, personId int) bool {
 	_, err := session.ExecuteRead(ctx, memgraph.GetPersonById(ctx, userId))
-
+	//TODO
 	return err == nil
 }
