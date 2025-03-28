@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/gin/healthcheck"
 	"go.uber.org/zap"
 )
@@ -16,7 +17,7 @@ type server struct {
 	logger      *zap.Logger
 }
 
-func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthcheck.HealthCheck, databaseOperationTimeoutInMs time.Duration) ServerInterface {
+func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthcheck.HealthCheck, databaseOperationTimeoutInMs time.Duration) api.ServerInterface {
 	if logger == nil {
 		panic("logger is required")
 	}

@@ -12,9 +12,10 @@ import (
 	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
-	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/api"
+	apiServer "github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/api"
+	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
+	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/gin/healthcheck"
-	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/memgraph"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -27,6 +28,7 @@ var (
 	memgraphPass   string
 	production     bool
 	requestTimeout time.Duration
+	dbOpTimeout    time.Duration
 )
 
 func init() {
@@ -46,6 +48,7 @@ func init() {
 	memgraphPass = viper.GetString("MEMGRAPH_PASS")
 	production = viper.GetBool("PRODUCTION")
 	requestTimeout = time.Duration(viper.GetInt("REQUEST_TIMEOUT")) * time.Second
+	dbOpTimeout = time.Duration(viper.GetInt("DB_OP_TIMEOUT")) * time.Millisecond
 }
 
 func main() {
@@ -76,7 +79,7 @@ func main() {
 	router.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 	router.Use(ginzap.RecoveryWithZap(logger, true))
 
-	sApi := api.New(logger, memgraphDriver, hc)
+	sApi := apiServer.New(logger, memgraphDriver, hc, dbOpTimeout)
 	api.RegisterHandlersWithOptions(router, sApi, api.GinServerOptions{})
 
 	server := &http.Server{
