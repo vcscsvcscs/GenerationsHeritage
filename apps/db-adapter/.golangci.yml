@@ -120,7 +120,7 @@ linters:
       - common-false-positives
       - legacy
     paths:
-      - internal/api/api.gen.go # generated code
+      - pkg/api/api.gen.go # generated code
 
     rules:
       - path: (.+)_test\.go
