@@ -157,6 +157,16 @@
             "post": {
                 "summary": "Create a new person",
                 "operationId": "createPerson",
+                "parameters": [
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -180,21 +190,6 @@
                     },
                     "500": {
                         "description": "Internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -382,7 +377,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     },
                     {   
@@ -534,6 +529,21 @@
                     },
                     "400": {
                         "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "content": {
                             "application/json": {
                                 "schema": {
