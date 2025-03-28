@@ -17,7 +17,7 @@ type server struct {
 	logger      *zap.Logger
 }
 
-func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthcheck.HealthCheck, databaseOperationTimeoutInMs time.Duration) api.ServerInterface {
+func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthcheck.HealthCheck, databaseOperationTimeout time.Duration) api.ServerInterface {
 	if logger == nil {
 		panic("logger is required")
 	}
@@ -30,7 +30,7 @@ func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthchec
 		panic("healthcheck is required")
 	}
 
-	if databaseOperationTimeoutInMs == 0 {
+	if databaseOperationTimeout == 0 {
 		panic("database operation timeout is required")
 	}
 
