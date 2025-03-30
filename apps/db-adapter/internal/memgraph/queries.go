@@ -59,15 +59,11 @@ var HardDeletePersonCypherQuery string
 //go:embed queries/get_relationship.cypher
 var GetRelationshipCypherQuery string
 
-// Requires id1, id2, Relationship parameters.
+// Requires childId, parentId, childRelationship, parentRelationship parameters.
+// returns relationships
 //
-//go:embed queries/create_directed_relationship.cypher
-var CreateDirectedRelationshipCypherQuery string
-
-// Requires id1, id2, Relationship1, Relationship2 parameters.
-//
-//go:embed queries/create_two_directed_relationships.cypher
-var CreateTwoDirectedRelationshipCypherQuery string
+//go:embed queries/create_child_parent_relationships.cypher
+var CreateChildParentRelationshipCypherQuery string
 
 // Requires id parameter.
 //
