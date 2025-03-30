@@ -67,8 +67,81 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) {}
+func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) {
+	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer cancel()
+	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
 
-func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonParams) {}
+	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer acancel()
+	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
 
-func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDeletePersonParams) {}
+		return
+	}
+
+	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer qCancel()
+	res, err := session.ExecuteWrite(qctx, memgraph.SoftDeletePerson(qctx, id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonParams) {
+	var person *api.PersonProperties
+	if err := c.ShouldBindJSON(&person); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
+
+		return
+	}
+
+	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer acancel()
+	session := srv.db.NewSession(actx, neo4j.SessionConfig{})
+	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
+
+		return
+	}
+
+	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer qCancel()
+	res, err := session.ExecuteWrite(qctx, memgraph.UpdatePerson(qctx, id, person))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDeletePersonParams) {
+	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer cancel()
+	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+
+	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer acancel()
+	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
+
+		return
+	}
+
+	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer qCancel()
+	res, err := session.ExecuteWrite(qctx, memgraph.HardDeletePerson(qctx, id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
