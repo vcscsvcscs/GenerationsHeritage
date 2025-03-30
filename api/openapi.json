@@ -89,6 +89,10 @@
                                     "person": {
                                         "$ref": "#/components/schemas/PersonRegistration"
                                     },
+                                    "type":{
+                                        "type": "string",
+                                        "enum": ["child", "parent", "spouse", "sibling"]
+                                    },
                                     "relationship": {
                                         "$ref": "#/components/schemas/FamilyRelationship"
                                     }
@@ -164,6 +168,14 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-Name",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -858,6 +870,10 @@
                                     },
                                     "id2": {
                                         "type": "string"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": ["child", "parent", "spouse", "sibling"]
                                     },
                                     "relationship": {
                                         "$ref": "#/components/schemas/FamilyRelationship"
