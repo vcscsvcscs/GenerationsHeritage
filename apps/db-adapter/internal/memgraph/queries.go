@@ -65,6 +65,23 @@ var GetRelationshipCypherQuery string
 //go:embed queries/create_child_parent_relationships.cypher
 var CreateChildParentRelationshipCypherQuery string
 
+// Requires id1, id2, Relationship1, Relationship1 parameters.
+// return relationships
+//
+//go:embed queries/create_sibling_relationship.cypher
+var CreateSiblingRelationshipCypherQuery string
+
+// Requires id1, id2, Relationship1, Relationship1 parameters.
+// return relationships
+//
+//go:embed queries/create_spouse_relationship.cypher
+var CreateSpouseRelationshipCypherQuery string
+
+// Requires id1, id2 parameters.
+//
+//go:embed queries/delete_relationship.cypher
+var DeleteRelationshipCypherQuery string
+
 // Requires id parameter.
 //
 //go:embed queries/get_family_tree_by_id.cypher
