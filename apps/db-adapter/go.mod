@@ -6,7 +6,6 @@ require (
 	github.com/gin-contrib/cors v1.7.4
 	github.com/gin-contrib/zap v1.1.4
 	github.com/gin-gonic/gin v1.10.0
-	github.com/google/uuid v1.6.0
 	github.com/neo4j/neo4j-go-driver/v5 v5.28.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/spf13/viper v1.20.0
@@ -33,6 +32,7 @@ require (
 	github.com/go-playground/validator/v10 v10.25.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
