@@ -29,6 +29,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer qCancel()
@@ -46,10 +47,11 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
 
 	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer acancel()
-	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+	if userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) == accessModeNone {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
 
 		return
@@ -71,10 +73,11 @@ func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDelet
 	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
 
 	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer acancel()
-	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+	if userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) != accessModeWrite {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
 
 		return
@@ -103,7 +106,9 @@ func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonP
 	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer acancel()
 	session := srv.db.NewSession(actx, neo4j.SessionConfig{})
-	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+
+	if userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) != accessModeWrite {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
 
 		return
@@ -125,10 +130,11 @@ func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDelet
 	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
 
 	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer acancel()
-	if !userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) {
+	if userWithIdHasAccessToGivenPerson(actx, session, params.XUserID, id) != accessModeWrite {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "User does not have access to this person"})
 
 		return

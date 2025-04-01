@@ -43,6 +43,7 @@ func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId 
 	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer qCancel()
