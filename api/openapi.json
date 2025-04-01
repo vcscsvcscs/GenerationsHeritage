@@ -1447,21 +1447,6 @@
             "PersonProperties": {
                 "type": "object",
                 "properties": {
-                    "allow_admin_access": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer"
-                                },
-                                "name": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "nullable": true
-                    },
                     "invite_code": {
                         "type": "string",
                         "nullable": true
@@ -2158,6 +2143,26 @@
                     "could_make_it": {
                         "type": "boolean",
                         "nullable": true
+                    }
+                }
+            },
+            "Admin":{
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "start": {
+                        "type": "string"
+                    },
+                    "end": {
+                        "type": "string"
+                    },
+                    "properties": {
+                        "type": "object"
                     }
                 }
             }
