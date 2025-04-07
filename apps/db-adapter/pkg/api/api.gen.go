@@ -28,6 +28,15 @@ const (
 	CreateRelationshipJSONBodyTypeSpouse  CreateRelationshipJSONBodyType = "spouse"
 )
 
+// Admin defines model for Admin.
+type Admin struct {
+	End        *string                 `json:"end,omitempty"`
+	Id         *int                    `json:"id,omitempty"`
+	Label      *string                 `json:"label,omitempty"`
+	Properties *map[string]interface{} `json:"properties,omitempty"`
+	Start      *string                 `json:"start,omitempty"`
+}
+
 // FamilyRelationship defines model for FamilyRelationship.
 type FamilyRelationship struct {
 	From     *openapi_types.Date `json:"from"`
@@ -65,14 +74,15 @@ type LikesProperties struct {
 
 // OptimizedPersonNode defines model for OptimizedPersonNode.
 type OptimizedPersonNode struct {
-	Born       *openapi_types.Date `json:"born,omitempty"`
-	Died       *openapi_types.Date `json:"died"`
-	FirstName  *string             `json:"first_name,omitempty"`
-	Id         *int                `json:"id,omitempty"`
-	Labels     *[]string           `json:"labels,omitempty"`
-	LastName   *string             `json:"last_name,omitempty"`
-	MiddleName *string             `json:"middle_name,omitempty"`
-	Type       *string             `json:"type"`
+	Born           *openapi_types.Date `json:"born,omitempty"`
+	Died           *openapi_types.Date `json:"died"`
+	FirstName      *string             `json:"first_name,omitempty"`
+	Id             *int                `json:"id,omitempty"`
+	Labels         *[]string           `json:"labels,omitempty"`
+	LastName       *string             `json:"last_name,omitempty"`
+	MiddleName     *string             `json:"middle_name,omitempty"`
+	ProfilePicture *string             `json:"profile_picture"`
+	Type           *string             `json:"type"`
 }
 
 // Person defines model for Person.
@@ -85,13 +95,9 @@ type Person struct {
 
 // PersonProperties defines model for PersonProperties.
 type PersonProperties struct {
-	Aliases          *[]string `json:"aliases"`
-	Allergies        *[]string `json:"allergies"`
-	AllowAdminAccess *[]struct {
-		Id   *int    `json:"id,omitempty"`
-		Name *string `json:"name,omitempty"`
-	} `json:"allow_admin_access"`
-	Audios *[]struct {
+	Aliases   *[]string `json:"aliases"`
+	Allergies *[]string `json:"allergies"`
+	Audios    *[]struct {
 		Date        *openapi_types.Date `json:"date,omitempty"`
 		Description *string             `json:"description,omitempty"`
 		Name        *string             `json:"name,omitempty"`
@@ -232,6 +238,31 @@ type Relationship struct {
 	Type       *string             `json:"type"`
 }
 
+// GetProfileAdminsParams defines parameters for GetProfileAdmins.
+type GetProfileAdminsParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// DeleteAdminRelationshipParams defines parameters for DeleteAdminRelationship.
+type DeleteAdminRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// GetAdminRelationshipParams defines parameters for GetAdminRelationship.
+type GetAdminRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// CreateAdminRelationshipParams defines parameters for CreateAdminRelationship.
+type CreateAdminRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// GetManagedProfilesParams defines parameters for GetManagedProfiles.
+type GetManagedProfilesParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
 // CreatePersonParams defines parameters for CreatePerson.
 type CreatePersonParams struct {
 	XUserID   int    `json:"X-User-ID"`
@@ -365,9 +396,24 @@ type CreateRelationshipJSONRequestBody CreateRelationshipJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Get profile Admins
+	// (GET /admin/{id1})
+	GetProfileAdmins(c *gin.Context, id1 int, params GetProfileAdminsParams)
+	// Delete admin relationship between two persons
+	// (DELETE /admin/{id1}/{id2})
+	DeleteAdminRelationship(c *gin.Context, id1 int, id2 int, params DeleteAdminRelationshipParams)
+	// Get admin relationship between two persons
+	// (GET /admin/{id1}/{id2})
+	GetAdminRelationship(c *gin.Context, id1 int, id2 int, params GetAdminRelationshipParams)
+	// Create admin relationship between two persons
+	// (POST /admin/{id1}/{id2})
+	CreateAdminRelationship(c *gin.Context, id1 int, id2 int, params CreateAdminRelationshipParams)
 	// Check the health of the server
 	// (GET /health)
 	HealthCheck(c *gin.Context)
+	// Get managed profiles
+	// (GET /managed_profiles)
+	GetManagedProfiles(c *gin.Context, params GetManagedProfilesParams)
 	// Create a new person
 	// (POST /person)
 	CreatePerson(c *gin.Context, params CreatePersonParams)
@@ -433,6 +479,237 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
+// GetProfileAdmins operation middleware
+func (siw *ServerInterfaceWrapper) GetProfileAdmins(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id1" -------------
+	var id1 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id1", c.Param("id1"), &id1, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id1: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetProfileAdminsParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetProfileAdmins(c, id1, params)
+}
+
+// DeleteAdminRelationship operation middleware
+func (siw *ServerInterfaceWrapper) DeleteAdminRelationship(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id1" -------------
+	var id1 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id1", c.Param("id1"), &id1, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id1: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "id2" -------------
+	var id2 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id2", c.Param("id2"), &id2, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id2: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteAdminRelationshipParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteAdminRelationship(c, id1, id2, params)
+}
+
+// GetAdminRelationship operation middleware
+func (siw *ServerInterfaceWrapper) GetAdminRelationship(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id1" -------------
+	var id1 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id1", c.Param("id1"), &id1, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id1: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "id2" -------------
+	var id2 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id2", c.Param("id2"), &id2, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id2: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetAdminRelationshipParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetAdminRelationship(c, id1, id2, params)
+}
+
+// CreateAdminRelationship operation middleware
+func (siw *ServerInterfaceWrapper) CreateAdminRelationship(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id1" -------------
+	var id1 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id1", c.Param("id1"), &id1, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id1: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "id2" -------------
+	var id2 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id2", c.Param("id2"), &id2, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id2: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateAdminRelationshipParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateAdminRelationship(c, id1, id2, params)
+}
+
 // HealthCheck operation middleware
 func (siw *ServerInterfaceWrapper) HealthCheck(c *gin.Context) {
 
@@ -444,6 +721,48 @@ func (siw *ServerInterfaceWrapper) HealthCheck(c *gin.Context) {
 	}
 
 	siw.Handler.HealthCheck(c)
+}
+
+// GetManagedProfiles operation middleware
+func (siw *ServerInterfaceWrapper) GetManagedProfiles(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetManagedProfilesParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetManagedProfiles(c, params)
 }
 
 // CreatePerson operation middleware
@@ -1311,7 +1630,12 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.GET(options.BaseURL+"/admin/:id1", wrapper.GetProfileAdmins)
+	router.DELETE(options.BaseURL+"/admin/:id1/:id2", wrapper.DeleteAdminRelationship)
+	router.GET(options.BaseURL+"/admin/:id1/:id2", wrapper.GetAdminRelationship)
+	router.POST(options.BaseURL+"/admin/:id1/:id2", wrapper.CreateAdminRelationship)
 	router.GET(options.BaseURL+"/health", wrapper.HealthCheck)
+	router.GET(options.BaseURL+"/managed_profiles", wrapper.GetManagedProfiles)
 	router.POST(options.BaseURL+"/person", wrapper.CreatePerson)
 	router.GET(options.BaseURL+"/person/google/:google_id", wrapper.GetPersonByGoogleId)
 	router.PATCH(options.BaseURL+"/person/google/:google_id", wrapper.CreatePersonByGoogleIdAndInviteCode)

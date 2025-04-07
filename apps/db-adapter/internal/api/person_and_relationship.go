@@ -27,19 +27,13 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 	qctx, qCancel := context.WithTimeout(ctx, srv.dbOpTimeout)
 	defer qCancel()
 
-	res, err := session.ExecuteRead(qctx, memgraph.CreatePerson(qctx, &api.PersonProperties{
+	res, err := session.ExecuteWrite(qctx, memgraph.CreatePerson(qctx, &api.PersonProperties{
 		FirstName:        &requestBody.Person.FirstName,
 		LastName:         &requestBody.Person.LastName,
 		Born:             &requestBody.Person.Born,
 		MothersFirstName: &requestBody.Person.MothersFirstName,
 		MothersLastName:  &requestBody.Person.MothersLastName,
 		Limit:            &requestBody.Person.Limit,
-		AllowAdminAccess: &[]struct {
-			Id   *int    "json:\"id,omitempty\""
-			Name *string "json:\"name,omitempty\""
-		}{
-			{Id: &params.XUserID},
-		},
 	}))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})

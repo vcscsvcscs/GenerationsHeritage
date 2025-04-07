@@ -86,3 +86,23 @@ var DeleteRelationshipCypherQuery string
 //
 //go:embed queries/get_family_tree_by_id.cypher
 var GetFamilyTreeByIdCypherQuery string
+
+// Requires id1, id2 parameter.
+//
+//go:embed queries/create_admin_relationship.cypher
+var CreateAdminRelationshipCypherQuery string
+
+// Requires id1, id2 parameter.
+//
+//go:embed queries/delete_admin_relationship.cypher
+var DeleteAdminRelationshipCypherQuery string
+
+// Requires id1, id2 parameter.
+//
+//go:embed queries/get_admin_relationship.cypher
+var GetAdminRelationshipCypherQuery string
+
+// Requires id parameter.
+//
+//go:embed queries/get_profile_admins.cypher
+var GetProfileAdminsCypherQuery string

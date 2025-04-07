@@ -47,7 +47,7 @@ func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId 
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer qCancel()
-	res, err := session.ExecuteRead(qctx, memgraph.UpdatePersonByInviteCode(qctx, person.InviteCode, person.Props))
+	res, err := session.ExecuteWrite(qctx, memgraph.UpdatePersonByInviteCode(qctx, person.InviteCode, person.Props))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 
@@ -72,7 +72,7 @@ func (srv *server) CreatePersonByGoogleId(c *gin.Context, googleId string) {
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer qCancel()
-	res, err := session.ExecuteRead(qctx, memgraph.CreatePerson(qctx, person))
+	res, err := session.ExecuteWrite(qctx, memgraph.CreatePerson(qctx, person))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 
