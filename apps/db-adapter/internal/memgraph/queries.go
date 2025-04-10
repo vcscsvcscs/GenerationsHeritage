@@ -44,6 +44,7 @@ var UpdatePersonByInviteCodeCypherQuery string
 var GetPersonByGoogleIdCypherQuery string
 
 // Requires id parameter.
+//
 // Returns labels(n) AS labels, n AS person
 //
 //go:embed queries/soft_delete_person_by_id.cypher
@@ -56,22 +57,27 @@ var HardDeletePersonCypherQuery string
 
 // Requires id1, id2 parameters.
 //
+// returns relationship
+//
 //go:embed queries/get_relationship.cypher
 var GetRelationshipCypherQuery string
 
 // Requires childId, parentId, childRelationship, parentRelationship parameters.
+//
 // returns relationships
 //
 //go:embed queries/create_child_parent_relationships.cypher
 var CreateChildParentRelationshipCypherQuery string
 
 // Requires id1, id2, Relationship1, Relationship1 parameters.
+//
 // return relationships
 //
 //go:embed queries/create_sibling_relationship.cypher
 var CreateSiblingRelationshipCypherQuery string
 
 // Requires id1, id2, Relationship1, Relationship1 parameters.
+//
 // return relationships
 //
 //go:embed queries/create_spouse_relationship.cypher
@@ -89,6 +95,8 @@ var GetFamilyTreeByIdCypherQuery string
 
 // Requires id1, id2 parameter.
 //
+// return relationship
+//
 //go:embed queries/create_admin_relationship.cypher
 var CreateAdminRelationshipCypherQuery string
 
@@ -99,10 +107,21 @@ var DeleteAdminRelationshipCypherQuery string
 
 // Requires id1, id2 parameter.
 //
+// return relationship
+//
 //go:embed queries/get_admin_relationship.cypher
 var GetAdminRelationshipCypherQuery string
 
 // Requires id parameter.
 //
+// returns admins
+//
 //go:embed queries/get_profile_admins.cypher
 var GetProfileAdminsCypherQuery string
+
+// Requires id parameter.
+//
+// returns managed
+//
+//go:embed queries/get_managed_profiles.cypher
+var GetManagedProfilesCypherQuery string
