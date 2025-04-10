@@ -119,7 +119,7 @@ func (srv *server) GetManagedProfiles(c *gin.Context, params api.GetManagedProfi
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 
-	res, err := session.ExecuteRead(qctx, memgraph.GetManagedProfiles(qctx, id))
+	res, err := session.ExecuteRead(qctx, memgraph.GetManagedProfiles(qctx, params.XUserID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 

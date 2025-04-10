@@ -353,8 +353,8 @@ type CreateRecipeRelationshipParams struct {
 
 // CreateRelationshipJSONBody defines parameters for CreateRelationship.
 type CreateRelationshipJSONBody struct {
-	Id1          *string                         `json:"id1,omitempty"`
-	Id2          *string                         `json:"id2,omitempty"`
+	Id1          *int                            `json:"id1,omitempty"`
+	Id2          *int                            `json:"id2,omitempty"`
 	Relationship *FamilyRelationship             `json:"relationship,omitempty"`
 	Type         *CreateRelationshipJSONBodyType `json:"type,omitempty"`
 }

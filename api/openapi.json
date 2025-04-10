@@ -866,10 +866,10 @@
                                 "type": "object",
                                 "properties": {
                                     "id1": {
-                                        "type": "string"
+                                        "type": "integer"
                                     },
                                     "id2": {
-                                        "type": "string"
+                                        "type": "integer"
                                     },
                                     "type": {
                                         "type": "string",
