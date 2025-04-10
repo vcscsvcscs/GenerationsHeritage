@@ -72,6 +72,29 @@ func GetProfileAdmins(ctx context.Context, userId int) neo4j.ManagedTransactionW
 			return nil, err
 		}
 
-		return result.Collect(ctx)
+		record, err := result.Single(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		return record.AsMap(), nil
+	}
+}
+
+func GetManagedProfiles(ctx context.Context, userId int) neo4j.ManagedTransactionWork {
+	return func(tx neo4j.ManagedTransaction) (any, error) {
+		result, err := tx.Run(ctx, GetManagedProfilesCypherQuery, map[string]any{
+			"id": userId,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		record, err := result.Single(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		return record.AsMap(), nil
 	}
 }
