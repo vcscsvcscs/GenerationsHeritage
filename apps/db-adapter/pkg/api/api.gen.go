@@ -30,11 +30,13 @@ const (
 
 // Admin defines model for Admin.
 type Admin struct {
-	End        *string                 `json:"end,omitempty"`
-	Id         *int                    `json:"id,omitempty"`
-	Label      *string                 `json:"label,omitempty"`
-	Properties *map[string]interface{} `json:"properties,omitempty"`
-	Start      *string                 `json:"start,omitempty"`
+	End        *string `json:"end,omitempty"`
+	Id         *int    `json:"id,omitempty"`
+	Label      *string `json:"label,omitempty"`
+	Properties *struct {
+		Added *int `json:"added,omitempty"`
+	} `json:"properties,omitempty"`
+	Start *string `json:"start,omitempty"`
 }
 
 // FamilyRelationship defines model for FamilyRelationship.
@@ -365,6 +367,11 @@ type CreateRelationshipParams struct {
 // CreateRelationshipJSONBodyType defines parameters for CreateRelationship.
 type CreateRelationshipJSONBodyType string
 
+// DeleteRelationshipParams defines parameters for DeleteRelationship.
+type DeleteRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
 // GetRelationshipParams defines parameters for GetRelationship.
 type GetRelationshipParams struct {
 	XUserID int `json:"X-User-ID"`
@@ -465,6 +472,9 @@ type ServerInterface interface {
 	// Create a relationship between two persons
 	// (POST /relationship)
 	CreateRelationship(c *gin.Context, params CreateRelationshipParams)
+	// Delete relationship between two persons
+	// (DELETE /relationship/{id1}/{id2})
+	DeleteRelationship(c *gin.Context, id1 int, id2 int, params DeleteRelationshipParams)
 	// Get relationship between two persons
 	// (GET /relationship/{id1}/{id2})
 	GetRelationship(c *gin.Context, id1 int, id2 int, params GetRelationshipParams)
@@ -1543,6 +1553,66 @@ func (siw *ServerInterfaceWrapper) CreateRelationship(c *gin.Context) {
 	siw.Handler.CreateRelationship(c, params)
 }
 
+// DeleteRelationship operation middleware
+func (siw *ServerInterfaceWrapper) DeleteRelationship(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id1" -------------
+	var id1 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id1", c.Param("id1"), &id1, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id1: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "id2" -------------
+	var id2 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id2", c.Param("id2"), &id2, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id2: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteRelationshipParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteRelationship(c, id1, id2, params)
+}
+
 // GetRelationship operation middleware
 func (siw *ServerInterfaceWrapper) GetRelationship(c *gin.Context) {
 
@@ -1653,5 +1723,6 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/recipe/:recipeId/relationship", wrapper.DeleteRecipeRelationship)
 	router.POST(options.BaseURL+"/recipe/:recipeId/relationship", wrapper.CreateRecipeRelationship)
 	router.POST(options.BaseURL+"/relationship", wrapper.CreateRelationship)
+	router.DELETE(options.BaseURL+"/relationship/:id1/:id2", wrapper.DeleteRelationship)
 	router.GET(options.BaseURL+"/relationship/:id1/:id2", wrapper.GetRelationship)
 }
