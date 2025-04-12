@@ -49,13 +49,8 @@ type FamilyRelationship struct {
 
 // FamilyTree defines model for FamilyTree.
 type FamilyTree struct {
-	Ancestors *[]OptimizedPersonNode `json:"ancestors,omitempty"`
-	Children  *[]OptimizedPersonNode `json:"children,omitempty"`
-	Prel1     *Relationship          `json:"prel1,omitempty"`
-	Prel2     *Relationship          `json:"prel2,omitempty"`
-	Spouses   *string                `json:"spouses,omitempty"`
-	Srel      *Relationship          `json:"srel,omitempty"`
-	User      *string                `json:"user,omitempty"`
+	People        *[]OptimizedPersonNode `json:"people,omitempty"`
+	Relationships *[]Relationship        `json:"relationships,omitempty"`
 }
 
 // Likes defines model for Likes.
@@ -444,6 +439,9 @@ type ServerInterface interface {
 	UpdatePerson(c *gin.Context, id int, params UpdatePersonParams)
 	// Get family tree by person ID
 	// (GET /person/{id}/family-tree)
+	GetFamilyTreeById(c *gin.Context, id int)
+	// Get family tree by person ID with spouses included
+	// (GET /person/{id}/family-tree-with-spouses)
 	GetFamilyTreeById(c *gin.Context, id int)
 	// Hard delete a person by ID
 	// (DELETE /person/{id}/hard-delete)
@@ -1062,6 +1060,30 @@ func (siw *ServerInterfaceWrapper) UpdatePerson(c *gin.Context) {
 	}
 
 	siw.Handler.UpdatePerson(c, id, params)
+}
+
+// GetFamilyTreeById operation middleware
+func (siw *ServerInterfaceWrapper) GetFamilyTreeById(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetFamilyTreeById(c, id)
 }
 
 // GetFamilyTreeById operation middleware
@@ -1714,6 +1736,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/person/:id", wrapper.GetPersonById)
 	router.PATCH(options.BaseURL+"/person/:id", wrapper.UpdatePerson)
 	router.GET(options.BaseURL+"/person/:id/family-tree", wrapper.GetFamilyTreeById)
+	router.GET(options.BaseURL+"/person/:id/family-tree-with-spouses", wrapper.GetFamilyTreeById)
 	router.DELETE(options.BaseURL+"/person/:id/hard-delete", wrapper.HardDeletePerson)
 	router.GET(options.BaseURL+"/person/:id/recipes", wrapper.GetRecipesByPersonId)
 	router.POST(options.BaseURL+"/person_and_relationship/:id", wrapper.CreatePersonAndRelationship)
