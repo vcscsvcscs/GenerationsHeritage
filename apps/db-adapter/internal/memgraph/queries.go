@@ -125,3 +125,17 @@ var GetProfileAdminsCypherQuery string
 //
 //go:embed queries/get_managed_profiles.cypher
 var GetManagedProfilesCypherQuery string
+
+// Requires id parameter.
+//
+// returns people, relationships
+//
+//go:embed queries/get_blood_relations_by_id.cypher
+var GetBloodRelativesCypherQuery string
+
+// Requires id parameter.
+//
+// returns people, relationships
+//
+//go:embed queries/get_family_tree_with_spouses.cypher
+var GetFamilyTreeWithSpousesCypherQuery string

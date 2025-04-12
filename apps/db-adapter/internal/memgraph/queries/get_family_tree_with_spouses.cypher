@@ -4,8 +4,11 @@ OPTIONAL MATCH (n)-[p:Parent*..]->(family:Person)
 OPTIONAL MATCH (family)-[c:Child*1..4]->(children:Person)
 OPTIONAL MATCH (family)-[s:Sibling]->(siblings:Person)
 OPTIONAL MATCH (n)-[ds:Sibling]->(direct_siblings:Person)
-WITH collections.to_set(collect(n)+collect(family)+collect(children)+collect(direct_siblings)) as people, 
-collections.to_set(collect(c) + collect(p) + collect(s) + collect(ds)) as relationships
+OPTIONAL MATCH (family)-[fsp:Spouse]->(fspouse:Person)
+OPTIONAL MATCH (children)-[csp:Spouse]->(cspouse:Person)
+OPTIONAL MATCH (n)-[sp:Spouse]->(spouse:Person)
+WITH collections.to_set(collect(n) + collect(family) + collect(children) + collect(direct_siblings) + collect(fspouse) + collect(cspouse) + collect(spouse)) as people, 
+collections.to_set(collect(c) + collect(p) + collect(s) + collect(ds) + collect(fsp) + collect(csp) + collect(sp)) as relationships
 UNWIND people as ppl
 RETURN collect({
   id: id(ppl), 

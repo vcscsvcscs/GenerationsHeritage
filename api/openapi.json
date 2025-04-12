@@ -749,6 +749,64 @@
                 }
             }
         },
+        "/person/{id}/family-tree-with-spouses": {
+            "get": {
+                "summary": "Get family tree by person ID with spouses included",
+                "operationId": "getFamilyTreeById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Family tree retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FamilyTree"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/person/{id}/recipes": {
             "get": {
                 "summary": "Get recipes by person ID",
@@ -2519,32 +2577,17 @@
             "FamilyTree": {
                 "type": "object",
                 "properties": {
-                    "ancestors": {
+                    "people": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/OptimizedPersonNode"
                         }
                     },
-                    "prel1": {
-                        "$ref": "#/components/schemas/Relationship"
-                    },
-                    "children": {
+                    "relationships": {
                         "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/OptimizedPersonNode"
+                        "items":{
+                            "$ref": "#/components/schemas/Relationship"
                         }
-                    },
-                    "prel2": {
-                        "$ref": "#/components/schemas/Relationship"
-                    },
-                    "spouses": {
-                        "type": "string"
-                    },
-                    "srel": {
-                        "$ref": "#/components/schemas/Relationship"
-                    },
-                    "user": {
-                        "type": "string"
                     }
                 }
             },
