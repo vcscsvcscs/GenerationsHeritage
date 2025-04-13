@@ -84,7 +84,7 @@ func TestGetPersonByGoogleId(t *testing.T) {
 	}
 }
 
-func TestUpdatePerson(t *testing.T) {
+func TestUpdatePersonByGoogleID(t *testing.T) {
 	tests := []struct {
 		name         string
 		mockRunError error

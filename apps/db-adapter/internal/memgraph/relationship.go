@@ -40,13 +40,33 @@ func DeleteRelationship(ctx context.Context, id1, id2 int) neo4j.ManagedTransact
 	}
 }
 
-func CreateChildParentRelationship(ctx context.Context, childId, parentId int) neo4j.ManagedTransactionWork {
+func UpdateRelationship(ctx context.Context, id1, id2 int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
+	return func(tx neo4j.ManagedTransaction) (any, error) {
+		result, err := tx.Run(ctx, UpdateRelationshipCypherQuery, map[string]any{
+			"id1":          id1,
+			"id2":          id2,
+			"relationship": relationship,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		record, err := result.Single(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		return record.AsMap(), nil
+	}
+}
+
+func CreateChildParentRelationship(ctx context.Context, childId, parentId int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateChildParentRelationshipCypherQuery, map[string]any{
 			"childId":            childId,
 			"parentId":           parentId,
-			"childRelationship":  api.FamilyRelationship{},
-			"parentRelationship": api.FamilyRelationship{},
+			"childRelationship":  relationship,
+			"parentRelationship": relationship,
 		})
 		if err != nil {
 			return nil, err
@@ -56,13 +76,13 @@ func CreateChildParentRelationship(ctx context.Context, childId, parentId int) n
 	}
 }
 
-func CreateSiblingRelationship(ctx context.Context, siblingId1, siblingId2 int) neo4j.ManagedTransactionWork {
+func CreateSiblingRelationship(ctx context.Context, siblingId1, siblingId2 int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateSiblingRelationshipCypherQuery, map[string]any{
 			"id1":           siblingId1,
 			"id2":           siblingId2,
-			"Relationship1": api.FamilyRelationship{},
-			"Relationship2": api.FamilyRelationship{},
+			"Relationship1": relationship,
+			"Relationship2": relationship,
 		})
 		if err != nil {
 			return nil, err
@@ -72,13 +92,13 @@ func CreateSiblingRelationship(ctx context.Context, siblingId1, siblingId2 int) 
 	}
 }
 
-func CreateSpouseRelationship(ctx context.Context, spouseId1, spouseId2 int) neo4j.ManagedTransactionWork {
+func CreateSpouseRelationship(ctx context.Context, spouseId1, spouseId2 int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateSpouseRelationshipCypherQuery, map[string]any{
 			"id1":           spouseId1,
 			"id2":           spouseId2,
-			"Relationship1": api.FamilyRelationship{},
-			"Relationship2": api.FamilyRelationship{},
+			"Relationship1": relationship,
+			"Relationship2": relationship,
 		})
 		if err != nil {
 			return nil, err
