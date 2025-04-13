@@ -88,10 +88,12 @@ var CreateSpouseRelationshipCypherQuery string
 //go:embed queries/delete_relationship.cypher
 var DeleteRelationshipCypherQuery string
 
-// Requires id parameter.
+// Requires id1, id2, relationship parameter.
 //
-//go:embed queries/get_family_tree_by_id.cypher
-var GetFamilyTreeByIdCypherQuery string
+// return relationship
+//
+//go:embed queries/update_relationship.cypher
+var UpdateRelationshipCypherQuery string
 
 // Requires id1, id2 parameter.
 //

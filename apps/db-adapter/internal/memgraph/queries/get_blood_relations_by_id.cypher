@@ -8,7 +8,7 @@ WITH collections.to_set(collect(n)+collect(family)+collect(children)+collect(dir
 collections.to_set(collect(c) + collect(p) + collect(s) + collect(ds)) as relationships
 UNWIND people as ppl
 RETURN collect({
-  id: id(ppl), 
+  id: id(ppl),
   first_name: ppl.first_name, 
   middle_name: ppl.middle_name,
   last_name: ppl.last_name, 
