@@ -18,50 +18,90 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer cancel()
-
-	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
 
-	qctx, qCancel := context.WithTimeout(ctx, srv.dbOpTimeout)
-	defer qCancel()
-
-	res, err := session.ExecuteWrite(qctx, memgraph.CreatePerson(qctx, &api.PersonProperties{
-		FirstName:        &requestBody.Person.FirstName,
-		LastName:         &requestBody.Person.LastName,
-		Born:             &requestBody.Person.Born,
-		MothersFirstName: &requestBody.Person.MothersFirstName,
-		MothersLastName:  &requestBody.Person.MothersLastName,
-		Limit:            &requestBody.Person.Limit,
-	}))
+	trs, err := session.BeginTransaction(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+	defer func() {
+		trs.Commit(c.Request.Context())
+		trs.Close(c.Request.Context())
+	}()
+
+	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	defer qCancel()
+	res, err := trs.Run(qctx, memgraph.CreatePersonCypherQuery, map[string]any{
+		"Person": requestBody.Person,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
 		return
 	}
 
-	resMap, ok := res.(map[string]any)
+	singleRes, err := res.Single(qctx)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+	personID, ok := singleRes.Get("id")
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": "unexpected result type"})
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Person ID not found in response"})
 
 		return
 	}
 
-	relCtx, relCCancel := context.WithTimeout(ctx, srv.dbOpTimeout)
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer acancel()
+	_, aErr := trs.Run(actx, memgraph.CreateAdminRelationshipCypherQuery, map[string]any{
+		"id2": personID.(int),
+		"id1": params.XUserID,
+	})
+	if aErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": aErr.Error()})
+
+		return
+	}
+
+	relCtx, relCCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer relCCancel()
 
-	personID := resMap["id"].(int)
 	var relationShipResultRaw any
 	var relationshipError error
 	switch *requestBody.Type {
 	case api.CreatePersonAndRelationshipJSONBodyTypeChild:
-		relationShipResultRaw, relationshipError = session.ExecuteRead(relCtx, memgraph.CreateChildParentRelationship(qctx, personID, id))
+		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateChildParentRelationshipCypherQuery, map[string]any{
+			"childId":            personID.(int),
+			"parentId":           id,
+			"childRelationship":  requestBody.Relationship,
+			"parentRelationship": requestBody.Relationship,
+		})
 	case api.CreatePersonAndRelationshipJSONBodyTypeParent:
-		relationShipResultRaw, relationshipError = session.ExecuteRead(relCtx, memgraph.CreateChildParentRelationship(qctx, id, personID))
+		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateChildParentRelationshipCypherQuery, map[string]any{
+			"childId":            id,
+			"parentId":           personID.(int),
+			"childRelationship":  requestBody.Relationship,
+			"parentRelationship": requestBody.Relationship,
+		})
 	case api.CreatePersonAndRelationshipJSONBodyTypeSibling:
-		relationShipResultRaw, relationshipError = session.ExecuteRead(relCtx, memgraph.CreateSiblingRelationship(qctx, personID, id))
+		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateSiblingRelationshipCypherQuery, map[string]any{
+			"id1":           id,
+			"id2":           personID.(int),
+			"Relationship1": requestBody.Relationship,
+			"Relationship2": requestBody.Relationship,
+		})
 	case api.CreatePersonAndRelationshipJSONBodyTypeSpouse:
-		relationShipResultRaw, relationshipError = session.ExecuteRead(relCtx, memgraph.CreateSpouseRelationship(qctx, personID, id))
+		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateSpouseRelationshipCypherQuery, map[string]any{
+			"id1":           personID.(int),
+			"id2":           id,
+			"Relationship1": requestBody.Relationship,
+			"Relationship2": requestBody.Relationship,
+		})
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "invalid relationship type"})
 	}
@@ -74,5 +114,5 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 	c.JSON(http.StatusOK, struct {
 		Person any `json:"person"`
 		Rel    any `json:"relationship"`
-	}{Person: resMap, Rel: relationShipResultRaw})
+	}{Person: singleRes, Rel: relationShipResultRaw})
 }
