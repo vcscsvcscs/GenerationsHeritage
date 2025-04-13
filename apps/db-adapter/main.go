@@ -35,7 +35,7 @@ func init() {
 	viper.AutomaticEnv()
 
 	viper.SetDefault("HTTP_PORT", ":80")
-	viper.SetDefault("MEMGRAPH_URI", "bolt+ssc://memgraph:7687")
+	viper.SetDefault("MEMGRAPH_URI", "bolt://memgraph:7687")
 	viper.SetDefault("MEMGRAPH_USER", "")
 	viper.SetDefault("MEMGRAPH_PASS", "")
 	viper.SetDefault("PRODUCTION", false)
