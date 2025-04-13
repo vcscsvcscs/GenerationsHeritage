@@ -28,6 +28,14 @@ const (
 	CreateRelationshipJSONBodyTypeSpouse  CreateRelationshipJSONBodyType = "spouse"
 )
 
+// Defines values for UpdateRelationshipJSONBodyType.
+const (
+	Child   UpdateRelationshipJSONBodyType = "child"
+	Parent  UpdateRelationshipJSONBodyType = "parent"
+	Sibling UpdateRelationshipJSONBodyType = "sibling"
+	Spouse  UpdateRelationshipJSONBodyType = "spouse"
+)
+
 // Admin defines model for Admin.
 type Admin struct {
 	End        *string `json:"end,omitempty"`
@@ -255,6 +263,16 @@ type CreateAdminRelationshipParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// GetFamilyTreeByIdParams defines parameters for GetFamilyTreeById.
+type GetFamilyTreeByIdParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// GetFamilyTreeWithSpousesByIdParams defines parameters for GetFamilyTreeWithSpousesById.
+type GetFamilyTreeWithSpousesByIdParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
 // GetManagedProfilesParams defines parameters for GetManagedProfiles.
 type GetManagedProfilesParams struct {
 	XUserID int `json:"X-User-ID"`
@@ -372,6 +390,22 @@ type GetRelationshipParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// UpdateRelationshipJSONBody defines parameters for UpdateRelationship.
+type UpdateRelationshipJSONBody struct {
+	Id1          *int                            `json:"id1,omitempty"`
+	Id2          *int                            `json:"id2,omitempty"`
+	Relationship *FamilyRelationship             `json:"relationship,omitempty"`
+	Type         *UpdateRelationshipJSONBodyType `json:"type,omitempty"`
+}
+
+// UpdateRelationshipParams defines parameters for UpdateRelationship.
+type UpdateRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// UpdateRelationshipJSONBodyType defines parameters for UpdateRelationship.
+type UpdateRelationshipJSONBodyType string
+
 // CreatePersonJSONRequestBody defines body for CreatePerson for application/json ContentType.
 type CreatePersonJSONRequestBody = PersonRegistration
 
@@ -396,6 +430,9 @@ type CreateRecipeRelationshipJSONRequestBody CreateRecipeRelationshipJSONBody
 // CreateRelationshipJSONRequestBody defines body for CreateRelationship for application/json ContentType.
 type CreateRelationshipJSONRequestBody CreateRelationshipJSONBody
 
+// UpdateRelationshipJSONRequestBody defines body for UpdateRelationship for application/json ContentType.
+type UpdateRelationshipJSONRequestBody UpdateRelationshipJSONBody
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Get profile Admins
@@ -410,6 +447,12 @@ type ServerInterface interface {
 	// Create admin relationship between two persons
 	// (POST /admin/{id1}/{id2})
 	CreateAdminRelationship(c *gin.Context, id1 int, id2 int, params CreateAdminRelationshipParams)
+	// Get family tree by person ID
+	// (GET /family-tree)
+	GetFamilyTreeById(c *gin.Context, params GetFamilyTreeByIdParams)
+	// Get family tree by person ID with spouses included
+	// (GET /family-tree-with-spouses)
+	GetFamilyTreeWithSpousesById(c *gin.Context, params GetFamilyTreeWithSpousesByIdParams)
 	// Check the health of the server
 	// (GET /health)
 	HealthCheck(c *gin.Context)
@@ -437,12 +480,6 @@ type ServerInterface interface {
 	// Update a person by ID
 	// (PATCH /person/{id})
 	UpdatePerson(c *gin.Context, id int, params UpdatePersonParams)
-	// Get family tree by person ID
-	// (GET /person/{id}/family-tree)
-	GetFamilyTreeById(c *gin.Context, id int)
-	// Get family tree by person ID with spouses included
-	// (GET /person/{id}/family-tree-with-spouses)
-	GetFamilyTreeById(c *gin.Context, id int)
 	// Hard delete a person by ID
 	// (DELETE /person/{id}/hard-delete)
 	HardDeletePerson(c *gin.Context, id int, params HardDeletePersonParams)
@@ -476,6 +513,9 @@ type ServerInterface interface {
 	// Get relationship between two persons
 	// (GET /relationship/{id1}/{id2})
 	GetRelationship(c *gin.Context, id1 int, id2 int, params GetRelationshipParams)
+	// Update a relationship between two persons
+	// (PATCH /relationship/{id1}/{id2})
+	UpdateRelationship(c *gin.Context, id1 int, id2 int, params UpdateRelationshipParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -716,6 +756,90 @@ func (siw *ServerInterfaceWrapper) CreateAdminRelationship(c *gin.Context) {
 	}
 
 	siw.Handler.CreateAdminRelationship(c, id1, id2, params)
+}
+
+// GetFamilyTreeById operation middleware
+func (siw *ServerInterfaceWrapper) GetFamilyTreeById(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetFamilyTreeByIdParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetFamilyTreeById(c, params)
+}
+
+// GetFamilyTreeWithSpousesById operation middleware
+func (siw *ServerInterfaceWrapper) GetFamilyTreeWithSpousesById(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetFamilyTreeWithSpousesByIdParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetFamilyTreeWithSpousesById(c, params)
 }
 
 // HealthCheck operation middleware
@@ -1060,54 +1184,6 @@ func (siw *ServerInterfaceWrapper) UpdatePerson(c *gin.Context) {
 	}
 
 	siw.Handler.UpdatePerson(c, id, params)
-}
-
-// GetFamilyTreeById operation middleware
-func (siw *ServerInterfaceWrapper) GetFamilyTreeById(c *gin.Context) {
-
-	var err error
-
-	// ------------- Path parameter "id" -------------
-	var id int
-
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetFamilyTreeById(c, id)
-}
-
-// GetFamilyTreeById operation middleware
-func (siw *ServerInterfaceWrapper) GetFamilyTreeById(c *gin.Context) {
-
-	var err error
-
-	// ------------- Path parameter "id" -------------
-	var id int
-
-	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetFamilyTreeById(c, id)
 }
 
 // HardDeletePerson operation middleware
@@ -1695,6 +1771,66 @@ func (siw *ServerInterfaceWrapper) GetRelationship(c *gin.Context) {
 	siw.Handler.GetRelationship(c, id1, id2, params)
 }
 
+// UpdateRelationship operation middleware
+func (siw *ServerInterfaceWrapper) UpdateRelationship(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id1" -------------
+	var id1 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id1", c.Param("id1"), &id1, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id1: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "id2" -------------
+	var id2 int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id2", c.Param("id2"), &id2, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id2: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateRelationshipParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateRelationship(c, id1, id2, params)
+}
+
 // GinServerOptions provides options for the Gin server.
 type GinServerOptions struct {
 	BaseURL      string
@@ -1726,6 +1862,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/admin/:id1/:id2", wrapper.DeleteAdminRelationship)
 	router.GET(options.BaseURL+"/admin/:id1/:id2", wrapper.GetAdminRelationship)
 	router.POST(options.BaseURL+"/admin/:id1/:id2", wrapper.CreateAdminRelationship)
+	router.GET(options.BaseURL+"/family-tree", wrapper.GetFamilyTreeById)
+	router.GET(options.BaseURL+"/family-tree-with-spouses", wrapper.GetFamilyTreeWithSpousesById)
 	router.GET(options.BaseURL+"/health", wrapper.HealthCheck)
 	router.GET(options.BaseURL+"/managed_profiles", wrapper.GetManagedProfiles)
 	router.POST(options.BaseURL+"/person", wrapper.CreatePerson)
@@ -1735,8 +1873,6 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/person/:id", wrapper.SoftDeletePerson)
 	router.GET(options.BaseURL+"/person/:id", wrapper.GetPersonById)
 	router.PATCH(options.BaseURL+"/person/:id", wrapper.UpdatePerson)
-	router.GET(options.BaseURL+"/person/:id/family-tree", wrapper.GetFamilyTreeById)
-	router.GET(options.BaseURL+"/person/:id/family-tree-with-spouses", wrapper.GetFamilyTreeById)
 	router.DELETE(options.BaseURL+"/person/:id/hard-delete", wrapper.HardDeletePerson)
 	router.GET(options.BaseURL+"/person/:id/recipes", wrapper.GetRecipesByPersonId)
 	router.POST(options.BaseURL+"/person_and_relationship/:id", wrapper.CreatePersonAndRelationship)
@@ -1748,4 +1884,5 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.POST(options.BaseURL+"/relationship", wrapper.CreateRelationship)
 	router.DELETE(options.BaseURL+"/relationship/:id1/:id2", wrapper.DeleteRelationship)
 	router.GET(options.BaseURL+"/relationship/:id1/:id2", wrapper.GetRelationship)
+	router.PATCH(options.BaseURL+"/relationship/:id1/:id2", wrapper.UpdateRelationship)
 }

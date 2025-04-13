@@ -691,14 +691,14 @@
                 }
             }
         },
-        "/person/{id}/family-tree": {
+        "/family-tree": {
             "get": {
                 "summary": "Get family tree by person ID",
                 "operationId": "getFamilyTreeById",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "X-User-ID",
+                        "in": "header",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -749,14 +749,14 @@
                 }
             }
         },
-        "/person/{id}/family-tree-with-spouses": {
+        "/family-tree-with-spouses": {
             "get": {
                 "summary": "Get family tree by person ID with spouses included",
-                "operationId": "getFamilyTreeById",
+                "operationId": "getFamilyTreeWithSpousesById",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "X-User-ID",
+                        "in": "header",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1072,6 +1072,99 @@
                         }
                     }
                 }
+            },
+            "patch":{
+                "summary": "Update a relationship between two persons",
+                "operationId": "updateRelationship",
+                "parameters": [
+                    {
+                        "name": "id1",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id1": {
+                                        "type": "integer"
+                                    },
+                                    "id2": {
+                                        "type": "integer"
+                                    },
+                                    "relationship": {
+                                        "$ref": "#/components/schemas/FamilyRelationship"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Relationship created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Relationship"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                
             },
             "delete": {
                 "summary": "Delete relationship between two persons",
