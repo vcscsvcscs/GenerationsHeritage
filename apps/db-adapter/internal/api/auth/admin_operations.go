@@ -22,6 +22,6 @@ func CouldManagePersonUnknownAdmin(ctx context.Context, session neo4j.SessionWit
 		return nil
 	}
 
-	_, err := session.ExecuteRead(ctx, memgraph.GetAdminRelationship(ctx, userId, XUserID), nil)
+	_, err := session.ExecuteRead(ctx, memgraph.GetAdminRelationship(ctx, userId, XUserID))
 	return err
 }

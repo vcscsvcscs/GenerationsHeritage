@@ -2,6 +2,7 @@ package mock
 
 import (
 	"context"
+	"sync"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/stretchr/testify/mock"
@@ -9,6 +10,7 @@ import (
 
 type SessionWithContext struct {
 	neo4j.SessionWithContext
+	ReturnOnce *sync.Once
 	mock.Mock
 }
 
@@ -43,11 +45,25 @@ func (m *SessionWithContext) BeginTransaction(ctx context.Context, configurers .
 
 func (m *SessionWithContext) ExecuteRead(ctx context.Context, work neo4j.ManagedTransactionWork, configurers ...func(*neo4j.TransactionConfig)) (any, error) {
 	args := m.Called(ctx, work, configurers)
-	if args.Get(0) != nil {
-		return args.Get(0), args.Error(1)
-	}
+	if len(args) > 2 && args.Get(2) != nil {
+		returnValue1, returnValue2 := args.Get(2), args.Error(3)
 
-	return nil, args.Error(1)
+		m.ReturnOnce.Do(func() {
+			if args.Get(0) != nil {
+				returnValue1, returnValue2 = args.Get(0), args.Error(1)
+			}
+
+			returnValue1, returnValue2 = nil, args.Error(1)
+		})
+
+		return returnValue1, returnValue2
+	} else {
+		if args.Get(0) != nil {
+			return args.Get(0), args.Error(1)
+		}
+
+		return nil, args.Error(1)
+	}
 }
 
 func (m *SessionWithContext) ExecuteWrite(ctx context.Context, work neo4j.ManagedTransactionWork, configurers ...func(*neo4j.TransactionConfig)) (any, error) {
