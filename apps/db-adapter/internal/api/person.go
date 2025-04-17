@@ -21,7 +21,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 	}
 
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	trs, err := session.BeginTransaction(c.Request.Context())
 	if err != nil {
@@ -34,7 +34,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 		trs.Close(c.Request.Context())
 	}()
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := trs.Run(qctx, memgraph.CreatePersonCypherQuery, map[string]any{
 		"Person": *person,
@@ -58,7 +58,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 		return
 	}
 
-	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	_, aErr := trs.Run(actx, memgraph.CreateAdminRelationshipCypherQuery, map[string]any{
 		"id2": personId.(int),
@@ -74,12 +74,12 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 }
 
 func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
-	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeePersonsProfile(actx, session, id, params.XUserID); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
@@ -87,7 +87,7 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 		return
 	}
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteRead(qctx, memgraph.GetPersonById(qctx, id))
 	if err != nil {
@@ -100,12 +100,12 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 }
 
 func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
-	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id, params.XUserID); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
@@ -113,7 +113,7 @@ func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDelet
 		return
 	}
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.SoftDeletePerson(qctx, id))
 	if err != nil {
@@ -133,10 +133,10 @@ func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonP
 		return
 	}
 
-	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	session := srv.db.NewSession(actx, neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id, params.XUserID); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
@@ -144,7 +144,7 @@ func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonP
 		return
 	}
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.UpdatePerson(qctx, id, person))
 	if err != nil {
@@ -157,12 +157,12 @@ func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonP
 }
 
 func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDeletePersonParams) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
-	actx, acancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id, params.XUserID); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
@@ -170,7 +170,7 @@ func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDelet
 		return
 	}
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.HardDeletePerson(qctx, id))
 	if err != nil {

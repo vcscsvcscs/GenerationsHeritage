@@ -14,7 +14,7 @@ import (
 
 func (srv *server) CreateAdminRelationship(c *gin.Context, id1 int, id2 int, params api.CreateAdminRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -39,7 +39,7 @@ func (srv *server) CreateAdminRelationship(c *gin.Context, id1 int, id2 int, par
 
 func (srv *server) DeleteAdminRelationship(c *gin.Context, id1 int, id2 int, params api.DeleteAdminRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -64,7 +64,7 @@ func (srv *server) DeleteAdminRelationship(c *gin.Context, id1 int, id2 int, par
 
 func (srv *server) GetAdminRelationship(c *gin.Context, id1 int, id2 int, params api.GetAdminRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -89,7 +89,7 @@ func (srv *server) GetAdminRelationship(c *gin.Context, id1 int, id2 int, params
 
 func (srv *server) GetProfileAdmins(c *gin.Context, id int, params api.GetProfileAdminsParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -114,7 +114,7 @@ func (srv *server) GetProfileAdmins(c *gin.Context, id int, params api.GetProfil
 
 func (srv *server) GetManagedProfiles(c *gin.Context, params api.GetManagedProfilesParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()

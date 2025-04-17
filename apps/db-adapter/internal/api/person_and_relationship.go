@@ -19,7 +19,7 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 	}
 
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	trs, err := session.BeginTransaction(c.Request.Context())
 	if err != nil {

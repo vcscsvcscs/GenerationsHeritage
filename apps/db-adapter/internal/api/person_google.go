@@ -11,11 +11,12 @@ import (
 )
 
 func (srv *server) GetPersonByGoogleId(c *gin.Context, googleId string) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteRead(qctx, memgraph.GetPersonByGoogleId(qctx, googleId))
 	if err != nil {
@@ -40,12 +41,12 @@ func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId 
 	emptyString := ""
 	person.Props.InviteCode = &emptyString
 
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.UpdatePersonByInviteCode(qctx, person.InviteCode, person.Props))
 	if err != nil {
@@ -66,11 +67,12 @@ func (srv *server) CreatePersonByGoogleId(c *gin.Context, googleId string) {
 	}
 	person.GoogleId = &googleId // just making sure :)
 
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()
 	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.CreatePerson(qctx, person))
 	if err != nil {

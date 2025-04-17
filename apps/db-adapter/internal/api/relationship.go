@@ -21,7 +21,7 @@ func (srv *server) CreateRelationship(c *gin.Context, params api.CreateRelations
 	}
 
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -69,7 +69,7 @@ func (srv *server) UpdateRelationship(c *gin.Context, id1, id2 int, params api.U
 	}
 
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -96,7 +96,7 @@ func (srv *server) UpdateRelationship(c *gin.Context, id1, id2 int, params api.U
 
 func (srv *server) GetRelationship(c *gin.Context, id1 int, id2 int, params api.GetRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
@@ -124,7 +124,7 @@ func (srv *server) GetRelationship(c *gin.Context, id1 int, id2 int, params api.
 
 func (srv *server) DeleteRelationship(c *gin.Context, id1 int, id2 int, params api.DeleteRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
-	defer closeSession(c.Request.Context(), session, srv.dbOpTimeout)
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
