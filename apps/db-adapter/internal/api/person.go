@@ -107,7 +107,7 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) { //nolint:dupl,lll // not worth abstracting more than this
+func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) {
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
