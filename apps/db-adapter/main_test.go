@@ -56,11 +56,9 @@ func TestIntegration(t *testing.T) {
 
 	memgraphHost, err := memgraphC.ContainerIP(t.Context())
 	require.NoError(t, err)
-	// memgraphPort, err := memgraphC.MappedPort(t.Context(), "7687/tcp")
-	// require.NoError(t, err)
 
 	memgraphURI := "bolt://" + memgraphHost + ":7687" // + memgraphPort.Port()
-	govet
+
 	DBAdapterReq := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
 			Context:    "./",
