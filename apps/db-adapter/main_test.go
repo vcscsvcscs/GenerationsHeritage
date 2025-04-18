@@ -17,7 +17,7 @@ func TestIntegration(t *testing.T) {
 		return
 	}
 	defer func() {
-		if err := net.Remove(t.Context()); err != nil {
+		if err := net.Remove(t.Context()); err != nil { //nolint:govet // ignore shadowing
 			t.Logf("failed to remove network: %s", err)
 		}
 	}()
@@ -56,11 +56,11 @@ func TestIntegration(t *testing.T) {
 
 	memgraphHost, err := memgraphC.ContainerIP(t.Context())
 	require.NoError(t, err)
-	//memgraphPort, err := memgraphC.MappedPort(t.Context(), "7687/tcp")
-	//require.NoError(t, err)
+	// memgraphPort, err := memgraphC.MappedPort(t.Context(), "7687/tcp")
+	// require.NoError(t, err)
 
 	memgraphURI := "bolt://" + memgraphHost + ":7687" // + memgraphPort.Port()
-
+	govet
 	DBAdapterReq := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
 			Context:    "./",
@@ -80,10 +80,13 @@ func TestIntegration(t *testing.T) {
 		Started:          true,
 	})
 	defer testcontainers.CleanupContainer(t, dbAdapterC)
-
-	aliasis, err := memgraphC.NetworkAliases(t.Context())
 	if err != nil {
-		t.Log("Memgraph Network Aliases: ", aliasis)
+		aliasis, naerr := memgraphC.NetworkAliases(t.Context())
+		if naerr != nil {
+			t.Logf("failed to get network aliases: %s", naerr)
+		} else {
+			t.Log("Memgraph Network Aliases: ", aliasis)
+		}
 		t.Log("Memgraph Running: ", memgraphC.IsRunning())
 		t.Log(dbAdapterC.Logs(t.Context()))
 	}
