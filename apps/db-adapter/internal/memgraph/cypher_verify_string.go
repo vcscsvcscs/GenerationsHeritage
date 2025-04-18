@@ -2,6 +2,7 @@ package memgraph
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -104,16 +105,10 @@ var cypherDelimiters = map[string]string{
 
 // VerifyString verifies if a string is valid and does not contain cypher injection
 func VerifyString(s string) error {
-	s = strings.ToUpper(s)
 	for _, keyword := range cypherKeywords {
-		if strings.Contains(s, keyword) {
+		keywordPattern := fmt.Sprintf(`\b%s\b`, strings.ToUpper(keyword))
+		if match, _ := regexp.MatchString(keywordPattern, strings.ToUpper(s)); match {
 			return fmt.Errorf("invalid string: %s contains cypher keyword: %s", s, keyword)
-		}
-	}
-
-	for _, operator := range cypherOperators {
-		if strings.Contains(s, operator) {
-			return fmt.Errorf("invalid string: %s contains cypher operator: %s", s, operator)
 		}
 	}
 
