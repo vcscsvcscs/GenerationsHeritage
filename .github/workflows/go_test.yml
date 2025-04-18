@@ -22,11 +22,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          go get ./${{ inputs.working-directory }}/...
+          cd ${{ inputs.working-directory }}
+          go get ./...
           
       - name: Run tests
         run: |
-          go test ./${{ inputs.working-directory }}/... -json > TestResults.json
+          cd ${{ inputs.working-directory }}
+          go test ./... -json > TestResults.json
 
       - name: Upload Go test results
         uses: actions/upload-artifact@v4
