@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -24,8 +25,8 @@ import (
 const (
 	defaultHTTPPort       = ":80"
 	defaultMemgraphURI    = "bolt://memgraph:7687"
-	defaultMemgraphUser   = ""
-	defaultMemgraphPass   = ""
+	defaultMemgraphUser   = "memgraph"
+	defaultMemgraphPass   = "memgraph"
 	defaultProduction     = false
 	defaultRequestTimeout = 20
 	defaultDBOpTimeout    = 5
@@ -75,14 +76,14 @@ func main() {
 	}
 
 	hc := healthcheck.New()
-
-	memgraphDriver := memgraph.InitDatabase(memgraphURI, memgraphUser, memgraphPass)
+	logger.Info("Init DB", zap.Any("Envvars", os.Environ()))
+	memgraphDriver := memgraph.InitDatabase(logger, memgraphURI, memgraphUser, memgraphPass)
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost"},
+		AllowOrigins:     []string{fmt.Sprintf("http://localhost%s", httpPort), "http://localhost"},
 		AllowCredentials: true,
-		AllowHeaders:     []string{"X-User-ID", "Content-Type"},
+		AllowHeaders:     []string{"X-User-ID", "X-User-Name", "Content-Type"},
 		MaxAge:           12 * time.Hour,
 	}))
 

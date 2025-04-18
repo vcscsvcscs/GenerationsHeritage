@@ -487,11 +487,11 @@ type ServerInterface interface {
 	// (DELETE /recipe/{id}/hard-delete)
 	HardDeleteRecipe(c *gin.Context, id int, params HardDeleteRecipeParams)
 	// Delete a relationship with a recipe
-	// (DELETE /recipe/{recipeId}/relationship)
-	DeleteRecipeRelationship(c *gin.Context, recipeId int, params DeleteRecipeRelationshipParams)
+	// (DELETE /recipe/{id}/relationship)
+	DeleteRecipeRelationship(c *gin.Context, id int, params DeleteRecipeRelationshipParams)
 	// Create a relationship with an existing recipe
-	// (POST /recipe/{recipeId}/relationship)
-	CreateRecipeRelationship(c *gin.Context, recipeId int, params CreateRecipeRelationshipParams)
+	// (POST /recipe/{id}/relationship)
+	CreateRecipeRelationship(c *gin.Context, id int, params CreateRecipeRelationshipParams)
 	// Create a relationship between two persons
 	// (POST /relationship)
 	CreateRelationship(c *gin.Context, params CreateRelationshipParams)
@@ -1485,12 +1485,12 @@ func (siw *ServerInterfaceWrapper) DeleteRecipeRelationship(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "recipeId" -------------
-	var recipeId int
+	// ------------- Path parameter "id" -------------
+	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "recipeId", c.Param("recipeId"), &recipeId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter recipeId: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -1543,7 +1543,7 @@ func (siw *ServerInterfaceWrapper) DeleteRecipeRelationship(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.DeleteRecipeRelationship(c, recipeId, params)
+	siw.Handler.DeleteRecipeRelationship(c, id, params)
 }
 
 // CreateRecipeRelationship operation middleware
@@ -1551,12 +1551,12 @@ func (siw *ServerInterfaceWrapper) CreateRecipeRelationship(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "recipeId" -------------
-	var recipeId int
+	// ------------- Path parameter "id" -------------
+	var id int
 
-	err = runtime.BindStyledParameterWithOptions("simple", "recipeId", c.Param("recipeId"), &recipeId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter recipeId: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -1594,7 +1594,7 @@ func (siw *ServerInterfaceWrapper) CreateRecipeRelationship(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.CreateRecipeRelationship(c, recipeId, params)
+	siw.Handler.CreateRecipeRelationship(c, id, params)
 }
 
 // CreateRelationship operation middleware
@@ -1867,8 +1867,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/recipe/:id", wrapper.SoftDeleteRecipe)
 	router.PATCH(options.BaseURL+"/recipe/:id", wrapper.UpdateRecipe)
 	router.DELETE(options.BaseURL+"/recipe/:id/hard-delete", wrapper.HardDeleteRecipe)
-	router.DELETE(options.BaseURL+"/recipe/:recipeId/relationship", wrapper.DeleteRecipeRelationship)
-	router.POST(options.BaseURL+"/recipe/:recipeId/relationship", wrapper.CreateRecipeRelationship)
+	router.DELETE(options.BaseURL+"/recipe/:id/relationship", wrapper.DeleteRecipeRelationship)
+	router.POST(options.BaseURL+"/recipe/:id/relationship", wrapper.CreateRecipeRelationship)
 	router.POST(options.BaseURL+"/relationship", wrapper.CreateRelationship)
 	router.DELETE(options.BaseURL+"/relationship/:id1/:id2", wrapper.DeleteRelationship)
 	router.GET(options.BaseURL+"/relationship/:id1/:id2", wrapper.GetRelationship)

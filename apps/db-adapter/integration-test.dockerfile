@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:alpine AS build
+FROM golang:alpine AS build
 
 WORKDIR /app
 
@@ -6,11 +6,11 @@ COPY . .
 
 RUN go get ./...
 
-RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o db-adapter
+RUN go build -o db-adapter
 
 RUN apk update && apk add ca-certificates && update-ca-certificates
 
-FROM --platform=$TARGETPLATFORM busybox:1.36.1
+FROM busybox:1.36.1
 
 COPY --from=build /etc/ssl/certs /etc/ssl/certs
 COPY --from=build /app/db-adapter /app/

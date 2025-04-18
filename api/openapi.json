@@ -1935,13 +1935,13 @@
                 }
             }
         },
-        "/recipe/{recipeId}/relationship": {
+        "/recipe/{id}/relationship": {
             "post": {
                 "summary": "Create a relationship with an existing recipe",
                 "operationId": "createRecipeRelationship",
                 "parameters": [
                     {
-                        "name": "recipeId",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2047,7 +2047,7 @@
                 "operationId": "deleteRecipeRelationship",
                 "parameters": [
                     {
-                        "name": "recipeId",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
