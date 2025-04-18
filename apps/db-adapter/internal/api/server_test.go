@@ -7,6 +7,7 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
 
@@ -31,7 +32,7 @@ func (m *mockHealthCheck) GetStatus() string {
 func TestNewServer(t *testing.T) {
 	logger := zap.NewNop()
 	mockDriver, err := neo4j.NewDriverWithContext("bolt+ssc://memgraph:7687", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	mockHealth := &mockHealthCheck{}
 
 	t.Run("should create a new server instance", func(t *testing.T) {

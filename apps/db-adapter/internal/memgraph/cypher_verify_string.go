@@ -79,7 +79,20 @@ var cypherOperators = []string{
 	"IS DURATION",
 }
 
-// cypherDelimiters contains the delimiters that need to be escaped in a string to prevent cypher injection keys are the delimiters that need to be escaped and values are the escaped delimiters
+// cypherDelimiters is a map that defines escape sequences for various
+// delimiter characters used in Cypher queries. The keys represent
+// the original delimiter characters, and the values represent their
+// corresponding escaped versions. This ensures that special characters
+// are properly escaped to prevent syntax errors or injection issues
+// when constructing Cypher queries.
+//
+// Key-value pairs:
+// - "'"       -> `\'`
+// - `"`       -> `\"`
+// - `\u0027`  -> `\\u0027`
+// - `\u0022`  -> `\\\\u0022`
+// - "`"       -> ` “ `
+// - `\u0060`  -> `\\u0060\\u0060`
 var cypherDelimiters = map[string]string{
 	"'":       `\'`,
 	`"`:       `\"`,

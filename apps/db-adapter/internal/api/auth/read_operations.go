@@ -36,5 +36,4 @@ func CouldSeePersonsProfile(ctx context.Context, session neo4j.SessionWithContex
 	}
 
 	return fmt.Errorf("user %d does not have permission to see user %d", XUserID, userId)
-
 }

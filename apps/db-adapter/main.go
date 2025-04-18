@@ -21,6 +21,16 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	defaultHTTPPort       = ":80"
+	defaultMemgraphURI    = "bolt://memgraph:7687"
+	defaultMemgraphUser   = ""
+	defaultMemgraphPass   = ""
+	defaultProduction     = false
+	defaultRequestTimeout = 20
+	defaultDBOpTimeout    = 5
+)
+
 var (
 	httpPort       string
 	memgraphURI    string
@@ -34,13 +44,13 @@ var (
 func init() {
 	viper.AutomaticEnv()
 
-	viper.SetDefault("HTTP_PORT", ":80")
-	viper.SetDefault("MEMGRAPH_URI", "bolt://memgraph:7687")
-	viper.SetDefault("MEMGRAPH_USER", "")
-	viper.SetDefault("MEMGRAPH_PASS", "")
-	viper.SetDefault("PRODUCTION", false)
-	viper.SetDefault("REQUEST_TIMEOUT", 20)
-	viper.SetDefault("DB_OP_TIMEOUT", 5)
+	viper.SetDefault("HTTP_PORT", defaultHTTPPort)
+	viper.SetDefault("MEMGRAPH_URI", defaultMemgraphURI)
+	viper.SetDefault("MEMGRAPH_USER", defaultMemgraphUser)
+	viper.SetDefault("MEMGRAPH_PASS", defaultMemgraphPass)
+	viper.SetDefault("PRODUCTION", defaultProduction)
+	viper.SetDefault("REQUEST_TIMEOUT", defaultRequestTimeout)
+	viper.SetDefault("DB_OP_TIMEOUT", defaultDBOpTimeout)
 
 	httpPort = viper.GetString("HTTP_PORT")
 	memgraphURI = viper.GetString("MEMGRAPH_URI")
