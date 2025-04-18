@@ -28,14 +28,6 @@ const (
 	CreateRelationshipJSONBodyTypeSpouse  CreateRelationshipJSONBodyType = "spouse"
 )
 
-// Defines values for UpdateRelationshipJSONBodyType.
-const (
-	Child   UpdateRelationshipJSONBodyType = "child"
-	Parent  UpdateRelationshipJSONBodyType = "parent"
-	Sibling UpdateRelationshipJSONBodyType = "sibling"
-	Spouse  UpdateRelationshipJSONBodyType = "spouse"
-)
-
 // Admin defines model for Admin.
 type Admin struct {
 	End        *string `json:"end,omitempty"`
@@ -392,19 +384,15 @@ type GetRelationshipParams struct {
 
 // UpdateRelationshipJSONBody defines parameters for UpdateRelationship.
 type UpdateRelationshipJSONBody struct {
-	Id1          *int                            `json:"id1,omitempty"`
-	Id2          *int                            `json:"id2,omitempty"`
-	Relationship *FamilyRelationship             `json:"relationship,omitempty"`
-	Type         *UpdateRelationshipJSONBodyType `json:"type,omitempty"`
+	Id1          *int                `json:"id1,omitempty"`
+	Id2          *int                `json:"id2,omitempty"`
+	Relationship *FamilyRelationship `json:"relationship,omitempty"`
 }
 
 // UpdateRelationshipParams defines parameters for UpdateRelationship.
 type UpdateRelationshipParams struct {
 	XUserID int `json:"X-User-ID"`
 }
-
-// UpdateRelationshipJSONBodyType defines parameters for UpdateRelationship.
-type UpdateRelationshipJSONBodyType string
 
 // CreatePersonJSONRequestBody defines body for CreatePerson for application/json ContentType.
 type CreatePersonJSONRequestBody = PersonRegistration

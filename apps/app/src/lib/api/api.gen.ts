@@ -110,7 +110,7 @@ export interface paths {
         patch: operations["createPersonByGoogleIdAndInviteCode"];
         trace?: never;
     };
-    "/person/{id}/family-tree": {
+    "/family-tree": {
         parameters: {
             query?: never;
             header?: never;
@@ -119,6 +119,23 @@ export interface paths {
         };
         /** Get family tree by person ID */
         get: operations["getFamilyTreeById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/family-tree-with-spouses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get family tree by person ID with spouses included */
+        get: operations["getFamilyTreeWithSpousesById"];
         put?: never;
         post?: never;
         delete?: never;
@@ -176,7 +193,8 @@ export interface paths {
         delete: operations["deleteRelationship"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update a relationship between two persons */
+        patch: operations["updateRelationship"];
         trace?: never;
     };
     "/admin/{id1}": {
@@ -439,13 +457,8 @@ export interface components {
             profile_picture?: string | null;
         };
         FamilyTree: {
-            ancestors?: components["schemas"]["OptimizedPersonNode"][];
-            prel1?: components["schemas"]["Relationship"];
-            children?: components["schemas"]["OptimizedPersonNode"][];
-            prel2?: components["schemas"]["Relationship"];
-            spouses?: string;
-            srel?: components["schemas"]["Relationship"];
-            user?: string;
+            people?: components["schemas"]["OptimizedPersonNode"][];
+            relationships?: components["schemas"]["Relationship"][];
         };
         RecipeProperties: {
             name?: string | null;
@@ -973,10 +986,54 @@ export interface operations {
     getFamilyTreeById: {
         parameters: {
             query?: never;
-            header?: never;
-            path: {
-                id: number;
+            header: {
+                "X-User-ID": number;
             };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Family tree retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyTree"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    getFamilyTreeWithSpousesById: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -1086,8 +1143,8 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    id1?: string;
-                    id2?: string;
+                    id1?: number;
+                    id2?: number;
                     /** @enum {string} */
                     type?: "child" | "parent" | "spouse" | "sibling";
                     relationship?: components["schemas"]["FamilyRelationship"];
@@ -1220,6 +1277,61 @@ export interface operations {
                     "application/json": {
                         msg?: string;
                     };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    updateRelationship: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id1: number;
+                id2: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    id1?: number;
+                    id2?: number;
+                    relationship?: components["schemas"]["FamilyRelationship"];
+                };
+            };
+        };
+        responses: {
+            /** @description Relationship created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Relationship"];
                 };
             };
             /** @description Unauthorized */
