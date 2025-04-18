@@ -120,6 +120,7 @@ linters:
       - common-false-positives
       - legacy
     paths:
+      - internal/memgraph/mock/*
       - pkg/api/api.gen.go # generated code
 
     rules:
