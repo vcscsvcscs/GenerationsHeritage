@@ -12,7 +12,7 @@ on:
   
 jobs:
     docker:
-      name: Build and Push Backend image to Docker Hub
+      name: Build and Push ${{inputs.service-name}} image to Docker Hub
       runs-on: ubuntu-latest
       steps:
         - uses: actions/github-script@v6
