@@ -76,7 +76,7 @@ func main() {
 	}
 
 	hc := healthcheck.New()
-	logger.Info("Init DB", zap.Any("Envvars", os.Environ()))
+
 	memgraphDriver := memgraph.InitDatabase(logger, memgraphURI, memgraphUser, memgraphPass)
 
 	router := gin.Default()
