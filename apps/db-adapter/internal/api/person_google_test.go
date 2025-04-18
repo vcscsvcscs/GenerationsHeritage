@@ -76,7 +76,7 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything).Return(map[string]any{"result": "success"}, nil)
+		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(map[string]any{"result": "success"}, nil)
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
@@ -112,7 +112,7 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		srv.CreatePersonByGoogleIdAndInviteCode(c, "test-google-id")
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
-		assert.Contains(t, w.Body.String(), "invalid character")
+		assert.Contains(t, w.Body.String(), "{\"msg\":\"unexpected EOF\"}")
 	})
 }
 

@@ -73,7 +73,7 @@ func TestCouldSeePersonsProfile(t *testing.T) {
 		mockSession := &memgraphMock.SessionWithContext{
 			ReturnOnce: &sync.Once{},
 		}
-		mockSession.On("ExecuteRead", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("invalid"), "invalid", nil).Once()
+		mockSession.On("ExecuteRead", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("invalid"), "invalid", nil)
 
 		err := CouldSeePersonsProfile(ctx, mockSession, 1, 3)
 		require.Error(t, err)

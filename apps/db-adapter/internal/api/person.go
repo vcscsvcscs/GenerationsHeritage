@@ -121,14 +121,14 @@ func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDelet
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
-	res, err := session.ExecuteWrite(qctx, memgraph.SoftDeletePerson(qctx, id))
+	_, err := session.ExecuteWrite(qctx, memgraph.SoftDeletePerson(qctx, id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, map[string]string{"description": "Person soft deleted"})
 }
 
 func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonParams) {

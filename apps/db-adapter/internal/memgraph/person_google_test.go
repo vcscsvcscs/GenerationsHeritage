@@ -107,8 +107,12 @@ func TestUpdatePersonByGoogleID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			mockTx := new(mock.Transaction)
-
-			mockTx.On("Run", ctx, UpdatePersonCypherQuery).Return(nil, tt.mockRunError)
+			mockResult := new(mock.Result)
+			mockResult.On("Single", ctx).Return(&neo4j.Record{
+				Values: []any{"value"},
+				Keys:   []string{"key"},
+			}, nil)
+			mockTx.On("Run", ctx, UpdatePersonByInviteCodeCypherQuery, tmock.Anything).Return(mockResult, tt.mockRunError)
 
 			personProps := &api.PersonProperties{}
 			work := UpdatePersonByInviteCode(ctx, "test-person-id", personProps)

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
@@ -23,15 +24,20 @@ func TestCreatePerson(t *testing.T) {
 
 	t.Run("Successful case", func(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
+		mockTransaction := new(memgraphMock.ExplicitTransaction)
 		mockResult := new(memgraphMock.Result)
-		mockResult.On("Single", mock.Anything).Return(map[string]any{"id": 1}, nil)
+		mockResult.On("Single", mock.Anything).Return(&neo4j.Record{
+			Values: []any{1},
+			Keys:   []string{"id"},
+		}, nil)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("BeginTransaction", mock.Anything).Return(mockSession, nil)
-		mockSession.On("Run", mock.Anything, memgraph.CreatePersonCypherQuery, mock.Anything).Return(mockResult, nil)
-		mockSession.On("Run", mock.Anything, memgraph.CreateAdminRelationshipCypherQuery, mock.Anything).Return(nil, nil)
-		mockSession.On("Commit", mock.Anything).Return(nil)
+		mockSession.On("BeginTransaction", mock.Anything, mock.Anything).Return(mockTransaction, nil)
+		mockTransaction.On("Run", mock.Anything, memgraph.CreatePersonCypherQuery, mock.Anything).Return(mockResult, nil).Once()
+		mockTransaction.On("Run", mock.Anything, memgraph.CreateAdminRelationshipCypherQuery, mock.Anything).Return(nil, nil).Once()
+		mockTransaction.On("Commit", mock.Anything).Return(nil)
 		mockSession.On("Close", mock.Anything).Return(nil)
+		mockTransaction.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
 			db:          mockDriver,
@@ -72,7 +78,7 @@ func TestCreatePerson(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("BeginTransaction", mock.Anything).Return(nil, errors.New("transaction error"))
+		mockSession.On("BeginTransaction", mock.Anything, mock.Anything).Return(nil, errors.New("transaction error"))
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
@@ -104,7 +110,7 @@ func TestGetPersonById(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("ExecuteRead", mock.Anything, mock.Anything).Return(map[string]any{"id": 1}, nil)
+		mockSession.On("ExecuteRead", mock.Anything, mock.Anything, mock.Anything).Return(map[string]any{"id": 1}, nil)
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
@@ -128,7 +134,7 @@ func TestGetPersonById(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("ExecuteRead", mock.Anything, mock.Anything).Return(nil, fmt.Errorf("unauthorized"))
+		mockSession.On("ExecuteRead", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("unauthorized"))
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
@@ -156,7 +162,7 @@ func TestSoftDeletePerson(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything).Return(nil, nil)
+		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(nil, nil)
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
@@ -180,7 +186,7 @@ func TestSoftDeletePerson(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything).Return(nil, fmt.Errorf("unauthorized"))
+		mockSession.On("ExecuteRead", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("unauthorized"))
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
