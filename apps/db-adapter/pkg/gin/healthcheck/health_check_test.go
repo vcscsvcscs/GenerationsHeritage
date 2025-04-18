@@ -120,7 +120,7 @@ func TestHealthCheck_HealthCheckHandler(t *testing.T) {
 			hc.SetStatus(tt.args.status)
 
 			w := httptest.NewRecorder()
-			req, _ := http.NewRequest("GET", "/health", nil)
+			req, _ := http.NewRequestWithContext(t.Context(), "GET", "/health", http.NoBody)
 			r.ServeHTTP(w, req)
 
 			if got := w.Code; got != tt.statusCode {

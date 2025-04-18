@@ -7,7 +7,7 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
-func CreateAdminRelationship(ctx context.Context, userId int, adminId int) neo4j.ManagedTransactionWork {
+func CreateAdminRelationship(ctx context.Context, userId, adminId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateAdminRelationshipCypherQuery, map[string]any{
 			"id1": adminId,
@@ -26,7 +26,7 @@ func CreateAdminRelationship(ctx context.Context, userId int, adminId int) neo4j
 	}
 }
 
-func DeleteAdminRelationship(ctx context.Context, userId int, adminId int) neo4j.ManagedTransactionWork {
+func DeleteAdminRelationship(ctx context.Context, userId, adminId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, DeleteAdminRelationshipCypherQuery, map[string]any{
 			"id1": adminId,
@@ -44,7 +44,7 @@ func DeleteAdminRelationship(ctx context.Context, userId int, adminId int) neo4j
 	}
 }
 
-func GetAdminRelationship(ctx context.Context, userId int, adminId int) neo4j.ManagedTransactionWork {
+func GetAdminRelationship(ctx context.Context, userId, adminId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, GetAdminRelationshipCypherQuery, map[string]any{
 			"id1": adminId,

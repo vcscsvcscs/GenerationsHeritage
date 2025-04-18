@@ -14,10 +14,10 @@ import (
 
 func TestCreatePerson(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -75,11 +75,11 @@ func TestCreatePerson(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}
@@ -87,10 +87,10 @@ func TestCreatePerson(t *testing.T) {
 
 func TestHardDeletePerson(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
-		expectedResult any
+		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -139,7 +139,7 @@ func TestHardDeletePerson(t *testing.T) {
 
 			if tc.expectedError != nil {
 				require.Error(t, err)
-				assert.Nil(t, result)
+				require.Nil(t, result)
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, tc.expectedResult, result)
@@ -150,10 +150,10 @@ func TestHardDeletePerson(t *testing.T) {
 
 func TestUpdatePerson(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -215,11 +215,11 @@ func TestUpdatePerson(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}
@@ -227,10 +227,10 @@ func TestUpdatePerson(t *testing.T) {
 
 func TestSoftDeletePerson(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -288,11 +288,11 @@ func TestSoftDeletePerson(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}

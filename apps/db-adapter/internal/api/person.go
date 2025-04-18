@@ -10,6 +10,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/api/auth"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
+	"go.uber.org/zap"
 )
 
 func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
@@ -30,8 +31,9 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 		return
 	}
 	defer func() {
-		trs.Commit(c.Request.Context())
-		trs.Close(c.Request.Context())
+		if err := trs.Close(c.Request.Context()); err != nil { //nolint:govet // ignore shadowing
+			srv.logger.Error("failed to close transaction", zap.Error(err))
+		}
 	}()
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
@@ -51,6 +53,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 
 		return
 	}
+
 	personId, ok := singleRes.Get("id")
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Person ID not found in response"})
@@ -70,13 +73,18 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 		return
 	}
 
+	if err := trs.Commit(c.Request.Context()); err != nil {
+		srv.logger.Error("failed to commit transaction", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, singleRes.AsMap())
 }
 
-func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer cancel()
-	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) { //nolint:dupl // not worth abstracting more
+	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
@@ -99,10 +107,8 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer cancel()
-	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) { //nolint:dupl,lll // not worth abstracting more than this
+	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
@@ -133,11 +139,11 @@ func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonP
 		return
 	}
 
-	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer acancel()
-	session := srv.db.NewSession(actx, neo4j.SessionConfig{})
+	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer acancel()
 	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id, params.XUserID); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
 
@@ -156,10 +162,8 @@ func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonP
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDeletePersonParams) {
-	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer cancel()
-	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDeletePersonParams) { //nolint:dupl,lll // This just does not worth abstracting anymore
+	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)

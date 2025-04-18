@@ -5,17 +5,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
 func (srv *server) GetFamilyTreeById(c *gin.Context, params api.GetFamilyTreeByIdParams) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
-	defer cancel()
-	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+	session := srv.createSessionWithTimeout(c.Request.Context())
 
-	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteRead(qctx, memgraph.GetFamilyTreeById(qctx, params.XUserID))
 	if err != nil {
@@ -26,10 +23,10 @@ func (srv *server) GetFamilyTreeById(c *gin.Context, params api.GetFamilyTreeByI
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) GetFamilyTreeWithSpousesById(c *gin.Context, params api.GetFamilyTreeWithSpousesByIdParams) {
-	ctx, cancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
-	defer cancel()
-	session := srv.db.NewSession(ctx, neo4j.SessionConfig{})
+func (srv *server) GetFamilyTreeWithSpousesById(
+	c *gin.Context, params api.GetFamilyTreeWithSpousesByIdParams,
+) {
+	session := srv.createSessionWithTimeout(c.Request.Context())
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer qCancel()

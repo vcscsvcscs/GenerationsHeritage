@@ -8,10 +8,10 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func CreatePerson(ctx context.Context, Person *api.PersonProperties) neo4j.ManagedTransactionWork {
+func CreatePerson(ctx context.Context, person *api.PersonProperties) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreatePersonCypherQuery, map[string]any{
-			"Person": *Person,
+			"Person": *person,
 		})
 		if err != nil {
 			return nil, err

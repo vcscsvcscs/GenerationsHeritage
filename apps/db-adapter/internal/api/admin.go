@@ -12,7 +12,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) CreateAdminRelationship(c *gin.Context, id1 int, id2 int, params api.CreateAdminRelationshipParams) {
+func (srv *server) CreateAdminRelationship(c *gin.Context, id1, id2 int, params api.CreateAdminRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -37,7 +37,7 @@ func (srv *server) CreateAdminRelationship(c *gin.Context, id1 int, id2 int, par
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) DeleteAdminRelationship(c *gin.Context, id1 int, id2 int, params api.DeleteAdminRelationshipParams) {
+func (srv *server) DeleteAdminRelationship(c *gin.Context, id1, id2 int, params api.DeleteAdminRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -62,7 +62,7 @@ func (srv *server) DeleteAdminRelationship(c *gin.Context, id1 int, id2 int, par
 	c.JSON(http.StatusOK, gin.H{"msg": "admin relationship was deleted"})
 }
 
-func (srv *server) GetAdminRelationship(c *gin.Context, id1 int, id2 int, params api.GetAdminRelationshipParams) {
+func (srv *server) GetAdminRelationship(c *gin.Context, id1, id2 int, params api.GetAdminRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

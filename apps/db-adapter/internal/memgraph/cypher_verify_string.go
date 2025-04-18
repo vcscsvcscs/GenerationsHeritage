@@ -38,7 +38,7 @@ var cypherKeywords = []string{
 	"WHERE",
 }
 
-var cypherOperators = []string{
+var cypherOperators = []string{ //nolint: unused // this could be used in the future
 	"+",
 	"-",
 	"*",

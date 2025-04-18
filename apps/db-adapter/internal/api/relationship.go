@@ -41,13 +41,29 @@ func (srv *server) CreateRelationship(c *gin.Context, params api.CreateRelations
 	var relationshipError error
 	switch *relationship.Type {
 	case api.CreateRelationshipJSONBodyTypeChild:
-		relationShipResultRaw, relationshipError = session.ExecuteWrite(qctx, memgraph.CreateChildParentRelationship(qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship))
+		relationShipResultRaw, relationshipError = session.ExecuteWrite(
+			qctx, memgraph.CreateChildParentRelationship(
+				qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship,
+			),
+		)
 	case api.CreateRelationshipJSONBodyTypeParent:
-		relationShipResultRaw, relationshipError = session.ExecuteWrite(qctx, memgraph.CreateChildParentRelationship(qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship))
+		relationShipResultRaw, relationshipError = session.ExecuteWrite(
+			qctx, memgraph.CreateChildParentRelationship(
+				qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship,
+			),
+		)
 	case api.CreateRelationshipJSONBodyTypeSibling:
-		relationShipResultRaw, relationshipError = session.ExecuteWrite(qctx, memgraph.CreateSiblingRelationship(qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship))
+		relationShipResultRaw, relationshipError = session.ExecuteWrite(
+			qctx, memgraph.CreateSiblingRelationship(
+				qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship,
+			),
+		)
 	case api.CreateRelationshipJSONBodyTypeSpouse:
-		relationShipResultRaw, relationshipError = session.ExecuteWrite(qctx, memgraph.CreateSpouseRelationship(qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship))
+		relationShipResultRaw, relationshipError = session.ExecuteWrite(
+			qctx, memgraph.CreateSpouseRelationship(
+				qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship,
+			),
+		)
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "invalid relationship type"})
 	}
@@ -94,7 +110,7 @@ func (srv *server) UpdateRelationship(c *gin.Context, id1, id2 int, params api.U
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) GetRelationship(c *gin.Context, id1 int, id2 int, params api.GetRelationshipParams) {
+func (srv *server) GetRelationship(c *gin.Context, id1, id2 int, params api.GetRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -122,7 +138,7 @@ func (srv *server) GetRelationship(c *gin.Context, id1 int, id2 int, params api.
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) DeleteRelationship(c *gin.Context, id1 int, id2 int, params api.DeleteRelationshipParams) {
+func (srv *server) DeleteRelationship(c *gin.Context, id1, id2 int, params api.DeleteRelationshipParams) {
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

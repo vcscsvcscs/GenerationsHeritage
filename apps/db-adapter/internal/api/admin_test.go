@@ -34,7 +34,7 @@ func TestCreateAdminRelationship(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 
-		c.Request = httptest.NewRequest(http.MethodPost, "/admin", nil)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/admin", http.NoBody)
 		params := api.CreateAdminRelationshipParams{XUserID: *api.IntPtr(1)}
 
 		srv.CreateAdminRelationship(c, 1, 2, params)
@@ -58,7 +58,7 @@ func TestCreateAdminRelationship(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 
-		c.Request = httptest.NewRequest(http.MethodPost, "/admin", nil)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/admin", http.NoBody)
 		params := api.CreateAdminRelationshipParams{XUserID: *api.IntPtr(3)}
 
 		srv.CreateAdminRelationship(c, 1, 2, params)
@@ -83,7 +83,7 @@ func TestCreateAdminRelationship(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 
-		c.Request = httptest.NewRequest(http.MethodPost, "/admin", nil)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/admin", http.NoBody)
 		params := api.CreateAdminRelationshipParams{XUserID: 1}
 
 		srv.CreateAdminRelationship(c, 1, 2, params)
@@ -112,7 +112,7 @@ func TestDeleteAdminRelationship(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 
-		c.Request = httptest.NewRequest(http.MethodDelete, "/admin", nil)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/admin", http.NoBody)
 		params := api.DeleteAdminRelationshipParams{XUserID: 2}
 
 		srv.DeleteAdminRelationship(c, 1, 2, params)
@@ -136,7 +136,7 @@ func TestDeleteAdminRelationship(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 
-		c.Request = httptest.NewRequest(http.MethodDelete, "/admin", nil)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/admin", http.NoBody)
 		params := api.DeleteAdminRelationshipParams{XUserID: 3}
 
 		srv.DeleteAdminRelationship(c, 1, 2, params)
@@ -161,7 +161,7 @@ func TestDeleteAdminRelationship(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 
-		c.Request = httptest.NewRequest(http.MethodDelete, "/admin", nil)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/admin", http.NoBody)
 		params := api.DeleteAdminRelationshipParams{XUserID: 2}
 
 		srv.DeleteAdminRelationship(c, 1, 2, params)

@@ -41,7 +41,7 @@ var (
 	dbOpTimeout    time.Duration
 )
 
-func init() {
+func init() { //nolint:gochecknoinits // this is a main package, init is ok
 	viper.AutomaticEnv()
 
 	viper.SetDefault("HTTP_PORT", defaultHTTPPort)

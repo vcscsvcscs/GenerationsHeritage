@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +12,15 @@ import (
 )
 
 type server struct {
-	db          neo4j.DriverWithContext
-	dbOpTimeout time.Duration
-	health      healthcheck.HealthCheck
 	logger      *zap.Logger
+	db          neo4j.DriverWithContext
+	health      healthcheck.HealthCheck
+	dbOpTimeout time.Duration
 }
 
-func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthcheck.HealthCheck, databaseOperationTimeout time.Duration) api.ServerInterface {
+func New(
+	logger *zap.Logger, drv neo4j.DriverWithContext, hc healthcheck.HealthCheck, databaseOperationTimeout time.Duration,
+) api.ServerInterface {
 	if logger == nil {
 		panic("logger is required")
 	}
@@ -26,7 +29,7 @@ func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthchec
 		panic("neo4j driver is required")
 	}
 
-	if healthcheck == nil {
+	if hc == nil {
 		panic("healthcheck is required")
 	}
 
@@ -34,9 +37,17 @@ func New(logger *zap.Logger, drv neo4j.DriverWithContext, healthcheck healthchec
 		panic("database operation timeout is required")
 	}
 
-	return &server{db: drv, health: healthcheck, logger: logger}
+	return &server{db: drv, health: hc, logger: logger}
 }
 
 func (srv *server) HealthCheck(c *gin.Context) {
 	srv.health.HealthCheckHandler(c)
+}
+
+// Helper function to create a session with timeout
+func (srv *server) createSessionWithTimeout(ctx context.Context) neo4j.SessionWithContext {
+	actx, acancel := context.WithTimeout(ctx, srv.dbOpTimeout)
+	defer acancel()
+	session := srv.db.NewSession(actx, neo4j.SessionConfig{})
+	return session
 }

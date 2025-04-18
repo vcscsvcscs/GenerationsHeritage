@@ -40,7 +40,9 @@ func DeleteRelationship(ctx context.Context, id1, id2 int) neo4j.ManagedTransact
 	}
 }
 
-func UpdateRelationship(ctx context.Context, id1, id2 int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
+func UpdateRelationship(
+	ctx context.Context, id1, id2 int, relationship api.FamilyRelationship,
+) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdateRelationshipCypherQuery, map[string]any{
 			"id1":          id1,
@@ -60,7 +62,9 @@ func UpdateRelationship(ctx context.Context, id1, id2 int, relationship api.Fami
 	}
 }
 
-func CreateChildParentRelationship(ctx context.Context, childId, parentId int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
+func CreateChildParentRelationship(
+	ctx context.Context, childId, parentId int, relationship api.FamilyRelationship,
+) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateChildParentRelationshipCypherQuery, map[string]any{
 			"childId":            childId,
@@ -76,7 +80,9 @@ func CreateChildParentRelationship(ctx context.Context, childId, parentId int, r
 	}
 }
 
-func CreateSiblingRelationship(ctx context.Context, siblingId1, siblingId2 int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
+func CreateSiblingRelationship(
+	ctx context.Context, siblingId1, siblingId2 int, relationship api.FamilyRelationship,
+) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateSiblingRelationshipCypherQuery, map[string]any{
 			"id1":           siblingId1,
@@ -92,7 +98,9 @@ func CreateSiblingRelationship(ctx context.Context, siblingId1, siblingId2 int, 
 	}
 }
 
-func CreateSpouseRelationship(ctx context.Context, spouseId1, spouseId2 int, relationship api.FamilyRelationship) neo4j.ManagedTransactionWork {
+func CreateSpouseRelationship(
+	ctx context.Context, spouseId1, spouseId2 int, relationship api.FamilyRelationship,
+) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateSpouseRelationshipCypherQuery, map[string]any{
 			"id1":           spouseId1,

@@ -8,6 +8,7 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
+	"go.uber.org/zap"
 )
 
 func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params api.CreatePersonAndRelationshipParams) {
@@ -28,8 +29,9 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 		return
 	}
 	defer func() {
-		trs.Commit(c.Request.Context())
-		trs.Close(c.Request.Context())
+		if err := trs.Close(c.Request.Context()); err != nil { //nolint:govet // ignore errcheck
+			srv.logger.Error("failed to close transaction", zap.Error(err))
+		}
 	}()
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
@@ -107,6 +109,13 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 	}
 	if relationshipError != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": relationshipError.Error()})
+
+		return
+	}
+
+	if err := trs.Commit(c.Request.Context()); err != nil {
+		srv.logger.Error("failed to commit transaction", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 
 		return
 	}

@@ -16,17 +16,17 @@ import (
 //   - session: The Neo4j session used for database operations.
 //   - userId: The ID of the user being managed.
 //   - adminId: The ID of the admin attempting to manage the user.
-//   - XUserID: The ID of the currently authenticated user.
+//   - xUserID: The ID of the currently authenticated user.
 //
 // Returns:
 //   - An error if the admin does not have the authority to manage the person,
 //     or nil if the operation is allowed.
-func CouldManagePerson(ctx context.Context, session neo4j.SessionWithContext, userId, adminId, XUserID int) error {
-	if adminId == XUserID {
+func CouldManagePerson(ctx context.Context, session neo4j.SessionWithContext, userId, adminId, xUserID int) error {
+	if adminId == xUserID {
 		return nil
 	}
 
-	return CouldManagePersonUnknownAdmin(ctx, session, userId, XUserID)
+	return CouldManagePersonUnknownAdmin(ctx, session, userId, xUserID)
 }
 
 // CouldManagePersonUnknownAdmin checks if a user can manage another person
@@ -38,16 +38,16 @@ func CouldManagePerson(ctx context.Context, session neo4j.SessionWithContext, us
 //   - ctx: The context for managing request-scoped values, deadlines, and cancellations.
 //   - session: The Neo4j session used to execute the database query.
 //   - userId: The ID of the user attempting to manage another person.
-//   - XUserID: The ID of the person being managed.
+//   - xUserID: The ID of the person being managed.
 //
 // Returns:
 //   - An error if the user is not allowed to manage the person or if there is
 //     an issue querying the database. Returns nil if the user is allowed.
-func CouldManagePersonUnknownAdmin(ctx context.Context, session neo4j.SessionWithContext, userId, XUserID int) error {
-	if userId == XUserID {
+func CouldManagePersonUnknownAdmin(ctx context.Context, session neo4j.SessionWithContext, userId, xUserID int) error {
+	if userId == xUserID {
 		return nil
 	}
 
-	_, err := session.ExecuteRead(ctx, memgraph.GetAdminRelationship(ctx, userId, XUserID))
+	_, err := session.ExecuteRead(ctx, memgraph.GetAdminRelationship(ctx, userId, xUserID))
 	return err
 }

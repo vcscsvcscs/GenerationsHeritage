@@ -6,7 +6,7 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
-// returned map has "people" which is a slice of OptimizedPersonNode and relationships wich a slice of Relatioship type.
+// returned map has "people" which is a slice of OptimizedPersonNode and relationships which a slice of Relatioship type.
 func GetFamilyTreeById(ctx context.Context, userId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, GetBloodRelativesCypherQuery, map[string]any{
@@ -25,7 +25,7 @@ func GetFamilyTreeById(ctx context.Context, userId int) neo4j.ManagedTransaction
 	}
 }
 
-// returned map has "people" which is a slice of OptimizedPersonNode and relationships wich a slice of Relatioship type.
+// returned map has "people" which is a slice of OptimizedPersonNode and relationships which a slice of Relatioship type.
 func GetFamilyTreeWithSpousesById(ctx context.Context, userId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, GetFamilyTreeWithSpousesCypherQuery, map[string]any{

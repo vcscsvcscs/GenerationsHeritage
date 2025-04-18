@@ -29,8 +29,8 @@ func (srv *server) GetPersonByGoogleId(c *gin.Context, googleId string) {
 
 func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId string) {
 	var person struct {
-		InviteCode string                `json:"invite_code"`
 		Props      *api.PersonProperties `json:"person"`
+		InviteCode string                `json:"invite_code"`
 	}
 	if err := c.ShouldBindJSON(&person); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -40,6 +40,7 @@ func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId 
 
 	emptyString := ""
 	person.Props.InviteCode = &emptyString
+	person.Props.GoogleId = &googleId
 
 	ctx, cancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer cancel()

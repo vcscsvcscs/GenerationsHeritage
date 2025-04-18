@@ -6,20 +6,21 @@ import (
 	"testing"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
-	"github.com/stretchr/testify/assert"
+	tmock "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph/mock"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
 func TestGetPersonByGoogleId(t *testing.T) {
 	tests := []struct {
-		name          string
 		mockRunResult any
 		mockRunError  error
-		mockSingle    *neo4j.Record
 		mockSingleErr error
-		expectedErr   bool
 		expectedRes   any
+		mockSingle    *neo4j.Record
+		name          string
+		expectedErr   bool
 	}{
 		{
 			name:          "Success",
@@ -31,7 +32,7 @@ func TestGetPersonByGoogleId(t *testing.T) {
 			},
 			mockSingleErr: nil,
 			expectedErr:   false,
-			expectedRes:   "value",
+			expectedRes:   map[string]any{"key": "value"},
 		},
 		{
 			name:          "RunError",
@@ -57,10 +58,10 @@ func TestGetPersonByGoogleId(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			mockTx := new(mock.Transaction)
-			mockResult := tt.mockRunResult.(*mock.Result)
 
-			mockTx.On("Run", ctx, GetPersonByGoogleIdCypherQuery).Return(tt.mockRunResult, tt.mockRunError)
-			if mockResult != nil {
+			mockTx.On("Run", ctx, GetPersonByGoogleIdCypherQuery, tmock.Anything).Return(tt.mockRunResult, tt.mockRunError)
+			if tt.mockRunResult != nil {
+				mockResult := tt.mockRunResult.(*mock.Result)
 				mockResult.On("Single", ctx).Return(tt.mockSingle, tt.mockSingleErr)
 			}
 
@@ -68,17 +69,17 @@ func TestGetPersonByGoogleId(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tt.expectedErr {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-				assert.Equal(t, tt.expectedRes, result)
+				require.NoError(t, err)
+				require.NotNil(t, result)
+				require.Equal(t, tt.expectedRes, result)
 			}
 
 			mockTx.AssertExpectations(t)
-			if mockResult != nil {
-				mockResult.AssertExpectations(t)
+			if tt.mockRunResult != nil {
+				tt.mockRunResult.(*mock.Result).AssertExpectations(t)
 			}
 		})
 	}
@@ -86,8 +87,8 @@ func TestGetPersonByGoogleId(t *testing.T) {
 
 func TestUpdatePersonByGoogleID(t *testing.T) {
 	tests := []struct {
-		name         string
 		mockRunError error
+		name         string
 		expectedErr  bool
 	}{
 		{
@@ -114,11 +115,11 @@ func TestUpdatePersonByGoogleID(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tt.expectedErr {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
+				require.NoError(t, err)
+				require.NotNil(t, result)
 			}
 
 			mockTx.AssertExpectations(t)

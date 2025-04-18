@@ -6,17 +6,17 @@ import (
 	"testing"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph/mock"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
 func TestGetRelationship(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -68,11 +68,11 @@ func TestGetRelationship(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}
@@ -80,10 +80,10 @@ func TestGetRelationship(t *testing.T) {
 
 func TestDeleteRelationship(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
-		expectedResult bool
 		expectedError  error
+		name           string
+		expectedResult bool
 	}{
 		{
 			name: "Successful case",
@@ -119,11 +119,11 @@ func TestDeleteRelationship(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.False(t, result.(bool))
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}
@@ -131,10 +131,10 @@ func TestDeleteRelationship(t *testing.T) {
 
 func TestUpdateRelationship(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -183,11 +183,11 @@ func TestUpdateRelationship(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}

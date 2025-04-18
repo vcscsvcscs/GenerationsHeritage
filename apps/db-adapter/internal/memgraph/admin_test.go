@@ -6,16 +6,16 @@ import (
 	"testing"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph/mock"
 )
 
 func TestGetManagedProfiles(t *testing.T) {
 	testCases := []struct {
-		name           string
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
 		expectedError  error
+		name           string
 	}{
 		{
 			name: "Successful case",
@@ -67,11 +67,11 @@ func TestGetManagedProfiles(t *testing.T) {
 			result, err := work(mockTx)
 
 			if tc.expectedError != nil {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				require.Error(t, err)
+				require.Nil(t, result)
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedResult, result)
+				require.NoError(t, err)
+				require.Equal(t, tc.expectedResult, result)
 			}
 		})
 	}
