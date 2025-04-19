@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "example-payloads",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

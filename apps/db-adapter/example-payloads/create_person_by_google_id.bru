@@ -1,0 +1,31 @@
+meta {
+  name: create_person_by_google_id
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/person/google/{{google_id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "first_name": "Alice",
+    "last_name": "Wonderland",
+    "born": "1990-06-01",
+    "limit": 100,
+    "mothers_first_name": "Mary",
+    "mothers_last_name": "Smith",
+    "email": "alice@example.com"
+  }
+}
+
+vars:pre-request {
+  google_id: alice123
+}
