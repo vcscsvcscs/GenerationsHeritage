@@ -37,7 +37,7 @@ func New(
 		panic("database operation timeout is required")
 	}
 
-	return &server{db: drv, health: hc, logger: logger}
+	return &server{db: drv, health: hc, logger: logger, dbOpTimeout: databaseOperationTimeout}
 }
 
 func (srv *server) HealthCheck(c *gin.Context) {

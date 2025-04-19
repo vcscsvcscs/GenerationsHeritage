@@ -59,7 +59,7 @@ func init() { //nolint:gochecknoinits // this is a main package, init is ok
 	memgraphPass = viper.GetString("MEMGRAPH_PASS")
 	production = viper.GetBool("PRODUCTION")
 	requestTimeout = time.Duration(viper.GetInt("REQUEST_TIMEOUT")) * time.Second
-	dbOpTimeout = time.Duration(viper.GetInt("DB_OP_TIMEOUT")) * time.Millisecond
+	dbOpTimeout = time.Duration(viper.GetInt("DB_OP_TIMEOUT")) * time.Second
 }
 
 func main() {

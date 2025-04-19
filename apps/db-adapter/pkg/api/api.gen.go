@@ -30,13 +30,13 @@ const (
 
 // Admin defines model for Admin.
 type Admin struct {
-	End        *string `json:"end,omitempty"`
-	Id         *int    `json:"id,omitempty"`
-	Label      *string `json:"label,omitempty"`
-	Properties *struct {
+	End   *string `json:"End,omitempty"`
+	Id    *int    `json:"Id,omitempty"`
+	Label *string `json:"Label,omitempty"`
+	Props *struct {
 		Added *int `json:"added,omitempty"`
-	} `json:"properties,omitempty"`
-	Start *string `json:"start,omitempty"`
+	} `json:"Props,omitempty"`
+	Start *string `json:"Start,omitempty"`
 }
 
 // FamilyRelationship defines model for FamilyRelationship.
@@ -55,11 +55,11 @@ type FamilyTree struct {
 
 // Likes defines model for Likes.
 type Likes struct {
-	End        *string          `json:"end,omitempty"`
-	Id         *int             `json:"id,omitempty"`
-	Label      *string          `json:"label,omitempty"`
-	Properties *LikesProperties `json:"properties,omitempty"`
-	Start      *string          `json:"start,omitempty"`
+	End   *string          `json:"End,omitempty"`
+	Id    *int             `json:"Id,omitempty"`
+	Label *string          `json:"Label,omitempty"`
+	Props *LikesProperties `json:"Props,omitempty"`
+	Start *string          `json:"Start,omitempty"`
 }
 
 // LikesProperties defines model for LikesProperties.
@@ -84,10 +84,9 @@ type OptimizedPersonNode struct {
 
 // Person defines model for Person.
 type Person struct {
-	Id         *int              `json:"id,omitempty"`
-	Labels     *[]string         `json:"labels,omitempty"`
-	Properties *PersonProperties `json:"properties,omitempty"`
-	Type       *string           `json:"type"`
+	Id     *int              `json:"Id,omitempty"`
+	Labels *[]string         `json:"Labels,omitempty"`
+	Props  *PersonProperties `json:"Props,omitempty"`
 }
 
 // PersonProperties defines model for PersonProperties.
@@ -198,9 +197,9 @@ type PersonRegistration struct {
 
 // Recipe defines model for Recipe.
 type Recipe struct {
-	Id         *int              `json:"id,omitempty"`
-	Labels     *[]string         `json:"labels,omitempty"`
-	Properties *RecipeProperties `json:"properties,omitempty"`
+	Id     *int              `json:"Id,omitempty"`
+	Labels *[]string         `json:"Labels,omitempty"`
+	Props  *RecipeProperties `json:"Props,omitempty"`
 }
 
 // RecipeProperties defines model for RecipeProperties.
@@ -227,12 +226,12 @@ type RecipeProperties struct {
 
 // Relationship defines model for Relationship.
 type Relationship struct {
-	End        *int                `json:"end,omitempty"`
-	Id         *int                `json:"id,omitempty"`
-	Label      *string             `json:"label,omitempty"`
-	Properties *FamilyRelationship `json:"properties,omitempty"`
-	Start      *int                `json:"start,omitempty"`
-	Type       *string             `json:"type"`
+	End   *int                `json:"End,omitempty"`
+	Id    *int                `json:"Id,omitempty"`
+	Label *string             `json:"Label,omitempty"`
+	Props *FamilyRelationship `json:"Props,omitempty"`
+	Start *int                `json:"Start,omitempty"`
+	Type  *string             `json:"Type"`
 }
 
 // GetProfileAdminsParams defines parameters for GetProfileAdmins.
