@@ -45,8 +45,8 @@ services:
     depends_on:
       - memgraph
     environment:
-      - MEMGRAPH_HOST=memgraph
-      - MEMGRAPH_PORT=7687
+      - HTTP_PORT=:8080
+      - MEMGRAPH_URI=bolt://memgraph:7687
       - MEMGRAPH_USER=<USERNAME>
       - MEMGRAPH_PASSWORD=<PASSWORD>
     healthcheck:
