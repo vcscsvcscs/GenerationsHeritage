@@ -285,7 +285,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/recipe/{recipeId}/relationship": {
+    "/recipe/{id}/relationship": {
         parameters: {
             query?: never;
             header?: never;
@@ -1828,7 +1828,7 @@ export interface operations {
                 "X-User-ID": number;
             };
             path: {
-                recipeId: number;
+                id: number;
             };
             cookie?: never;
         };
@@ -1896,7 +1896,7 @@ export interface operations {
                 "X-User-ID": number;
             };
             path: {
-                recipeId: number;
+                id: number;
             };
             cookie?: never;
         };

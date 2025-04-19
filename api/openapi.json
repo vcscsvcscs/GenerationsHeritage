@@ -2557,20 +2557,16 @@
             "Person": {
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "Id": {
                         "type": "integer"
                     },
-                    "labels": {
+                    "Labels": {
                         "type": "array",
                         "items": {
                             "type": "string"
                         }
                     },
-                    "type": {
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "properties": {
+                    "Props": {
                         "$ref": "#/components/schemas/PersonProperties"
                     }
                 }
@@ -2601,23 +2597,23 @@
             "Relationship": {
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "Id": {
                         "type": "integer"
                     },
-                    "label": {
+                    "Label": {
                         "type": "string"
                     },
-                    "type": {
+                    "Type": {
                         "type": "string",
                         "nullable": true
                     },
-                    "start": {
+                    "Start": {
                         "type": "integer"
                     },
-                    "end": {
+                    "End": {
                         "type": "integer"
                     },
-                    "properties": {
+                    "Props": {
                         "$ref": "#/components/schemas/FamilyRelationship"
                     }
                 }
@@ -2767,16 +2763,16 @@
             "Recipe": {
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "Id": {
                         "type": "integer"
                     },
-                    "labels": {
+                    "Labels": {
                         "type": "array",
                         "items": {
                             "type": "string"
                         }
                     },
-                    "properties": {
+                    "Props": {
                         "$ref": "#/components/schemas/RecipeProperties"
                     }
                 }
@@ -2784,19 +2780,19 @@
             "Likes": {
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "Id": {
                         "type": "integer"
                     },
-                    "label": {
+                    "Label": {
                         "type": "string"
                     },
-                    "start": {
+                    "Start": {
                         "type": "string"
                     },
-                    "end": {
+                    "End": {
                         "type": "string"
                     },
-                    "properties": {
+                    "Props": {
                         "$ref": "#/components/schemas/LikesProperties"
                     }
                 }
@@ -2821,19 +2817,19 @@
             "Admin":{
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "Id": {
                         "type": "integer"
                     },
-                    "label": {
+                    "Label": {
                         "type": "string"
                     },
-                    "start": {
+                    "Start": {
                         "type": "string"
                     },
-                    "end": {
+                    "End": {
                         "type": "string"
                     },
-                    "properties": {
+                    "Props": {
                         "type": "object",
                         "properties": {
                             "added": {
