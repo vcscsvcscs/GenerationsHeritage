@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,6 +12,8 @@ import (
 )
 
 func TestIntegration(t *testing.T) {
+	t.Parallel()
+
 	net, err := network.New(t.Context())
 	if err != nil {
 		t.Logf("failed to create network: %s", err)
@@ -97,5 +100,18 @@ func TestIntegration(t *testing.T) {
 	require.NoError(t, err)
 	dbAdapterURI := "http://" + dbAdapterHost + ":" + dbAdapterPort.Port()
 
-	t.Run("TestCreatePersonByGoogleIdAndGetById", integration_tests.TestPersonGoogle(dbAdapterURI))
+	IntegrationTestFlow(dbAdapterURI)(t)
+}
+
+func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
+	return func(t *testing.T) {
+		client := &http.Client{}
+		t.Run("CreatePersonByGoogleIdAndGetById", integration_tests.TestPersonGoogle(dbAdapterURI))
+		t.Run("CreatePerson", integration_tests.CreatePersonTest(dbAdapterURI, client))
+		t.Run("UpdatePerson", integration_tests.UpdatePersonTest(dbAdapterURI, client))
+		t.Run("AddInviteCodeToPerson", integration_tests.UpdatePersonWithInviteCodeTest(dbAdapterURI, client))
+		t.Run("GetPersonById", integration_tests.GetPersonById(dbAdapterURI, client))
+		t.Run("SoftDeletePerson", integration_tests.SoftDeletePersonTest(dbAdapterURI, client))
+		t.Run("HardDeletePerson", integration_tests.HardDeletePersonTest(dbAdapterURI, client))
+	}
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 	"go.uber.org/zap"
@@ -36,8 +37,9 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 
 	qctx, qCancel := context.WithTimeout(context.Background(), srv.dbOpTimeout)
 	defer qCancel()
+	convertedPerson := memgraph.StructToMap(requestBody.Person)
 	res, err := trs.Run(qctx, memgraph.CreatePersonCypherQuery, map[string]any{
-		"Person": requestBody.Person,
+		"Person": convertedPerson,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
@@ -51,17 +53,19 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 
 		return
 	}
-	personID, ok := singleRes.Get("id")
+	createdPerson, ok := singleRes.Get("person")
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Person ID not found in response"})
 
 		return
 	}
 
+	personID := createdPerson.(dbtype.Node).Id //nolint:staticcheck // this is a difference in neo4j and memgraph
+
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	_, aErr := trs.Run(actx, memgraph.CreateAdminRelationshipCypherQuery, map[string]any{
-		"id2": personID.(int),
+		"id2": personID,
 		"id1": params.XUserID,
 	})
 	if aErr != nil {
@@ -73,36 +77,38 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 	relCtx, relCCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer relCCancel()
 
+	convertedRelationship := memgraph.StructToMap(requestBody.Relationship)
+
 	var relationShipResultRaw any
 	var relationshipError error
 	switch *requestBody.Type {
 	case api.CreatePersonAndRelationshipJSONBodyTypeChild:
 		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateChildParentRelationshipCypherQuery, map[string]any{
-			"childId":            personID.(int),
+			"childId":            personID,
 			"parentId":           id,
-			"childRelationship":  requestBody.Relationship,
-			"parentRelationship": requestBody.Relationship,
+			"childRelationship":  convertedRelationship,
+			"parentRelationship": convertedRelationship,
 		})
 	case api.CreatePersonAndRelationshipJSONBodyTypeParent:
 		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateChildParentRelationshipCypherQuery, map[string]any{
 			"childId":            id,
-			"parentId":           personID.(int),
-			"childRelationship":  requestBody.Relationship,
-			"parentRelationship": requestBody.Relationship,
+			"parentId":           personID,
+			"childRelationship":  convertedRelationship,
+			"parentRelationship": convertedRelationship,
 		})
 	case api.CreatePersonAndRelationshipJSONBodyTypeSibling:
 		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateSiblingRelationshipCypherQuery, map[string]any{
 			"id1":           id,
-			"id2":           personID.(int),
-			"Relationship1": requestBody.Relationship,
-			"Relationship2": requestBody.Relationship,
+			"id2":           personID,
+			"Relationship1": convertedRelationship,
+			"Relationship2": convertedRelationship,
 		})
 	case api.CreatePersonAndRelationshipJSONBodyTypeSpouse:
 		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateSpouseRelationshipCypherQuery, map[string]any{
-			"id1":           personID.(int),
+			"id1":           personID,
 			"id2":           id,
-			"Relationship1": requestBody.Relationship,
-			"Relationship2": requestBody.Relationship,
+			"Relationship1": convertedRelationship,
+			"Relationship2": convertedRelationship,
 		})
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "invalid relationship type"})

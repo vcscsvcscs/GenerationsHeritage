@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/api/auth"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
@@ -38,8 +39,9 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
+	convertedPerson := memgraph.StructToMap(person)
 	res, err := trs.Run(qctx, memgraph.CreatePersonCypherQuery, map[string]any{
-		"Person": *person,
+		"Person": convertedPerson,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
@@ -54,17 +56,19 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 		return
 	}
 
-	personId, ok := singleRes.Get("id")
+	createdPerson, ok := singleRes.Get("person")
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Person ID not found in response"})
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Person not found in db response"})
 
 		return
 	}
 
+	personId := createdPerson.(dbtype.Node).Id //nolint:staticcheck // this is a difference in neo4j and memgraph
+
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	_, aErr := trs.Run(actx, memgraph.CreateAdminRelationshipCypherQuery, map[string]any{
-		"id2": personId.(int),
+		"id2": personId,
 		"id1": params.XUserID,
 	})
 	if aErr != nil {
@@ -80,10 +84,10 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 		return
 	}
 
-	c.JSON(http.StatusOK, singleRes.AsMap())
+	c.JSON(http.StatusOK, createdPerson)
 }
 
-func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) { //nolint:dupl // not worth abstracting more
+func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) {
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -107,7 +111,7 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) {
+func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDeletePersonParams) { //nolint:dupl,lll // This just does not worth abstracting anymore
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -128,7 +132,7 @@ func (srv *server) SoftDeletePerson(c *gin.Context, id int, params api.SoftDelet
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]string{"description": "Person soft deleted"})
+	c.JSON(http.StatusOK, gin.H{"description": "Person soft deleted"})
 }
 
 func (srv *server) UpdatePerson(c *gin.Context, id int, params api.UpdatePersonParams) {
@@ -176,12 +180,14 @@ func (srv *server) HardDeletePerson(c *gin.Context, id int, params api.HardDelet
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
-	res, err := session.ExecuteWrite(qctx, memgraph.HardDeletePerson(qctx, id))
+	_, err := session.ExecuteWrite(qctx, memgraph.HardDeletePerson(qctx, id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, gin.H{
+		"description": "Person hard deleted",
+	})
 }

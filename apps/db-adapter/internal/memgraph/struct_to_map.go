@@ -71,6 +71,8 @@ func StructToMap(input any) map[string]any {
 		switch val.Kind() {
 		case reflect.Struct:
 			result[jsonKey] = StructToMap(val.Interface())
+		case reflect.Slice, reflect.Array:
+			result[jsonKey] = processSlice(val)
 		default:
 			result[jsonKey] = val.Interface()
 		}
@@ -103,4 +105,20 @@ func isPreservedType(v any) bool {
 	default:
 		return false
 	}
+}
+
+func processSlice(val reflect.Value) []any {
+	slice := make([]any, val.Len())
+	for i := range val.Len() {
+		item := val.Index(i).Interface()
+		if isPreservedType(item) {
+			slice[i] = item
+		} else if reflect.ValueOf(item).Kind() == reflect.Struct {
+			slice[i] = StructToMap(item)
+		} else {
+			slice[i] = item
+		}
+	}
+
+	return slice
 }

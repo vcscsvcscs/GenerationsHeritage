@@ -1,0 +1,28 @@
+meta {
+  name: create_person
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/person
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 1
+  X-User-Name: Alice Wonderland
+}
+
+body:json {
+  {
+    "first_name": "Jhon",
+    "last_name": "Doe",
+    "born": "1985-07-01",
+    "limit": 1000,
+    "mothers_first_name": "Mary",
+    "mothers_last_name": "Smith",
+    "email": "jd@example.com"
+  }
+}

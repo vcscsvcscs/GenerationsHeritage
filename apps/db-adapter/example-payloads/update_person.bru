@@ -1,0 +1,172 @@
+meta {
+  name: update_person
+  type: http
+  seq: 8
+}
+
+patch {
+  url: http://localhost:8080/person/{{id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 2
+}
+
+body:json {
+  {
+      "invite_code": "ABCD1234",
+      "first_name": "John",
+      "middle_name": "Fitzgerald",
+      "last_name": "Doe",
+      "titles": [
+          "Dr.",
+          "Prof."
+      ],
+      "suffixes": [
+          "Jr."
+      ],
+      "extra_names": [
+          "Johnny",
+          "J.D."
+      ],
+      "aliases": [
+          "The Professor"
+      ],
+      "mothers_first_name": "Jane",
+      "mothers_last_name": "Smith",
+      "born": "1980-05-15",
+      "place_of_birth": "New York, USA",
+      "died": null,
+      "place_of_death": null,
+      "life_events": [
+          {
+              "from": "2000-01-01",
+              "to": "2004-12-31",
+              "description": "Studied at Harvard University"
+          },
+          {
+              "from": "2005-01-01",
+              "to": "2015-01-01",
+              "description": "Worked at NASA"
+          }
+      ],
+      "occupations": [
+          "Engineer",
+          "Professor"
+      ],
+      "occupation_to_display": "Professor",
+      "others_said": [
+          {
+              "id": 1,
+              "name": "Alice Johnson",
+              "relationship": "Colleague",
+              "description": "John was always a dedicated professional.",
+              "url": "https://example.com/testimonial"
+          }
+      ],
+      "limit": 10,
+      "photos": [
+          {
+              "url": "https://example.com/photo1.jpg",
+              "description": "Graduation day",
+              "date": "2004-06-15",
+              "name": "Harvard Graduation"
+          }
+      ],
+      "videos": [
+          {
+              "url": "https://example.com/video1.mp4",
+              "description": "Interview about Mars mission",
+              "date": "2012-09-10",
+              "name": "NASA Interview"
+          }
+      ],
+      "audios": [
+          {
+              "url": "https://example.com/audio1.mp3",
+              "description": "Podcast guest appearance",
+              "date": "2020-11-20",
+              "name": "Science Today Podcast"
+          }
+      ],
+      "profile_picture": "https://example.com/profile.jpg",
+      "verified": true,
+      "email": "john.doe@example.com",
+      "phone": "+1-555-123-4567",
+      "residence": {
+          "city": "San Francisco",
+          "country": "USA",
+          "zip_code": "94103",
+          "address_line_1": "123 Main St",
+          "address_line_2": "Apt 4B"
+      },
+      "religion": "Agnostic",
+      "baptized": null,
+      "ideologies": [
+          "Environmentalism",
+          "Humanism"
+      ],
+      "blood_type": "O+",
+      "allergies": [
+          "Peanuts",
+          "Pollen"
+      ],
+      "medications": [
+          {
+              "name": "Ibuprofen",
+              "description": "Pain relief",
+              "components": "Ibuprofen 400mg",
+              "dosage": "Once a day",
+              "from": "2024-01-01",
+              "to": null
+          }
+      ],
+      "medical_conditions": [
+          {
+              "condition": "Hypertension",
+              "diagnosed_on": "2023-03-01"
+          }
+      ],
+      "height": 180.5,
+      "weight": 75.0,
+      "hair_colour": "Brown",
+      "skin_colour": "Light",
+      "eye_colour": "Green",
+      "sports": [
+          "Tennis",
+          "Cycling"
+      ],
+      "hobbies": [
+          "Painting",
+          "Chess"
+      ],
+      "interests": [
+          "Astronomy",
+          "AI Research"
+      ],
+      "languages": [
+          {
+              "language": "English",
+              "level": "Native"
+          },
+          {
+              "language": "French",
+              "level": "Intermediate"
+          }
+      ],
+      "notes": [
+          {
+              "date": "2023-12-01",
+              "title": "Family Tree Interview",
+              "note": "Discussed with John's aunt about his early years.",
+              "url": "https://example.com/note1"
+          }
+      ]
+  }
+}
+
+vars:pre-request {
+  id: 10
+}

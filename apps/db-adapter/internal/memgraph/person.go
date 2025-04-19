@@ -41,7 +41,12 @@ func GetPersonById(ctx context.Context, id int) neo4j.ManagedTransactionWork {
 			return nil, err
 		}
 
-		return record.AsMap(), nil
+		person, ok := record.Get("person")
+		if !ok {
+			return nil, fmt.Errorf("person not found")
+		}
+
+		return person, nil
 	}
 }
 
@@ -61,7 +66,12 @@ func UpdatePerson(ctx context.Context, id int, person *api.PersonProperties) neo
 			return nil, err
 		}
 
-		return record.AsMap(), nil
+		person, ok := record.Get("person")
+		if !ok {
+			return nil, fmt.Errorf("person not found")
+		}
+
+		return person, nil
 	}
 }
 
