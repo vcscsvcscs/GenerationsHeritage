@@ -9,9 +9,10 @@ import (
 )
 
 func CreatePerson(ctx context.Context, person *api.PersonProperties) neo4j.ManagedTransactionWork {
+	convertedPerson := StructToMap(person)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreatePersonCypherQuery, map[string]any{
-			"Person": *person,
+			"Person": convertedPerson,
 		})
 		if err != nil {
 			return nil, err
@@ -45,10 +46,11 @@ func GetPersonById(ctx context.Context, id int) neo4j.ManagedTransactionWork {
 }
 
 func UpdatePerson(ctx context.Context, id int, person *api.PersonProperties) neo4j.ManagedTransactionWork {
+	convertedPerson := StructToMap(person)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdatePersonCypherQuery, map[string]any{
 			"id":    id,
-			"props": *person,
+			"props": convertedPerson,
 		})
 		if err != nil {
 			return nil, err

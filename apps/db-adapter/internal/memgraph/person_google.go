@@ -26,10 +26,11 @@ func GetPersonByGoogleId(ctx context.Context, googleId string) neo4j.ManagedTran
 }
 
 func UpdatePersonByInviteCode(ctx context.Context, inviteCode string, person *api.PersonProperties) neo4j.ManagedTransactionWork {
+	convertedPerson := StructToMap(person)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdatePersonByInviteCodeCypherQuery, map[string]any{
 			"invite_code": inviteCode,
-			"props":       *person,
+			"props":       convertedPerson,
 		})
 		if err != nil {
 			return nil, err

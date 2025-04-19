@@ -43,11 +43,12 @@ func DeleteRelationship(ctx context.Context, id1, id2 int) neo4j.ManagedTransact
 func UpdateRelationship(
 	ctx context.Context, id1, id2 int, relationship api.FamilyRelationship,
 ) neo4j.ManagedTransactionWork {
+	convertedRelationship := StructToMap(relationship)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdateRelationshipCypherQuery, map[string]any{
 			"id1":          id1,
 			"id2":          id2,
-			"relationship": relationship,
+			"relationship": convertedRelationship,
 		})
 		if err != nil {
 			return nil, err
@@ -65,12 +66,13 @@ func UpdateRelationship(
 func CreateChildParentRelationship(
 	ctx context.Context, childId, parentId int, relationship api.FamilyRelationship,
 ) neo4j.ManagedTransactionWork {
+	convertedRelationship := StructToMap(relationship)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateChildParentRelationshipCypherQuery, map[string]any{
 			"childId":            childId,
 			"parentId":           parentId,
-			"childRelationship":  relationship,
-			"parentRelationship": relationship,
+			"childRelationship":  convertedRelationship,
+			"parentRelationship": convertedRelationship,
 		})
 		if err != nil {
 			return nil, err
@@ -83,12 +85,13 @@ func CreateChildParentRelationship(
 func CreateSiblingRelationship(
 	ctx context.Context, siblingId1, siblingId2 int, relationship api.FamilyRelationship,
 ) neo4j.ManagedTransactionWork {
+	convertedRelationship := StructToMap(relationship)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateSiblingRelationshipCypherQuery, map[string]any{
 			"id1":           siblingId1,
 			"id2":           siblingId2,
-			"Relationship1": relationship,
-			"Relationship2": relationship,
+			"Relationship1": convertedRelationship,
+			"Relationship2": convertedRelationship,
 		})
 		if err != nil {
 			return nil, err
@@ -101,12 +104,13 @@ func CreateSiblingRelationship(
 func CreateSpouseRelationship(
 	ctx context.Context, spouseId1, spouseId2 int, relationship api.FamilyRelationship,
 ) neo4j.ManagedTransactionWork {
+	convertedRelationship := StructToMap(relationship)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, CreateSpouseRelationshipCypherQuery, map[string]any{
 			"id1":           spouseId1,
 			"id2":           spouseId2,
-			"Relationship1": relationship,
-			"Relationship2": relationship,
+			"Relationship1": convertedRelationship,
+			"Relationship2": convertedRelationship,
 		})
 		if err != nil {
 			return nil, err
