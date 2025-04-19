@@ -9,8 +9,8 @@ import (
 
 // StructToMap recursively converts a struct to a map using JSON tags.
 // Nil pointers and unexported fields are excluded.
-func StructToMap(input interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
+func StructToMap(input any) map[string]any {
+	result := make(map[string]any)
 	value := reflect.ValueOf(input)
 
 	if value.Kind() == reflect.Ptr {
@@ -22,7 +22,7 @@ func StructToMap(input interface{}) map[string]interface{} {
 
 	typ := value.Type()
 
-	for i := 0; i < value.NumField(); i++ {
+	for i := range value.NumField() {
 		field := typ.Field(i)
 		fieldValue := value.Field(i)
 
@@ -89,7 +89,7 @@ func indexComma(tag string) int {
 }
 
 // Checks if a value is one of the preserved types that shouldn't be expanded recursively
-func isPreservedType(v interface{}) bool {
+func isPreservedType(v any) bool {
 	switch v.(type) {
 	case dbtype.Point2D, *dbtype.Point2D,
 		dbtype.Point3D, *dbtype.Point3D,

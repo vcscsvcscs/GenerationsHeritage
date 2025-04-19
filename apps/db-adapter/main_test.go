@@ -1,15 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
+	integration_tests "github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/integration-tests"
 )
 
 func TestIntegration(t *testing.T) {
@@ -73,7 +71,7 @@ func TestIntegration(t *testing.T) {
 			"HTTP_PORT":    ":8080",
 		},
 		Networks:   []string{net.Name},
-		WaitingFor: wait.ForLog("Starting server"),
+		WaitingFor: wait.ForListeningPort("8080/tcp"),
 	}
 
 	dbAdapterC, err := testcontainers.GenericContainer(t.Context(), testcontainers.GenericContainerRequest{
@@ -99,44 +97,5 @@ func TestIntegration(t *testing.T) {
 	require.NoError(t, err)
 	dbAdapterURI := "http://" + dbAdapterHost + ":" + dbAdapterPort.Port()
 
-	testClient := &http.Client{}
-	t.Run("TestCreatePersonByGoogleId", CreatePersonByGoogleIdTest(dbAdapterURI, testClient))
-}
-
-func CreatePersonByGoogleIdTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
-	return func(t *testing.T) {
-		url := dbAdapterUri + "/person/google/test-google-id"
-		requestBody := map[string]any{
-			"first_name":         "John",
-			"last_name":          "Doe",
-			"born":               "1990-01-01",
-			"limit":              10,
-			"mothers_first_name": "Jane",
-			"mothers_last_name":  "Doe",
-		}
-
-		body, err := json.Marshal(requestBody)
-		require.NoError(t, err)
-
-		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, url, bytes.NewBuffer(body))
-		require.NoError(t, err)
-		req.Header.Set("Content-Type", "application/json")
-
-		// Send the request
-		resp, err := client.Do(req)
-		require.NoError(t, err)
-		defer resp.Body.Close()
-
-		var responseBody map[string]any
-		err = json.NewDecoder(resp.Body).Decode(&responseBody)
-		require.NoError(t, err)
-
-		// Validate the response
-		t.Log("Response Status Code: ", responseBody)
-		require.Equal(t, http.StatusOK, resp.StatusCode)
-
-		require.Equal(t, int(1), responseBody["id"])
-		require.Equal(t, "John", responseBody["first_name"])
-		require.Equal(t, "Doe", responseBody["last_name"])
-	}
+	t.Run("TestCreatePersonByGoogleIdAndGetById", integration_tests.TestPersonGoogle(dbAdapterURI))
 }

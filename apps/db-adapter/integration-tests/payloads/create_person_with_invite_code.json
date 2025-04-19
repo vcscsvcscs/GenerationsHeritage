@@ -1,0 +1,12 @@
+{
+    "invite_code": "INV123456",
+    "person": {
+        "first_name": "Bob",
+        "last_name": "Builder",
+        "born": "1985-11-25",
+        "limit": 200,
+        "mothers_first_name": "Linda",
+        "mothers_last_name": "Builder",
+        "email": "bob@example.com"
+    }
+}

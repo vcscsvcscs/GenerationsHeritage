@@ -24,7 +24,7 @@ func (srv *server) GetPersonByGoogleId(c *gin.Context, googleId string) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, res.(map[string]any)["person"])
 }
 
 func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId string) {
@@ -56,7 +56,7 @@ func (srv *server) CreatePersonByGoogleIdAndInviteCode(c *gin.Context, googleId 
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, res.(map[string]any)["person"])
 }
 
 func (srv *server) CreatePersonByGoogleId(c *gin.Context, googleId string) {
@@ -82,5 +82,5 @@ func (srv *server) CreatePersonByGoogleId(c *gin.Context, googleId string) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, res.(map[string]any)["person"])
 }

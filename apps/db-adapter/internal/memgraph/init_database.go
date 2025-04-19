@@ -8,6 +8,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	databaseReconnectTimeout  = 5 * time.Second
+	databaseReconnectAttempts = 5
+)
+
 func InitDatabase(logger *zap.Logger, dbURI, dbUser, dbPassword string) neo4j.DriverWithContext {
 	driver, err := neo4j.NewDriverWithContext(dbURI, neo4j.BasicAuth(dbUser, dbPassword, ""))
 	if err != nil {
@@ -15,7 +20,7 @@ func InitDatabase(logger *zap.Logger, dbURI, dbUser, dbPassword string) neo4j.Dr
 	}
 
 	ctx := context.Background()
-	for attempt := 1; attempt <= 5; attempt++ {
+	for attempt := 1; attempt <= databaseReconnectAttempts; attempt++ {
 		err = driver.VerifyConnectivity(ctx)
 		if err == nil {
 			break
@@ -27,7 +32,7 @@ func InitDatabase(logger *zap.Logger, dbURI, dbUser, dbPassword string) neo4j.Dr
 			zap.String("dbURI", dbURI),
 			zap.Int("attempt", attempt),
 		)
-		time.Sleep(time.Duration(attempt*5) * time.Second)
+		time.Sleep(time.Duration(attempt) * databaseReconnectTimeout)
 	}
 
 	if err != nil {

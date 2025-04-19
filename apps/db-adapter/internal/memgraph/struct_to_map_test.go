@@ -13,12 +13,12 @@ type NestedStruct struct {
 }
 
 type TestStruct struct {
-	ExportedField   string       `json:"exported_field"`
-	unexportedField string       // Should be ignored
-	IgnoredField    string       `json:"-"`
+	ExportedField   string `json:"exported_field"`
+	IgnoredField    string `json:"-"`
+	unexportedField string
 	PointerField    *string      `json:"pointer_field"`
-	Nested          NestedStruct `json:"nested"`
 	NilPointer      *string      `json:"nil_pointer"`
+	Nested          NestedStruct `json:"nested"`
 }
 
 func TestStructToMap(t *testing.T) {
@@ -35,10 +35,10 @@ func TestStructToMap(t *testing.T) {
 		NilPointer: nil,
 	}
 
-	expected := map[string]interface{}{
+	expected := map[string]any{
 		"exported_field": "exported value",
 		"pointer_field":  "pointer value",
-		"nested": map[string]interface{}{
+		"nested": map[string]any{
 			"nested_field": "nested value",
 		},
 	}
@@ -70,23 +70,23 @@ func TestStructToMap_EmptyStruct(t *testing.T) {
 func TestIsPreservedType(t *testing.T) {
 	// Test cases for preserved types
 	tests := []struct {
+		input    any
 		name     string
-		input    interface{}
 		expected bool
 	}{
-		{"Point2D", dbtype.Point2D{}, true},
-		{"Pointer to Point2D", &dbtype.Point2D{}, true},
-		{"Point3D", dbtype.Point3D{}, true},
-		{"Pointer to Point3D", &dbtype.Point3D{}, true},
-		{"Time", time.Time{}, true},
-		{"LocalDateTime", dbtype.LocalDateTime{}, true},
-		{"Date", dbtype.Date{}, true},
-		{"Time", dbtype.Time{}, true},
-		{"LocalTime", dbtype.LocalTime{}, true},
-		{"Duration", dbtype.Duration{}, true},
-		{"String", "not preserved", false},
-		{"Integer", 123, false},
-		{"Struct", struct{}{}, false},
+		{dbtype.Point2D{}, "Point2D", true},
+		{&dbtype.Point2D{}, "Pointer to Point2D", true},
+		{dbtype.Point3D{}, "Point3D", true},
+		{&dbtype.Point3D{}, "Pointer to Point3D", true},
+		{time.Time{}, "Time", true},
+		{dbtype.LocalDateTime{}, "LocalDateTime", true},
+		{dbtype.Date{}, "Date", true},
+		{dbtype.Time{}, "Time", true},
+		{dbtype.LocalTime{}, "LocalTime", true},
+		{dbtype.Duration{}, "Duration", true},
+		{"not preserved", "String", false},
+		{123, "Integer", false},
+		{struct{}{}, "Struct", false},
 	}
 
 	for _, tt := range tests {
