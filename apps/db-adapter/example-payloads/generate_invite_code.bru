@@ -6,12 +6,18 @@ meta {
 
 patch {
   url: http://localhost:8080/person/{{id}}
-  body: none
+  body: json
   auth: inherit
 }
 
 headers {
   X-User-Id: 2
+}
+
+body:json {
+  {
+      "invite_code": "test-invite-code"
+  }
 }
 
 vars:pre-request {

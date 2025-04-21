@@ -422,10 +422,9 @@ export interface components {
             mothers_last_name: string;
         };
         Person: {
-            id?: number;
-            labels?: string[];
-            type?: string | null;
-            properties?: components["schemas"]["PersonProperties"];
+            Id?: number;
+            Labels?: string[];
+            Props?: components["schemas"]["PersonProperties"];
         };
         FamilyRelationship: {
             verified?: boolean | null;
@@ -436,12 +435,12 @@ export interface components {
             to?: string | null;
         };
         Relationship: {
-            id?: number;
-            label?: string;
-            type?: string | null;
-            start?: number;
-            end?: number;
-            properties?: components["schemas"]["FamilyRelationship"];
+            Id?: number;
+            Label?: string;
+            Type?: string | null;
+            Start?: number;
+            End?: number;
+            Props?: components["schemas"]["FamilyRelationship"];
         };
         OptimizedPersonNode: {
             id?: number;
@@ -482,16 +481,16 @@ export interface components {
             }[] | null;
         };
         Recipe: {
-            id?: number;
-            labels?: string[];
-            properties?: components["schemas"]["RecipeProperties"];
+            Id?: number;
+            Labels?: string[];
+            Props?: components["schemas"]["RecipeProperties"];
         };
         Likes: {
-            id?: number;
-            label?: string;
-            start?: string;
-            end?: string;
-            properties?: components["schemas"]["LikesProperties"];
+            Id?: number;
+            Label?: string;
+            Start?: string;
+            End?: string;
+            Props?: components["schemas"]["LikesProperties"];
         };
         LikesProperties: {
             favourite?: boolean | null;
@@ -499,11 +498,11 @@ export interface components {
             could_make_it?: boolean | null;
         };
         Admin: {
-            id?: number;
-            label?: string;
-            start?: string;
-            end?: string;
-            properties?: {
+            Id?: number;
+            Label?: string;
+            Start?: string;
+            End?: string;
+            Props?: {
                 added?: number;
             };
         };
