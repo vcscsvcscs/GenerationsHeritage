@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-//go:embed payloads\create_other_person.json
+//go:embed payloads/create_other_person.json
 var create_other_person []byte
 
 func CreatePersonTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
@@ -98,7 +98,7 @@ func SoftDeletePersonTest(dbAdapterUri string, client *http.Client) func(t *test
 	}
 }
 
-//go:embed payloads\update_person.json
+//go:embed payloads/update_person.json
 var update_person []byte
 
 func UpdatePersonTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
@@ -131,7 +131,7 @@ func UpdatePersonTest(dbAdapterUri string, client *http.Client) func(t *testing.
 	}
 }
 
-//go:embed payloads\generate_invite_code.json
+//go:embed payloads/generate_invite_code.json
 var generate_invite_code []byte
 
 func UpdatePersonWithInviteCodeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
