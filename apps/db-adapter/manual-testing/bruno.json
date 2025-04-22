@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "example-payloads",
+  "name": "Generations Heritage DB adapter",
   "type": "collection",
   "ignore": [
     "node_modules",
