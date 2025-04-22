@@ -41,16 +41,16 @@ services:
     image: vcscsvcscs/gheritage-db-adapter:latest
     container_name: db-adapter
     ports:
-      - "8080:8080"
+      - "5237:5237"
     depends_on:
       - memgraph
     environment:
-      - HTTP_PORT=:8080
+      - HTTP_PORT=:5237
       - MEMGRAPH_URI=bolt://memgraph:7687
       - MEMGRAPH_USER=<USERNAME>
       - MEMGRAPH_PASSWORD=<PASSWORD>
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+      test: ["CMD-SHELL", "curl --fail http://localhost:5237/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3

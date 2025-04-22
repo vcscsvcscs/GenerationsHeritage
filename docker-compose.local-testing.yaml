@@ -21,11 +21,11 @@ services:
       dockerfile: ./integration-test.dockerfile
     container_name: db-adapter
     ports:
-      - "8080:8080"
+      - "5237:5237"
     depends_on:
       - memgrapht
     environment:
-      - HTTP_PORT=:8080
+      - HTTP_PORT=:5237
       - MEMGRAPH_URI=bolt://memgrapht:7687
       - MEMGRAPH_USER=memgraph
       - MEMGRAPH_PASSWORD=memgraph

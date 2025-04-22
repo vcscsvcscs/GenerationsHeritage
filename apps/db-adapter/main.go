@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	defaultHTTPPort       = ":80"
+	defaultHTTPPort       = ":5237"
 	defaultMemgraphURI    = "bolt://memgraph:7687"
 	defaultMemgraphUser   = "memgraph"
 	defaultMemgraphPass   = "memgraph"
@@ -83,8 +83,15 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{fmt.Sprintf("http://localhost%s", httpPort), "http://localhost"},
 		AllowCredentials: true,
-		AllowHeaders:     []string{"X-User-ID", "X-User-Name", "Content-Type"},
-		MaxAge:           12 * time.Hour,
+		AllowHeaders: []string{
+			"X-User-ID",
+			"X-User-Name",
+			"Content-Type",
+			"cf-access-token",
+			"CF-Access-Client-Secret",
+			"CF-Access-Client-Id",
+		},
+		MaxAge: 12 * time.Hour,
 	}))
 
 	router.Use(ginzap.Ginzap(logger, time.RFC3339, true))
