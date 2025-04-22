@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
+	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/api/auth"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 	"go.uber.org/zap"
@@ -22,6 +23,12 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 
 	session := srv.db.NewSession(c.Request.Context(), neo4j.SessionConfig{})
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
+
+	if err := auth.CouldManagePersonUnknownAdmin(c.Request.Context(), session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": err.Error()})
+
+		return
+	}
 
 	trs, err := session.BeginTransaction(c.Request.Context())
 	if err != nil {
@@ -79,7 +86,7 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 
 	convertedRelationship := memgraph.StructToMap(requestBody.Relationship)
 
-	var relationShipResultRaw any
+	var relationShipResultRaw neo4j.ResultWithContext
 	var relationshipError error
 	switch *requestBody.Type {
 	case api.CreatePersonAndRelationshipJSONBodyTypeChild:
@@ -126,8 +133,22 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 		return
 	}
 
+	relationshipsSingle, err := relationShipResultRaw.Single(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "no relationship was created" + err.Error()})
+
+		return
+	}
+
+	relationships, ok := relationshipsSingle.Get("relationships")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "no relationship was created"})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, struct {
 		Person any `json:"person"`
 		Rel    any `json:"relationship"`
-	}{Person: singleRes, Rel: relationShipResultRaw})
+	}{Person: singleRes, Rel: relationships})
 }

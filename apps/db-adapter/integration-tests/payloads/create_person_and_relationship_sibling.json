@@ -1,0 +1,16 @@
+{
+    "person": {
+        "first_name": "Sandra",
+        "last_name": "Doe",
+        "born": "1987-07-01",
+        "limit": 1000,
+        "mothers_first_name": "Mary",
+        "mothers_last_name": "Smith",
+        "email": "SD@example.com"
+    },
+    "type": "sibling",
+    "relationship": {
+        "verified": true,
+        "notes": "Good siblings"
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "person": {
+        "first_name": "Johannes",
+        "last_name": "Doe",
+        "born": "2000-07-01",
+        "limit": 1000,
+        "mothers_first_name": "Frances",
+        "mothers_last_name": "Soft",
+        "email": "dj@example.com"
+    },
+    "type": "child",
+    "relationship": {
+        "verified": true,
+        "notes": "Test notes",
+        "from": "2023-01-01"
+    }
+}

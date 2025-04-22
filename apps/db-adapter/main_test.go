@@ -68,13 +68,13 @@ func TestIntegration(t *testing.T) {
 			Context:    "./",
 			Dockerfile: "integration-test.dockerfile",
 		},
-		ExposedPorts: []string{"8080/tcp"},
+		ExposedPorts: []string{"5237/tcp"},
 		Env: map[string]string{
 			"MEMGRAPH_URI": memgraphURI,
-			"HTTP_PORT":    ":8080",
+			"HTTP_PORT":    ":5237",
 		},
 		Networks:   []string{net.Name},
-		WaitingFor: wait.ForListeningPort("8080/tcp"),
+		WaitingFor: wait.ForListeningPort("5237/tcp"),
 	}
 
 	dbAdapterC, err := testcontainers.GenericContainer(t.Context(), testcontainers.GenericContainerRequest{
@@ -96,7 +96,7 @@ func TestIntegration(t *testing.T) {
 
 	dbAdapterHost, err := dbAdapterC.Host(t.Context())
 	require.NoError(t, err)
-	dbAdapterPort, err := dbAdapterC.MappedPort(t.Context(), "8080/tcp")
+	dbAdapterPort, err := dbAdapterC.MappedPort(t.Context(), "5237/tcp")
 	require.NoError(t, err)
 	dbAdapterURI := "http://" + dbAdapterHost + ":" + dbAdapterPort.Port()
 
@@ -111,6 +111,7 @@ func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
 		t.Run("UpdatePerson", integration_tests.UpdatePersonTest(dbAdapterURI, client))
 		t.Run("AddInviteCodeToPerson", integration_tests.UpdatePersonWithInviteCodeTest(dbAdapterURI, client))
 		t.Run("GetPersonById", integration_tests.GetPersonById(dbAdapterURI, client))
+		t.Run("CreateFamilyTest", integration_tests.CreateAFamilyTest(dbAdapterURI, client))
 		t.Run("SoftDeletePerson", integration_tests.SoftDeletePersonTest(dbAdapterURI, client))
 		t.Run("HardDeletePerson", integration_tests.HardDeletePersonTest(dbAdapterURI, client))
 	}
