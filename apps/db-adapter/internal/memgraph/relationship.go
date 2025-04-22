@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
@@ -78,7 +79,40 @@ func CreateChildParentRelationship(
 			return nil, err
 		}
 
-		return result.Single(ctx)
+		siblingResult, err := tx.Run(ctx, CreateSiblingRelationshipsBasedOnParentCypherQuery, map[string]any{
+			"childId":  childId,
+			"parentId": parentId,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		relationship, err := result.Single(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		relationshipsRaw, ok := relationship.Get("relationships")
+		if !ok {
+			return nil, err
+		}
+
+		relationships, rok := relationshipsRaw.([]dbtype.Relationship)
+		if !rok {
+			return nil, err
+		}
+
+		siblingRecord, err := siblingResult.Single(ctx)
+		if err != nil {
+
+			siblingRelationship, ok := siblingRecord.Get("relationships")
+			siblings, ok := siblingRelationship.([]dbtype.Relationship)
+			if ok {
+				relationships = append(relationships, siblings...)
+			}
+		}
+
+		return relationships, nil
 	}
 }
 

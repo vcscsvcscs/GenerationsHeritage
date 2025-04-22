@@ -110,9 +110,11 @@ func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
 		t.Run("CreatePerson", integration_tests.CreatePersonTest(dbAdapterURI, client))
 		t.Run("UpdatePerson", integration_tests.UpdatePersonTest(dbAdapterURI, client))
 		t.Run("AddInviteCodeToPerson", integration_tests.UpdatePersonWithInviteCodeTest(dbAdapterURI, client))
-		t.Run("GetPersonById", integration_tests.GetPersonById(dbAdapterURI, client))
 		t.Run("CreateFamilyTest", integration_tests.CreateAFamilyTest(dbAdapterURI, client))
 		t.Run("SoftDeletePerson", integration_tests.SoftDeletePersonTest(dbAdapterURI, client))
 		t.Run("HardDeletePerson", integration_tests.HardDeletePersonTest(dbAdapterURI, client))
+		t.Run("GetPersonById", integration_tests.GetPersonById(dbAdapterURI, client))
+		t.Run("GetFamilyTreeByIdTest", integration_tests.GetFamilyTreeByIdTest(dbAdapterURI, client))
+		t.Run("GetFamilyTreeWithSpousesByIdTest", integration_tests.GetFamilyTreeWithSpousesByIdTest(dbAdapterURI, client))
 	}
 }

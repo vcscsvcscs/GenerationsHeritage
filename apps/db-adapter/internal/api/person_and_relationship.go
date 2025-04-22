@@ -126,13 +126,6 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 		return
 	}
 
-	if err := trs.Commit(c.Request.Context()); err != nil {
-		srv.logger.Error("failed to commit transaction", zap.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
-
-		return
-	}
-
 	relationshipsSingle, err := relationShipResultRaw.Single(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "no relationship was created" + err.Error()})
@@ -147,8 +140,15 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 		return
 	}
 
+	if err := trs.Commit(c.Request.Context()); err != nil {
+		srv.logger.Error("failed to commit transaction", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, struct {
 		Person any `json:"person"`
-		Rel    any `json:"relationship"`
-	}{Person: singleRes, Rel: relationships})
+		Rel    any `json:"relationships"`
+	}{Person: createdPerson, Rel: relationships})
 }

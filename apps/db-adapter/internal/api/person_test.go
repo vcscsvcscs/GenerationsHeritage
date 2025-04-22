@@ -52,7 +52,7 @@ func TestCreatePerson(t *testing.T) {
 		c.Request = httptest.NewRequestWithContext(
 			t.Context(), http.MethodPost, "/person", io.NopCloser(strings.NewReader(body)),
 		)
-		params := api.CreatePersonParams{XUserID: 1, XUserName: "test"}
+		params := api.CreatePersonParams{XUserID: 1}
 
 		srv.CreatePerson(c, params)
 

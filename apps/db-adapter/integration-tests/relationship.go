@@ -1,6 +1,6 @@
 package integration_tests
 
-func CreateRelationship() {
+func CreateRelationshipTest() {
 }
 
 func UpdateRelationship() {

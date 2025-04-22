@@ -1,0 +1,15 @@
+meta {
+  name: person_family_tree_with_spouses
+  type: http
+  seq: 15
+}
+
+get {
+  url: http://localhost:8080/family-tree
+  body: none
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 2
+}

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // StructToMap recursively converts a struct to a map using JSON tags.
@@ -70,7 +71,12 @@ func StructToMap(input any) map[string]any {
 		// Recurse into nested structs
 		switch val.Kind() {
 		case reflect.Struct:
-			result[jsonKey] = StructToMap(val.Interface())
+			switch val.Interface().(type) {
+			case openapi_types.Date:
+				result[jsonKey] = val.Interface().(openapi_types.Date).String()
+			default:
+				result[jsonKey] = StructToMap(val.Interface())
+			}
 		case reflect.Slice, reflect.Array:
 			result[jsonKey] = processSlice(val)
 		default:
@@ -114,7 +120,12 @@ func processSlice(val reflect.Value) []any {
 		if isPreservedType(item) {
 			slice[i] = item
 		} else if reflect.ValueOf(item).Kind() == reflect.Struct {
-			slice[i] = StructToMap(item)
+			switch item.(type) {
+			case openapi_types.Date:
+				slice[i] = item.(openapi_types.Date).String()
+			default:
+				slice[i] = StructToMap(item)
+			}
 		} else {
 			slice[i] = item
 		}

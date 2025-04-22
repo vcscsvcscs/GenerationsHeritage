@@ -30,13 +30,15 @@ const (
 
 // Admin defines model for Admin.
 type Admin struct {
-	End   *string `json:"End,omitempty"`
-	Id    *int    `json:"Id,omitempty"`
-	Label *string `json:"Label,omitempty"`
-	Props *struct {
+	EndElementId *string `json:"EndElementId,omitempty"`
+	EndId        *int    `json:"EndId,omitempty"`
+	Id           *int    `json:"Id,omitempty"`
+	Props        *struct {
 		Added *int `json:"added,omitempty"`
 	} `json:"Props,omitempty"`
-	Start *string `json:"Start,omitempty"`
+	StartElementId *string `json:"StartElementId,omitempty"`
+	StartId        *int    `json:"StartId,omitempty"`
+	Type           *string `json:"Type,omitempty"`
 }
 
 // FamilyRelationship defines model for FamilyRelationship.
@@ -55,11 +57,13 @@ type FamilyTree struct {
 
 // Likes defines model for Likes.
 type Likes struct {
-	End   *string          `json:"End,omitempty"`
-	Id    *int             `json:"Id,omitempty"`
-	Label *string          `json:"Label,omitempty"`
-	Props *LikesProperties `json:"Props,omitempty"`
-	Start *string          `json:"Start,omitempty"`
+	EndElementId   *string          `json:"EndElementId,omitempty"`
+	EndId          *int             `json:"EndId,omitempty"`
+	Id             *int             `json:"Id,omitempty"`
+	Props          *LikesProperties `json:"Props,omitempty"`
+	StartElementId *string          `json:"StartElementId,omitempty"`
+	StartId        *int             `json:"StartId,omitempty"`
+	Type           *string          `json:"Type,omitempty"`
 }
 
 // LikesProperties defines model for LikesProperties.
@@ -84,9 +88,10 @@ type OptimizedPersonNode struct {
 
 // Person defines model for Person.
 type Person struct {
-	Id     *int              `json:"Id,omitempty"`
-	Labels *[]string         `json:"Labels,omitempty"`
-	Props  *PersonProperties `json:"Props,omitempty"`
+	ElementId *string           `json:"ElementId,omitempty"`
+	Id        *int              `json:"Id,omitempty"`
+	Labels    *[]string         `json:"Labels,omitempty"`
+	Props     *PersonProperties `json:"Props,omitempty"`
 }
 
 // PersonProperties defines model for PersonProperties.
@@ -197,9 +202,10 @@ type PersonRegistration struct {
 
 // Recipe defines model for Recipe.
 type Recipe struct {
-	Id     *int              `json:"Id,omitempty"`
-	Labels *[]string         `json:"Labels,omitempty"`
-	Props  *RecipeProperties `json:"Props,omitempty"`
+	ElementId *string           `json:"ElementId,omitempty"`
+	Id        *int              `json:"Id,omitempty"`
+	Labels    *[]string         `json:"Labels,omitempty"`
+	Props     *RecipeProperties `json:"Props,omitempty"`
 }
 
 // RecipeProperties defines model for RecipeProperties.
@@ -226,12 +232,12 @@ type RecipeProperties struct {
 
 // Relationship defines model for Relationship.
 type Relationship struct {
-	End   *int                `json:"End,omitempty"`
-	Id    *int                `json:"Id,omitempty"`
-	Label *string             `json:"Label,omitempty"`
-	Props *FamilyRelationship `json:"Props,omitempty"`
-	Start *int                `json:"Start,omitempty"`
-	Type  *string             `json:"Type"`
+	End        *int                `json:"end,omitempty"`
+	Id         *int                `json:"id,omitempty"`
+	Label      *string             `json:"label"`
+	Properties *FamilyRelationship `json:"properties,omitempty"`
+	Start      *int                `json:"start,omitempty"`
+	Type       *string             `json:"type"`
 }
 
 // GetProfileAdminsParams defines parameters for GetProfileAdmins.
@@ -271,8 +277,7 @@ type GetManagedProfilesParams struct {
 
 // CreatePersonParams defines parameters for CreatePerson.
 type CreatePersonParams struct {
-	XUserID   int    `json:"X-User-ID"`
-	XUserName string `json:"X-User-Name"`
+	XUserID int `json:"X-User-ID"`
 }
 
 // CreatePersonByGoogleIdAndInviteCodeJSONBody defines parameters for CreatePersonByGoogleIdAndInviteCode.
@@ -913,28 +918,6 @@ func (siw *ServerInterfaceWrapper) CreatePerson(c *gin.Context) {
 
 	} else {
 		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	// ------------- Required header parameter "X-User-Name" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("X-User-Name")]; found {
-		var XUserName string
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-Name, got %d", n), http.StatusBadRequest)
-			return
-		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "X-User-Name", valueList[0], &XUserName, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
-		if err != nil {
-			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-Name: %w", err), http.StatusBadRequest)
-			return
-		}
-
-		params.XUserName = XUserName
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-Name is required, but not found"), http.StatusBadRequest)
 		return
 	}
 

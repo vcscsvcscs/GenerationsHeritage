@@ -116,8 +116,11 @@
                                         "person": {
                                             "$ref": "#/components/schemas/Person"
                                         },
-                                        "relationship": {
-                                            "$ref": "#/components/schemas/Relationship"
+                                        "relationships": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Relationship"
+                                            }
                                         }
                                     }
                                 }
@@ -168,14 +171,6 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "X-User-Name",
-                        "in": "header",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 ],
@@ -2560,6 +2555,9 @@
                     "Id": {
                         "type": "integer"
                     },
+                    "ElementId": {
+                        "type": "string"
+                    },
                     "Labels": {
                         "type": "array",
                         "items": {
@@ -2597,23 +2595,24 @@
             "Relationship": {
                 "type": "object",
                 "properties": {
-                    "Id": {
+                    "id": {
                         "type": "integer"
                     },
-                    "Label": {
-                        "type": "string"
-                    },
-                    "Type": {
+                    "type": {
                         "type": "string",
                         "nullable": true
                     },
-                    "Start": {
+                    "label":{
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "start": {
                         "type": "integer"
                     },
-                    "End": {
+                    "end": {
                         "type": "integer"
                     },
-                    "Props": {
+                    "properties": {
                         "$ref": "#/components/schemas/FamilyRelationship"
                     }
                 }
@@ -2766,6 +2765,9 @@
                     "Id": {
                         "type": "integer"
                     },
+                    "ElementId":{
+                        "type": "string"
+                    },
                     "Labels": {
                         "type": "array",
                         "items": {
@@ -2783,13 +2785,19 @@
                     "Id": {
                         "type": "integer"
                     },
-                    "Label": {
+                    "Type": {
                         "type": "string"
                     },
-                    "Start": {
+                    "StartId": {
+                        "type": "integer"
+                    },
+                    "StartElementId": {
                         "type": "string"
                     },
-                    "End": {
+                    "EndId": {
+                        "type": "integer"
+                    },
+                    "EndElementId": {
                         "type": "string"
                     },
                     "Props": {
@@ -2820,13 +2828,19 @@
                     "Id": {
                         "type": "integer"
                     },
-                    "Label": {
+                    "Type": {
                         "type": "string"
                     },
-                    "Start": {
+                    "StartId": {
+                        "type": "integer"
+                    },
+                    "StartElementId": {
                         "type": "string"
                     },
-                    "End": {
+                    "EndId": {
+                        "type": "integer"
+                    },
+                    "EndElementId": {
                         "type": "string"
                     },
                     "Props": {

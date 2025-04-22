@@ -24,13 +24,19 @@ func CouldSeePersonsProfile(ctx context.Context, session neo4j.SessionWithContex
 		return fmt.Errorf("could not convert result to map[string]any")
 	}
 
-	people, ok := resMap["people"].([]api.OptimizedPersonNode)
-	if !ok {
-		return fmt.Errorf("could not convert people to []api.PersonProperties")
+	var uniqueIds []int64
+	var flattenedPeople []any
+	if err := api.Flatten(resMap["people"], &uniqueIds, &flattenedPeople); err != nil {
+		return fmt.Errorf("could not convert people to []map[string]any: %w", err)
 	}
 
-	for _, person := range people {
-		if *person.Id == userId {
+	for _, person := range flattenedPeople {
+		person, ok := person.(map[string]any)
+		if !ok {
+			return fmt.Errorf("could not convert person to map[string]any")
+		}
+
+		if person["id"].(int64) == int64(userId) {
 			return nil
 		}
 	}

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/stretchr/testify/require"
 )
 
@@ -35,29 +36,28 @@ func CreatePersonAndRelationshipTest(dbAdapterUri string, payload *[]byte, clien
 	return func(t *testing.T) {
 		url := dbAdapterUri + "/person_and_relationship/1"
 
-		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, url, bytes.NewBuffer(create_other_person))
+		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, url, bytes.NewBuffer(*payload))
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-User-ID", "0")
-		req.Header.Set("X-User-Name", "application/json")
 
 		// Send the request
 		resp, err := client.Do(req)
 		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		var responseBody map[string]any
+		var responseBody struct {
+			Person        dbtype.Node           `json:"person"`
+			Relationships []dbtype.Relationship `json:"relationships"`
+		}
+
 		err = json.NewDecoder(resp.Body).Decode(&responseBody)
 		require.NoError(t, err)
 
 		// Validate the response
 		require.Equal(t, http.StatusOK, resp.StatusCode)
 
-		_, ok := responseBody["Id"]
-		require.True(t, ok)
-		_, ok = responseBody["person"]
-		require.True(t, ok)
-		_, ok = responseBody["relationship"]
-		require.True(t, ok)
+		require.NotEmpty(t, responseBody.Person)
+		require.NotEmpty(t, responseBody.Relationships)
 	}
 }

@@ -69,6 +69,13 @@ var GetRelationshipCypherQuery string
 //go:embed queries/create_child_parent_relationships.cypher
 var CreateChildParentRelationshipCypherQuery string
 
+// Requires childId, parentId parameters.
+//
+// returns relationships
+//
+//go:embed queries/create_sibling_relationships_based_on_parent.cypher
+var CreateSiblingRelationshipsBasedOnParentCypherQuery string
+
 // Requires id1, id2, Relationship1, Relationship1 parameters.
 //
 // return relationships

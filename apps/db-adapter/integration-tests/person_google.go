@@ -71,7 +71,7 @@ func CreatePersonByGoogleIdAndInviteCodeTest(dbAdapterUri string, client *http.C
 		require.NoError(t, err)
 
 		// Validate the response
-		t.Log("Response Status Code: ", responseBody)
+		// t.Log("Response Status Code: ", responseBody)
 		require.Equal(t, http.StatusOK, resp.StatusCode)
 
 		_, ok := responseBody["Id"]

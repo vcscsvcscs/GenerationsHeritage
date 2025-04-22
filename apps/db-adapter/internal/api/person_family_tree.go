@@ -20,7 +20,17 @@ func (srv *server) GetFamilyTreeById(c *gin.Context, params api.GetFamilyTreeByI
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	results := FamilyTree{
+		People:        []any{},
+		Relationships: []any{},
+	}
+	err = FlattenFamilyTree(res, &results)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }
 
 func (srv *server) GetFamilyTreeWithSpousesById(
@@ -36,5 +46,15 @@ func (srv *server) GetFamilyTreeWithSpousesById(
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	results := FamilyTree{
+		People:        []any{},
+		Relationships: []any{},
+	}
+	err = FlattenFamilyTree(res, &results)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }
