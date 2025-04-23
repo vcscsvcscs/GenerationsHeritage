@@ -89,9 +89,14 @@
                                     "person": {
                                         "$ref": "#/components/schemas/PersonRegistration"
                                     },
-                                    "type":{
+                                    "type": {
                                         "type": "string",
-                                        "enum": ["child", "parent", "spouse", "sibling"]
+                                        "enum": [
+                                            "child",
+                                            "parent",
+                                            "spouse",
+                                            "sibling"
+                                        ]
                                     },
                                     "relationship": {
                                         "$ref": "#/components/schemas/FamilyRelationship"
@@ -387,7 +392,7 @@
                             "type": "integer"
                         }
                     },
-                    {   
+                    {
                         "name": "X-User-ID",
                         "in": "header",
                         "required": true,
@@ -926,7 +931,12 @@
                                     },
                                     "type": {
                                         "type": "string",
-                                        "enum": ["child", "parent", "spouse", "sibling"]
+                                        "enum": [
+                                            "child",
+                                            "parent",
+                                            "spouse",
+                                            "sibling"
+                                        ]
                                     },
                                     "relationship": {
                                         "$ref": "#/components/schemas/FamilyRelationship"
@@ -938,11 +948,14 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Relationship created",
+                        "description": "Relationships created",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Relationship"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Relationship"
+                                    }
                                 }
                             }
                         }
@@ -982,7 +995,7 @@
         },
         "/relationship/{id1}/{id2}": {
             "get": {
-                "summary": "Get relationship between two persons",
+                "summary": "Get relationships between two persons",
                 "operationId": "getRelationship",
                 "parameters": [
                     {
@@ -1068,7 +1081,7 @@
                     }
                 }
             },
-            "patch":{
+            "patch": {
                 "summary": "Update a relationship between two persons",
                 "operationId": "updateRelationship",
                 "parameters": [
@@ -1159,7 +1172,7 @@
                             }
                         }
                     }
-                }                
+                }
             },
             "delete": {
                 "summary": "Delete relationship between two persons",
@@ -1253,7 +1266,6 @@
                     }
                 }
             }
-                
         },
         "/admin/{id1}": {
             "get": {
@@ -1517,9 +1529,9 @@
                             }
                         }
                     }
-                }                
+                }
             },
-            "delete":{
+            "delete": {
                 "summary": "Delete admin relationship between two persons",
                 "operationId": "deleteAdminRelationship",
                 "parameters": [
@@ -2602,7 +2614,7 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "label":{
+                    "label": {
                         "type": "string",
                         "nullable": true
                     },
@@ -2655,11 +2667,10 @@
                         "format": "date",
                         "nullable": true
                     },
-                    "profile_picture":{
+                    "profile_picture": {
                         "type": "string",
                         "nullable": true
                     }
-
                 }
             },
             "FamilyTree": {
@@ -2673,7 +2684,7 @@
                     },
                     "relationships": {
                         "type": "array",
-                        "items":{
+                        "items": {
                             "$ref": "#/components/schemas/Relationship"
                         }
                     }
@@ -2765,7 +2776,7 @@
                     "Id": {
                         "type": "integer"
                     },
-                    "ElementId":{
+                    "ElementId": {
                         "type": "string"
                     },
                     "Labels": {
@@ -2822,7 +2833,7 @@
                     }
                 }
             },
-            "Admin":{
+            "Admin": {
                 "type": "object",
                 "properties": {
                     "Id": {

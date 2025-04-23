@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func TestGetRelationship(t *testing.T) {
+func TestGetRelationships(t *testing.T) {
 	testCases := []struct {
 		mockTxSetup    func() *mock.Transaction
 		expectedResult map[string]any
@@ -24,8 +24,8 @@ func TestGetRelationship(t *testing.T) {
 				mockTx := new(mock.Transaction)
 				mockResult := new(mock.Result)
 				mockRecord := &neo4j.Record{
-					Values: []any{"value"},
-					Keys:   []string{"key"},
+					Values: []any{map[string]any{"key": "value"}},
+					Keys:   []string{"relationship"},
 				}
 				mockResult.On("Single", context.Background()).Return(mockRecord, nil)
 				mockTx.On("Run", context.Background(), GetRelationshipCypherQuery, map[string]any{"id1": 1, "id2": 2}).Return(mockResult, nil)
@@ -142,14 +142,14 @@ func TestUpdateRelationship(t *testing.T) {
 				mockTx := new(mock.Transaction)
 				mockResult := new(mock.Result)
 				mockRecord := &neo4j.Record{
-					Values: []any{"value"},
-					Keys:   []string{"key"},
+					Values: []any{map[string]any{"key": "value"}},
+					Keys:   []string{"relationship"},
 				}
 				mockResult.On("Single", context.Background()).Return(mockRecord, nil)
 				mockTx.On("Run", context.Background(), UpdateRelationshipCypherQuery, map[string]any{
 					"id1":          1,
 					"id2":          2,
-					"relationship": api.FamilyRelationship{},
+					"relationship": map[string]any{},
 				}).Return(mockResult, nil)
 				return mockTx
 			},
@@ -163,7 +163,7 @@ func TestUpdateRelationship(t *testing.T) {
 				mockTx.On("Run", context.Background(), UpdateRelationshipCypherQuery, map[string]any{
 					"id1":          1,
 					"id2":          2,
-					"relationship": api.FamilyRelationship{},
+					"relationship": map[string]any{},
 				}).Return(nil, errors.New("run error"))
 				return mockTx
 			},

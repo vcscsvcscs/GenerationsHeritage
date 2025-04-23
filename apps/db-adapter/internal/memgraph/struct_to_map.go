@@ -120,11 +120,11 @@ func processSlice(val reflect.Value) []any {
 		if isPreservedType(item) {
 			slice[i] = item
 		} else if reflect.ValueOf(item).Kind() == reflect.Struct {
-			switch item.(type) {
+			switch typedItem := item.(type) {
 			case openapi_types.Date:
-				slice[i] = item.(openapi_types.Date).String()
+				slice[i] = typedItem.String()
 			default:
-				slice[i] = StructToMap(item)
+				slice[i] = StructToMap(typedItem)
 			}
 		} else {
 			slice[i] = item

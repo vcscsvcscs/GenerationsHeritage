@@ -502,7 +502,7 @@ type ServerInterface interface {
 	// Delete relationship between two persons
 	// (DELETE /relationship/{id1}/{id2})
 	DeleteRelationship(c *gin.Context, id1 int, id2 int, params DeleteRelationshipParams)
-	// Get relationship between two persons
+	// Get relationships between two persons
 	// (GET /relationship/{id1}/{id2})
 	GetRelationship(c *gin.Context, id1 int, id2 int, params GetRelationshipParams)
 	// Update a relationship between two persons

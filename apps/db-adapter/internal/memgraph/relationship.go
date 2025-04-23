@@ -2,6 +2,7 @@ package memgraph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
@@ -23,7 +24,12 @@ func GetRelationship(ctx context.Context, id1, id2 int) neo4j.ManagedTransaction
 			return nil, err
 		}
 
-		return record.AsMap(), nil
+		relationshipsRaw, ok := record.Get("relationship")
+		if !ok {
+			return nil, fmt.Errorf("no relationships found")
+		}
+
+		return relationshipsRaw, nil
 	}
 }
 
@@ -60,7 +66,12 @@ func UpdateRelationship(
 			return nil, err
 		}
 
-		return record.AsMap(), nil
+		relationshipRaw, ok := record.Get("relationship")
+		if !ok {
+			return nil, fmt.Errorf("no relationships found")
+		}
+
+		return relationshipRaw, nil
 	}
 }
 
@@ -104,11 +115,12 @@ func CreateChildParentRelationship(
 
 		siblingRecord, err := siblingResult.Single(ctx)
 		if err != nil {
-
 			siblingRelationship, ok := siblingRecord.Get("relationships")
-			siblings, ok := siblingRelationship.([]dbtype.Relationship)
 			if ok {
-				relationships = append(relationships, siblings...)
+				siblings, ok := siblingRelationship.([]dbtype.Relationship)
+				if ok {
+					relationships = append(relationships, siblings...)
+				}
 			}
 		}
 
@@ -131,7 +143,17 @@ func CreateSiblingRelationship(
 			return nil, err
 		}
 
-		return result.Collect(ctx)
+		record, err := result.Single(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		relationshipsRaw, ok := record.Get("relationships")
+		if !ok {
+			return nil, fmt.Errorf("no relationships found")
+		}
+
+		return relationshipsRaw, nil
 	}
 }
 
@@ -150,6 +172,16 @@ func CreateSpouseRelationship(
 			return nil, err
 		}
 
-		return result.Collect(ctx)
+		record, err := result.Single(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		relationshipsRaw, ok := record.Get("relationships")
+		if !ok {
+			return nil, fmt.Errorf("no relationships found")
+		}
+
+		return relationshipsRaw, nil
 	}
 }
