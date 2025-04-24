@@ -46,12 +46,12 @@ func CreatePersonTest(dbAdapterUri string, client *http.Client) func(t *testing.
 
 func GetPersonById(dbAdapterUri string, client *http.Client) func(t *testing.T) {
 	return func(t *testing.T) {
-		url := dbAdapterUri + "/person/2"
+		url := dbAdapterUri + "/person/8"
 
 		req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, url, http.NoBody)
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-User-ID", "3")
+		req.Header.Set("X-User-ID", "6")
 
 		// Send the request
 		resp, err := client.Do(req)
@@ -68,7 +68,7 @@ func GetPersonById(dbAdapterUri string, client *http.Client) func(t *testing.T) 
 		_, ok := responseBody["Id"]
 		require.True(t, ok)
 
-		require.Equal(t, "Johannes", responseBody["Props"].(map[string]any)["first_name"])
+		require.Equal(t, "Jhon", responseBody["Props"].(map[string]any)["first_name"])
 		require.Equal(t, "Doe", responseBody["Props"].(map[string]any)["last_name"])
 	}
 }

@@ -13,7 +13,9 @@ import (
 	"go.uber.org/zap"
 )
 
-func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params api.CreatePersonAndRelationshipParams) {
+func (srv *server) CreatePersonAndRelationship( //nolint:gocyclo,funlen // this is a complex function, but it is not too long
+	c *gin.Context, id int, params api.CreatePersonAndRelationshipParams,
+) {
 	var requestBody api.CreatePersonAndRelationshipJSONBody
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -87,6 +89,7 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 	convertedRelationship := memgraph.StructToMap(requestBody.Relationship)
 
 	var relationShipResultRaw neo4j.ResultWithContext
+	relationships := []any{}
 	var relationshipError error
 	switch *requestBody.Type {
 	case api.CreatePersonAndRelationshipJSONBodyTypeChild:
@@ -96,6 +99,19 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 			"childRelationship":  convertedRelationship,
 			"parentRelationship": convertedRelationship,
 		})
+		sres, err := trs.Run(relCtx, memgraph.CreateSiblingRelationshipsBasedOnParentCypherQuery, map[string]any{ //nolint:govet,lll // this is intentional
+			"childId":  personID,
+			"parentId": id,
+		})
+		if err == nil {
+			if srec, err := sres.Single(relCtx); err == nil {
+				if relationshipsRaw, ok := srec.Get("relationships"); ok { //nolint:govet // this is intentional
+					if rrelationships, ok := relationshipsRaw.([]any); ok {
+						relationships = append(relationships, rrelationships...)
+					}
+				}
+			}
+		}
 	case api.CreatePersonAndRelationshipJSONBodyTypeParent:
 		relationShipResultRaw, relationshipError = trs.Run(relCtx, memgraph.CreateChildParentRelationshipCypherQuery, map[string]any{
 			"childId":            id,
@@ -133,12 +149,21 @@ func (srv *server) CreatePersonAndRelationship(c *gin.Context, id int, params ap
 		return
 	}
 
-	relationships, ok := relationshipsSingle.Get("relationships")
+	rrelationships, ok := relationshipsSingle.Get("relationships")
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": "no relationship was created"})
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "no relationships were found"})
 
 		return
 	}
+
+	rrrelationships, ok := rrelationships.([]any)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": "unknown relationships type were returned by database"})
+
+		return
+	}
+
+	relationships = append(relationships, rrrelationships...)
 
 	if err := trs.Commit(c.Request.Context()); err != nil {
 		srv.logger.Error("failed to commit transaction", zap.Error(err))

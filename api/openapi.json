@@ -954,7 +954,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Relationship"
+                                        "$ref": "#/components/schemas/dbtypeRelationship"
                                     }
                                 }
                             }
@@ -2625,6 +2625,36 @@
                         "type": "integer"
                     },
                     "properties": {
+                        "$ref": "#/components/schemas/FamilyRelationship"
+                    }
+                }
+            },
+            "dbtypeRelationship": {
+                "type": "object",
+                "properties": {
+                    "Id": {
+                        "type": "integer"
+                    },
+                    "ElementId": {
+                        "type": "string"
+                    },
+                    "Type": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "StartId": {
+                        "type": "integer"
+                    },
+                    "StartElementId":{
+                        "type": "string"
+                    },
+                    "EndId": {
+                        "type": "integer"
+                    },
+                    "EndElementId": {
+                        "type": "string"
+                    },
+                    "Props": {
                         "$ref": "#/components/schemas/FamilyRelationship"
                     }
                 }

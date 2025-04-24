@@ -240,6 +240,18 @@ type Relationship struct {
 	Type       *string             `json:"type"`
 }
 
+// DbtypeRelationship defines model for dbtypeRelationship.
+type DbtypeRelationship struct {
+	ElementId      *string             `json:"ElementId,omitempty"`
+	EndElementId   *string             `json:"EndElementId,omitempty"`
+	EndId          *int                `json:"EndId,omitempty"`
+	Id             *int                `json:"Id,omitempty"`
+	Props          *FamilyRelationship `json:"Props,omitempty"`
+	StartElementId *string             `json:"StartElementId,omitempty"`
+	StartId        *int                `json:"StartId,omitempty"`
+	Type           *string             `json:"Type"`
+}
+
 // GetProfileAdminsParams defines parameters for GetProfileAdmins.
 type GetProfileAdminsParams struct {
 	XUserID int `json:"X-User-ID"`

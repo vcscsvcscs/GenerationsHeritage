@@ -7,27 +7,41 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/stretchr/testify/require"
 )
 
 //go:embed payloads/create_relationship_child.json
 var create_relationship_child []byte
 
-func CreateRelationshipsTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+//go:embed payloads/create_relationship_parent.json
+var create_relationship_parent []byte
+
+//go:embed payloads/create_relationship_sibling.json
+var create_relationship_sibling []byte
+
+//go:embed payloads/create_relationship_spouse.json
+var create_relationship_spouse []byte
+
+func CreateRelationshipsTest(dbAdapterURI string, client *http.Client) func(t *testing.T) {
 	return func(t *testing.T) {
-		t.Run("CreateChildRelationship", CreateRelationshipTest(dbAdapterUri, &create_relationship_child, client))
+		t.Run("CreatePerson6", CreatePersonTest(dbAdapterURI, client))
+		t.Run("CreatePerson7", CreatePersonTest(dbAdapterURI, client))
+		t.Run("CreatePerson8", CreatePersonTest(dbAdapterURI, client))
+		t.Run("CreateChildRelationship", CreateRelationshipTest(dbAdapterURI, &create_relationship_child, client))
+		t.Run("CreateParentRelationship", CreateRelationshipTest(dbAdapterURI, &create_relationship_parent, client))
+		t.Run("CreateSiblingRelationship", CreateRelationshipTest(dbAdapterURI, &create_relationship_sibling, client))
+		t.Run("CreateSpouseRelationship", CreateRelationshipTest(dbAdapterURI, &create_relationship_spouse, client))
 	}
 }
 
-func CreateRelationshipTest(dbAdapterUri string, payload *[]byte, client *http.Client) func(t *testing.T) {
+func CreateRelationshipTest(dbAdapterURI string, payload *[]byte, client *http.Client) func(t *testing.T) {
 	return func(t *testing.T) {
-		url := dbAdapterUri + "/relationship"
+		url := dbAdapterURI + "/relationship"
 
 		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, url, bytes.NewBuffer(*payload))
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-User-ID", "1")
+		req.Header.Set("X-User-ID", "0")
 		req.Header.Set("X-User-Name", "application/json")
 
 		// Send the request
@@ -35,7 +49,7 @@ func CreateRelationshipTest(dbAdapterUri string, payload *[]byte, client *http.C
 		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		var responseBody []dbtype.Relationship
+		var responseBody []any
 		err = json.NewDecoder(resp.Body).Decode(&responseBody)
 		require.NoError(t, err)
 
@@ -47,14 +61,14 @@ func CreateRelationshipTest(dbAdapterUri string, payload *[]byte, client *http.C
 func UpdateRelationship() {
 }
 
-func GetRelationship(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+func GetRelationshipTest(dbAdapterURI string, client *http.Client) func(t *testing.T) {
 	return func(t *testing.T) {
-		url := dbAdapterUri + "/relationship/2/1"
+		url := dbAdapterURI + "/relationship/5/8"
 
 		req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, url, http.NoBody)
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-User-ID", "3")
+		req.Header.Set("X-User-ID", "5")
 
 		// Send the request
 		resp, err := client.Do(req)
@@ -68,11 +82,11 @@ func GetRelationship(dbAdapterUri string, client *http.Client) func(t *testing.T
 		// Validate the response
 		require.Equal(t, http.StatusOK, resp.StatusCode)
 
-		_, ok := responseBody["id"]
+		_, ok := responseBody["Id"]
 		require.True(t, ok)
 
-		require.Equal(t, 2, responseBody["Props"].(map[string]any)["start"])
-		require.Equal(t, 1, responseBody["Props"].(map[string]any)["end"])
+		require.Equal(t, "5", responseBody["StartElementId"])
+		require.Equal(t, "8", responseBody["EndElementId"])
 	}
 }
 

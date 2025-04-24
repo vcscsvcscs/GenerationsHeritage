@@ -423,6 +423,7 @@ export interface components {
         };
         Person: {
             Id?: number;
+            ElementId?: string;
             Labels?: string[];
             Props?: components["schemas"]["PersonProperties"];
         };
@@ -435,12 +436,12 @@ export interface components {
             to?: string | null;
         };
         Relationship: {
-            Id?: number;
-            Label?: string;
-            Type?: string | null;
-            Start?: number;
-            End?: number;
-            Props?: components["schemas"]["FamilyRelationship"];
+            id?: number;
+            type?: string | null;
+            label?: string | null;
+            start?: number;
+            end?: number;
+            properties?: components["schemas"]["FamilyRelationship"];
         };
         OptimizedPersonNode: {
             id?: number;
@@ -482,14 +483,17 @@ export interface components {
         };
         Recipe: {
             Id?: number;
+            ElementId?: string;
             Labels?: string[];
             Props?: components["schemas"]["RecipeProperties"];
         };
         Likes: {
             Id?: number;
-            Label?: string;
-            Start?: string;
-            End?: string;
+            Type?: string;
+            StartId?: number;
+            StartElementId?: string;
+            EndId?: number;
+            EndElementId?: string;
             Props?: components["schemas"]["LikesProperties"];
         };
         LikesProperties: {
@@ -499,9 +503,11 @@ export interface components {
         };
         Admin: {
             Id?: number;
-            Label?: string;
-            Start?: string;
-            End?: string;
+            Type?: string;
+            StartId?: number;
+            StartElementId?: string;
+            EndId?: number;
+            EndElementId?: string;
             Props?: {
                 added?: number;
             };
@@ -578,7 +584,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         person?: components["schemas"]["Person"];
-                        relationship?: components["schemas"]["Relationship"];
+                        relationships?: components["schemas"]["Relationship"][];
                     };
                 };
             };
@@ -611,7 +617,6 @@ export interface operations {
             query?: never;
             header: {
                 "X-User-ID": number;
-                "X-User-Name": string;
             };
             path?: never;
             cookie?: never;

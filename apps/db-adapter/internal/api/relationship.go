@@ -27,7 +27,7 @@ func (srv *server) CreateRelationship(c *gin.Context, params api.CreateRelations
 	defer aCancel()
 
 	if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id1, params.XUserID); err != nil {
-		if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id1, params.XUserID); err != nil {
+		if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id2, params.XUserID); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
 
 			return
@@ -43,7 +43,7 @@ func (srv *server) CreateRelationship(c *gin.Context, params api.CreateRelations
 	case api.CreateRelationshipJSONBodyTypeChild:
 		relationShipResultRaw, relationshipError = session.ExecuteWrite(
 			qctx, memgraph.CreateChildParentRelationship(
-				qctx, *relationship.Id1, *relationship.Id2, *relationship.Relationship,
+				qctx, *relationship.Id2, *relationship.Id1, *relationship.Relationship,
 			),
 		)
 	case api.CreateRelationshipJSONBodyTypeParent:
@@ -91,7 +91,7 @@ func (srv *server) UpdateRelationship(c *gin.Context, id1, id2 int, params api.U
 	defer aCancel()
 
 	if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id1, params.XUserID); err != nil {
-		if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id1, params.XUserID); err != nil {
+		if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id2, params.XUserID); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
 
 			return
@@ -117,8 +117,8 @@ func (srv *server) GetRelationship(c *gin.Context, id1, id2 int, params api.GetR
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
 
-	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id1, params.XUserID); err != nil {
-		if err := auth.CouldManagePersonUnknownAdmin(actx, session, id2, params.XUserID); err != nil {
+	if err := auth.CouldSeePersonsProfile(actx, session, id1, params.XUserID); err != nil {
+		if err := auth.CouldSeePersonsProfile(actx, session, id2, params.XUserID); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
 
 			return

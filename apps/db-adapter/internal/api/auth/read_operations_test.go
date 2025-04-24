@@ -91,7 +91,7 @@ func TestCouldSeePersonsProfile(t *testing.T) {
 
 		err := CouldSeePersonsProfile(ctx, mockSession, 1, 3)
 		require.Error(t, err)
-		require.EqualError(t, err, "could not convert people to []api.PersonProperties")
+		require.EqualError(t, err, "could not convert people to []map[string]any: unexpected type: string")
 		mockSession.AssertExpectations(t)
 	})
 }

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	memgraphMock "github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph/mock"
@@ -76,7 +77,10 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
-		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(map[string]any{"result": "success"}, nil)
+		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(
+			map[string]any{"person": dbtype.Node{Id: 3}},
+			nil,
+		)
 		mockSession.On("Close", mock.Anything).Return(nil)
 
 		srv := &server{
@@ -95,7 +99,7 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		srv.CreatePersonByGoogleIdAndInviteCode(c, "test-google-id")
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Body.String(), "success")
+		assert.Contains(t, w.Body.String(), "Id")
 	})
 
 	t.Run("Bad request case", func(t *testing.T) {
@@ -124,7 +128,7 @@ func TestCreatePersonByGoogleId(t *testing.T) {
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
 		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(
-			map[string]any{"result": "success"}, nil,
+			map[string]any{"person": dbtype.Node{Id: 3}}, nil,
 		)
 		mockSession.On("Close", mock.Anything).Return(nil)
 
@@ -144,7 +148,7 @@ func TestCreatePersonByGoogleId(t *testing.T) {
 		srv.CreatePersonByGoogleId(c, "test-google-id")
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Body.String(), "success")
+		assert.Contains(t, w.Body.String(), "Id")
 	})
 
 	t.Run("Bad request case", func(t *testing.T) {

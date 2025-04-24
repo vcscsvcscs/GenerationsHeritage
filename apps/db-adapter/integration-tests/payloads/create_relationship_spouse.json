@@ -1,0 +1,11 @@
+{
+    "id1": 5,
+    "id2": 8,
+    "type": "spouse",
+    "relationship": {
+      "verified": true,
+      "notes": "UwU",
+      "from": "2025-01-01",
+      "to": "2025-03-01"
+    }
+}

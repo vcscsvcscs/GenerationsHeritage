@@ -29,7 +29,7 @@ func TestCreatePerson(t *testing.T) {
 				}
 				mockResult.On("Single", context.Background()).Return(mockRecord, nil)
 				mockTx.On("Run", context.Background(), CreatePersonCypherQuery, map[string]any{
-					"Person": api.PersonProperties{},
+					"Person": map[string]any{},
 				}).Return(mockResult, nil)
 				return mockTx
 			},
@@ -41,7 +41,7 @@ func TestCreatePerson(t *testing.T) {
 			mockTxSetup: func() *mock.Transaction {
 				mockTx := new(mock.Transaction)
 				mockTx.On("Run", context.Background(), CreatePersonCypherQuery, map[string]any{
-					"Person": api.PersonProperties{},
+					"Person": map[string]any{},
 				}).Return(nil, errors.New("run error"))
 				return mockTx
 			},
@@ -55,7 +55,7 @@ func TestCreatePerson(t *testing.T) {
 				mockResult := new(mock.Result)
 				mockResult.On("Single", context.Background()).Return(nil, errors.New("single error"))
 				mockTx.On("Run", context.Background(), CreatePersonCypherQuery, map[string]any{
-					"Person": api.PersonProperties{},
+					"Person": map[string]any{},
 				}).Return(mockResult, nil)
 				return mockTx
 			},
@@ -160,13 +160,13 @@ func TestUpdatePerson(t *testing.T) {
 				mockTx := new(mock.Transaction)
 				mockResult := new(mock.Result)
 				mockRecord := &neo4j.Record{
-					Values: []any{"updatedValue"},
-					Keys:   []string{"updatedKey"},
+					Values: []any{map[string]any{"updatedKey": "updatedValue"}},
+					Keys:   []string{"person"},
 				}
 				mockResult.On("Single", context.Background()).Return(mockRecord, nil)
 				mockTx.On("Run", context.Background(), UpdatePersonCypherQuery, map[string]any{
 					"id":    123,
-					"props": api.PersonProperties{},
+					"props": map[string]any{},
 				}).Return(mockResult, nil)
 				return mockTx
 			},
@@ -179,7 +179,7 @@ func TestUpdatePerson(t *testing.T) {
 				mockTx := new(mock.Transaction)
 				mockTx.On("Run", context.Background(), UpdatePersonCypherQuery, map[string]any{
 					"id":    123,
-					"props": api.PersonProperties{},
+					"props": map[string]any{},
 				}).Return(nil, errors.New("run error"))
 				return mockTx
 			},
@@ -194,7 +194,7 @@ func TestUpdatePerson(t *testing.T) {
 				mockResult.On("Single", context.Background()).Return(nil, errors.New("single error"))
 				mockTx.On("Run", context.Background(), UpdatePersonCypherQuery, map[string]any{
 					"id":    123,
-					"props": api.PersonProperties{},
+					"props": map[string]any{},
 				}).Return(mockResult, nil)
 				return mockTx
 			},

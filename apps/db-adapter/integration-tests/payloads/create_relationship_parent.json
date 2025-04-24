@@ -1,0 +1,10 @@
+{
+    "id1": 6,
+    "id2": 7,
+    "type": "parent",
+    "relationship": {
+        "verified": false,
+        "notes": "Test notes asdasdasda",
+        "from": "2021-01-01"
+    }
+}

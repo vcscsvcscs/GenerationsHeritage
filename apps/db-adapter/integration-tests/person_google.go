@@ -53,7 +53,7 @@ func getPersonByGoogleIdTest(dbAdapterUri string, client *http.Client) func(t *t
 //go:embed payloads/create_person_with_invite_code.json
 var create_person_with_invite_code []byte
 
-func CreatePersonByGoogleIdAndInviteCodeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+func CreatePersonByGoogleIdAndInviteCodeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl,lll // won't fix this, as it is a test
 	return func(t *testing.T) {
 		url := dbAdapterUri + "/person/google/test-google-id"
 
@@ -85,7 +85,7 @@ func CreatePersonByGoogleIdAndInviteCodeTest(dbAdapterUri string, client *http.C
 //go:embed payloads/create_person.json
 var create_person []byte
 
-func createPersonByGoogleIdTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+func createPersonByGoogleIdTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl,lll // won't fix this, as it is a test
 	return func(t *testing.T) {
 		url := dbAdapterUri + "/person/google/test-google-id"
 

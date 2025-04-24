@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
@@ -27,8 +28,9 @@ func TestCreatePerson(t *testing.T) {
 		mockTransaction := new(memgraphMock.ExplicitTransaction)
 		mockResult := new(memgraphMock.Result)
 		mockResult.On("Single", mock.Anything).Return(&neo4j.Record{
-			Values: []any{1},
-			Keys:   []string{"id"},
+			Values: []any{dbtype.Node{
+				Id: 1}},
+			Keys: []string{"person"},
 		}, nil)
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
@@ -57,7 +59,7 @@ func TestCreatePerson(t *testing.T) {
 		srv.CreatePerson(c, params)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Body.String(), "id")
+		assert.Contains(t, w.Body.String(), "Id")
 	})
 
 	t.Run("Bad request case", func(t *testing.T) {

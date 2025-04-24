@@ -15,7 +15,6 @@ func FlattenFamilyTree(input any, result *FamilyTree) error {
 	root, ok := input.(map[string]any)
 	if !ok {
 		return fmt.Errorf("could not convert result to map[string]any")
-
 	}
 
 	var uniqueIds []int64

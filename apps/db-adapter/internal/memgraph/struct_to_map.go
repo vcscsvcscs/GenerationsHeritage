@@ -10,7 +10,7 @@ import (
 
 // StructToMap recursively converts a struct to a map using JSON tags.
 // Nil pointers and unexported fields are excluded.
-func StructToMap(input any) map[string]any {
+func StructToMap(input any) map[string]any { //nolint:cyclop,gocyclo // this is a known issue with the neo4j-go-driver
 	result := make(map[string]any)
 	value := reflect.ValueOf(input)
 

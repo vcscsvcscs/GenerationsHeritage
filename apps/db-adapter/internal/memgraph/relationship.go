@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
-	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
@@ -108,16 +107,16 @@ func CreateChildParentRelationship(
 			return nil, err
 		}
 
-		relationships, rok := relationshipsRaw.([]dbtype.Relationship)
+		relationships, rok := relationshipsRaw.([]any)
 		if !rok {
 			return nil, err
 		}
 
 		siblingRecord, err := siblingResult.Single(ctx)
-		if err != nil {
+		if err == nil {
 			siblingRelationship, ok := siblingRecord.Get("relationships")
 			if ok {
-				siblings, ok := siblingRelationship.([]dbtype.Relationship)
+				siblings, ok := siblingRelationship.([]any)
 				if ok {
 					relationships = append(relationships, siblings...)
 				}
@@ -128,7 +127,7 @@ func CreateChildParentRelationship(
 	}
 }
 
-func CreateSiblingRelationship(
+func CreateSiblingRelationship( //nolint:dupl // this is not worth fixing
 	ctx context.Context, siblingId1, siblingId2 int, relationship api.FamilyRelationship,
 ) neo4j.ManagedTransactionWork {
 	convertedRelationship := StructToMap(relationship)
@@ -157,7 +156,7 @@ func CreateSiblingRelationship(
 	}
 }
 
-func CreateSpouseRelationship(
+func CreateSpouseRelationship( //nolint:dupl // this is not worth fixing
 	ctx context.Context, spouseId1, spouseId2 int, relationship api.FamilyRelationship,
 ) neo4j.ManagedTransactionWork {
 	convertedRelationship := StructToMap(relationship)

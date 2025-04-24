@@ -16,7 +16,7 @@ func Flatten(input any, uniqueIds *[]int64, result *[]any) error {
 
 	switch val.Kind() {
 	case reflect.Slice, reflect.Array:
-		for i := 0; i < val.Len(); i++ {
+		for i := range val.Len() {
 			if err := Flatten(val.Index(i).Interface(), uniqueIds, result); err != nil {
 				return err
 			}
@@ -35,15 +35,15 @@ func Flatten(input any, uniqueIds *[]int64, result *[]any) error {
 		switch input.(type) {
 		case dbtype.Node:
 			node := val.Interface().(dbtype.Node)
-			if !slices.Contains(*uniqueIds, node.Id) {
+			if !slices.Contains(*uniqueIds, node.Id) { //nolint:staticcheck // this is a known issue with the neo4j-go-driver
 				*result = append(*result, node)
-				*uniqueIds = append(*uniqueIds, node.Id)
+				*uniqueIds = append(*uniqueIds, node.Id) //nolint:staticcheck // this is a known issue with the neo4j-go-driver
 			}
 		case dbtype.Relationship:
 			relationship := val.Interface().(dbtype.Relationship)
-			if !slices.Contains(*uniqueIds, relationship.Id) {
+			if !slices.Contains(*uniqueIds, relationship.Id) { //nolint:staticcheck // this is a known issue with the neo4j-go-driver
 				*result = append(*result, relationship)
-				*uniqueIds = append(*uniqueIds, relationship.Id)
+				*uniqueIds = append(*uniqueIds, relationship.Id) //nolint:staticcheck // this is a known issue with the neo4j-go-driver
 			}
 		}
 	default:
