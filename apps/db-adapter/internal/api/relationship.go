@@ -90,8 +90,8 @@ func (srv *server) UpdateRelationship(c *gin.Context, id1, id2 int, params api.U
 	actx, aCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer aCancel()
 
-	if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id1, params.XUserID); err != nil {
-		if err := auth.CouldManagePersonUnknownAdmin(actx, session, *relationship.Id2, params.XUserID); err != nil {
+	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id1, params.XUserID); err != nil {
+		if err := auth.CouldManagePersonUnknownAdmin(actx, session, id2, params.XUserID); err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
 
 			return

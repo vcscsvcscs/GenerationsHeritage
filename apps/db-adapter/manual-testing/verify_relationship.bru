@@ -1,0 +1,19 @@
+meta {
+  name: verify_relationship
+  type: http
+  seq: 20
+}
+
+patch {
+  url: http://localhost:8080/relationship/1/2
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "relationship": {
+          "verified": false
+      }
+  }
+}

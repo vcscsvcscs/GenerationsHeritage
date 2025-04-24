@@ -42,7 +42,6 @@ func CreateRelationshipTest(dbAdapterURI string, payload *[]byte, client *http.C
 		require.NoError(t, err)
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-User-ID", "0")
-		req.Header.Set("X-User-Name", "application/json")
 
 		// Send the request
 		resp, err := client.Do(req)
@@ -58,7 +57,30 @@ func CreateRelationshipTest(dbAdapterURI string, payload *[]byte, client *http.C
 	}
 }
 
-func UpdateRelationship() {
+//go:embed payloads/verify_relationship.json
+var verify_relationship []byte
+
+func UpdateRelationshipTest(dbAdapterURI string, client *http.Client) func(t *testing.T) {
+	return func(t *testing.T) {
+		url := dbAdapterURI + "/relationship/6/7"
+
+		req, err := http.NewRequestWithContext(t.Context(), http.MethodPatch, url, bytes.NewBuffer(verify_relationship))
+		require.NoError(t, err)
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("X-User-ID", "7")
+
+		// Send the request
+		resp, err := client.Do(req)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		var responseBody []any
+		err = json.NewDecoder(resp.Body).Decode(&responseBody)
+		require.NoError(t, err)
+
+		// Validate the response
+		require.Equal(t, http.StatusOK, resp.StatusCode)
+	}
 }
 
 func GetRelationshipTest(dbAdapterURI string, client *http.Client) func(t *testing.T) {
@@ -90,5 +112,27 @@ func GetRelationshipTest(dbAdapterURI string, client *http.Client) func(t *testi
 	}
 }
 
-func DeleteRelationship() {
+func DeleteRelationshipTest(dbAdapterURI string, client *http.Client) func(t *testing.T) {
+	return func(t *testing.T) {
+		url := dbAdapterURI + "/relationship/5/8"
+
+		req, err := http.NewRequestWithContext(t.Context(), http.MethodDelete, url, http.NoBody)
+		require.NoError(t, err)
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("X-User-ID", "5")
+
+		// Send the request
+		resp, err := client.Do(req)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		var responseBody map[string]any
+		err = json.NewDecoder(resp.Body).Decode(&responseBody)
+		require.NoError(t, err)
+
+		// Validate the response
+		require.Equal(t, http.StatusOK, resp.StatusCode)
+		_, ok := responseBody["msg"]
+		require.True(t, ok)
+	}
 }

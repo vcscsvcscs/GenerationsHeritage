@@ -1,0 +1,23 @@
+meta {
+  name: delete_relationship
+  type: http
+  seq: 21
+}
+
+patch {
+  url: http://localhost:8080/relationship/1/2
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User-ID: 1
+}
+
+body:json {
+  {
+      "relationship": {
+          "verified": true
+      }
+  }
+}

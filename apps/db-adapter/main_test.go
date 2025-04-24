@@ -118,5 +118,7 @@ func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
 		t.Run("GetPersonById", integration_tests.GetPersonById(dbAdapterURI, client))
 		t.Run("GetFamilyTreeByIdTest", integration_tests.GetFamilyTreeByIdTest(dbAdapterURI, client))
 		t.Run("GetFamilyTreeWithSpousesByIdTest", integration_tests.GetFamilyTreeWithSpousesByIdTest(dbAdapterURI, client))
+		t.Run("VerifyRelationships", integration_tests.UpdateRelationshipTest(dbAdapterURI, client))
+		t.Run("DeleteRelationship", integration_tests.DeleteRelationshipTest(dbAdapterURI, client))
 	}
 }

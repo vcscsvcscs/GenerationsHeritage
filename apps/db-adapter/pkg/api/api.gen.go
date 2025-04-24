@@ -400,8 +400,6 @@ type GetRelationshipParams struct {
 
 // UpdateRelationshipJSONBody defines parameters for UpdateRelationship.
 type UpdateRelationshipJSONBody struct {
-	Id1          *int                `json:"id1,omitempty"`
-	Id2          *int                `json:"id2,omitempty"`
 	Relationship *FamilyRelationship `json:"relationship,omitempty"`
 }
 
