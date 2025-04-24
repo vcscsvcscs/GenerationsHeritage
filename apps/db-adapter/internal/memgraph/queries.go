@@ -148,3 +148,22 @@ var GetBloodRelativesCypherQuery string
 //
 //go:embed queries/get_family_tree_with_spouses.cypher
 var GetFamilyTreeWithSpousesCypherQuery string
+
+// Requires comment, id1 as commenter and id2 as profile that is commented on parameter.
+//
+// returns people, comments
+//
+//go:embed queries/comment.cypher
+var CommentCypherQuery string
+
+// Requires id1 as commenter and id2 as profile that is commented on parameter.
+//
+//go:embed queries/delete_comment.cypher
+var DeleteCommentCypherQuery string
+
+// Requires id1 as profile that is commented on parameter.
+//
+// returns comments, people
+//
+//go:embed queries/comments_on_profile.cypher
+var CommentsOnProfileCypherQuery string

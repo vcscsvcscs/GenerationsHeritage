@@ -6,6 +6,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oapi-codegen/runtime"
@@ -41,6 +42,16 @@ type Admin struct {
 	Type           *string `json:"Type,omitempty"`
 }
 
+// Comment defines model for Comment.
+type Comment struct {
+	End   *int     `json:"end"`
+	Id    *int     `json:"id"`
+	Label *string  `json:"label"`
+	Props *Message `json:"props,omitempty"`
+	Start *int     `json:"start"`
+	Type  *string  `json:"type"`
+}
+
 // FamilyRelationship defines model for FamilyRelationship.
 type FamilyRelationship struct {
 	From     *openapi_types.Date `json:"from"`
@@ -71,6 +82,19 @@ type LikesProperties struct {
 	CouldMakeIt *bool `json:"could_make_it"`
 	Favourite   *bool `json:"favourite"`
 	LikeIt      *bool `json:"like_it"`
+}
+
+// Message defines model for Message.
+type Message struct {
+	Edited  *time.Time `json:"edited"`
+	Message *string    `json:"message,omitempty"`
+	SentAt  *time.Time `json:"sent_at,omitempty"`
+}
+
+// Messages defines model for Messages.
+type Messages struct {
+	Comments *[]Comment             `json:"comments,omitempty"`
+	People   *[]OptimizedPersonNode `json:"people,omitempty"`
 }
 
 // OptimizedPersonNode defines model for OptimizedPersonNode.
@@ -150,15 +174,8 @@ type PersonProperties struct {
 	} `json:"notes"`
 	OccupationToDisplay *string   `json:"occupation_to_display"`
 	Occupations         *[]string `json:"occupations"`
-	OthersSaid          *[]struct {
-		Description  *string `json:"description,omitempty"`
-		Id           *int    `json:"id,omitempty"`
-		Name         *string `json:"name,omitempty"`
-		Relationship *string `json:"relationship,omitempty"`
-		Url          *string `json:"url"`
-	} `json:"others_said"`
-	Phone  *string `json:"phone"`
-	Photos *[]struct {
+	Phone               *string   `json:"phone"`
+	Photos              *[]struct {
 		Date        *openapi_types.Date `json:"date,omitempty"`
 		Description *string             `json:"description,omitempty"`
 		Name        *string             `json:"name,omitempty"`
@@ -269,6 +286,26 @@ type GetAdminRelationshipParams struct {
 
 // CreateAdminRelationshipParams defines parameters for CreateAdminRelationship.
 type CreateAdminRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// DeleteCommentOnPersonParams defines parameters for DeleteCommentOnPerson.
+type DeleteCommentOnPersonParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// GetCommentsOnPersonParams defines parameters for GetCommentsOnPerson.
+type GetCommentsOnPersonParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// EditCommentParams defines parameters for EditComment.
+type EditCommentParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// CommentOnPersonParams defines parameters for CommentOnPerson.
+type CommentOnPersonParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
@@ -408,6 +445,15 @@ type UpdateRelationshipParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// GetCommentsOnPersonJSONRequestBody defines body for GetCommentsOnPerson for application/json ContentType.
+type GetCommentsOnPersonJSONRequestBody = Message
+
+// EditCommentJSONRequestBody defines body for EditComment for application/json ContentType.
+type EditCommentJSONRequestBody = Message
+
+// CommentOnPersonJSONRequestBody defines body for CommentOnPerson for application/json ContentType.
+type CommentOnPersonJSONRequestBody = Message
+
 // CreatePersonJSONRequestBody defines body for CreatePerson for application/json ContentType.
 type CreatePersonJSONRequestBody = PersonRegistration
 
@@ -449,6 +495,18 @@ type ServerInterface interface {
 	// Create admin relationship between two persons
 	// (POST /admin/{id1}/{id2})
 	CreateAdminRelationship(c *gin.Context, id1 int, id2 int, params CreateAdminRelationshipParams)
+	// Comment on person's profile by ID
+	// (DELETE /comment/{id})
+	DeleteCommentOnPerson(c *gin.Context, id int, params DeleteCommentOnPersonParams)
+	// Get comments on person's profile by ID
+	// (GET /comment/{id})
+	GetCommentsOnPerson(c *gin.Context, id int, params GetCommentsOnPersonParams)
+	// Edit comment on person's profile by ID
+	// (PATCH /comment/{id})
+	EditComment(c *gin.Context, id int, params EditCommentParams)
+	// Comment on person's profile by ID
+	// (POST /comment/{id})
+	CommentOnPerson(c *gin.Context, id int, params CommentOnPersonParams)
 	// Get family tree by person ID
 	// (GET /family-tree)
 	GetFamilyTreeById(c *gin.Context, params GetFamilyTreeByIdParams)
@@ -758,6 +816,210 @@ func (siw *ServerInterfaceWrapper) CreateAdminRelationship(c *gin.Context) {
 	}
 
 	siw.Handler.CreateAdminRelationship(c, id1, id2, params)
+}
+
+// DeleteCommentOnPerson operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCommentOnPerson(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteCommentOnPersonParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteCommentOnPerson(c, id, params)
+}
+
+// GetCommentsOnPerson operation middleware
+func (siw *ServerInterfaceWrapper) GetCommentsOnPerson(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCommentsOnPersonParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCommentsOnPerson(c, id, params)
+}
+
+// EditComment operation middleware
+func (siw *ServerInterfaceWrapper) EditComment(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params EditCommentParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.EditComment(c, id, params)
+}
+
+// CommentOnPerson operation middleware
+func (siw *ServerInterfaceWrapper) CommentOnPerson(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CommentOnPersonParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CommentOnPerson(c, id, params)
 }
 
 // GetFamilyTreeById operation middleware
@@ -1842,6 +2104,10 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/admin/:id1/:id2", wrapper.DeleteAdminRelationship)
 	router.GET(options.BaseURL+"/admin/:id1/:id2", wrapper.GetAdminRelationship)
 	router.POST(options.BaseURL+"/admin/:id1/:id2", wrapper.CreateAdminRelationship)
+	router.DELETE(options.BaseURL+"/comment/:id", wrapper.DeleteCommentOnPerson)
+	router.GET(options.BaseURL+"/comment/:id", wrapper.GetCommentsOnPerson)
+	router.PATCH(options.BaseURL+"/comment/:id", wrapper.EditComment)
+	router.POST(options.BaseURL+"/comment/:id", wrapper.CommentOnPerson)
 	router.GET(options.BaseURL+"/family-tree", wrapper.GetFamilyTreeById)
 	router.GET(options.BaseURL+"/family-tree-with-spouses", wrapper.GetFamilyTreeWithSpousesById)
 	router.GET(options.BaseURL+"/health", wrapper.HealthCheck)

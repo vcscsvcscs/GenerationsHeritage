@@ -55,6 +55,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/comment/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get comments on person's profile by ID */
+        get: operations["GetCommentsOnPerson"];
+        put?: never;
+        /** Comment on person's profile by ID */
+        post: operations["commentOnPerson"];
+        /** Comment on person's profile by ID */
+        delete: operations["deleteCommentOnPerson"];
+        options?: never;
+        head?: never;
+        /** Edit comment on person's profile by ID */
+        patch: operations["editComment"];
+        trace?: never;
+    };
     "/person/{id}": {
         parameters: {
             query?: never;
@@ -185,7 +205,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get relationship between two persons */
+        /** Get relationships between two persons */
         get: operations["getRelationship"];
         put?: never;
         post?: never;
@@ -334,13 +354,6 @@ export interface components {
             }[] | null;
             occupations?: string[] | null;
             occupation_to_display?: string | null;
-            others_said?: {
-                id?: number;
-                name?: string;
-                relationship?: string;
-                description?: string;
-                url?: string | null;
-            }[] | null;
             limit?: number | null;
             photos?: {
                 url?: string;
@@ -443,6 +456,16 @@ export interface components {
             end?: number;
             properties?: components["schemas"]["FamilyRelationship"];
         };
+        dbtypeRelationship: {
+            Id?: number;
+            ElementId?: string;
+            Type?: string | null;
+            StartId?: number;
+            StartElementId?: string;
+            EndId?: number;
+            EndElementId?: string;
+            Props?: components["schemas"]["FamilyRelationship"];
+        };
         OptimizedPersonNode: {
             id?: number;
             labels?: string[];
@@ -511,6 +534,25 @@ export interface components {
             Props?: {
                 added?: number;
             };
+        };
+        Comment: {
+            id?: number | null;
+            start?: number | null;
+            end?: number | null;
+            type?: string | null;
+            label?: string | null;
+            props?: components["schemas"]["Message"];
+        };
+        Message: {
+            message?: string;
+            /** Format: date-time */
+            edited?: string | null;
+            /** Format: date-time */
+            sent_at?: string;
+        };
+        Messages: {
+            people?: components["schemas"]["OptimizedPersonNode"][];
+            comments?: components["schemas"]["Comment"][];
         };
     };
     responses: never;
@@ -634,6 +676,248 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Person"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    GetCommentsOnPerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Message"];
+            };
+        };
+        responses: {
+            /** @description Comments */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Messages"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    commentOnPerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Message"];
+            };
+        };
+        responses: {
+            /** @description Message updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Messages"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    deleteCommentOnPerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted comment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    editComment: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Message"];
+            };
+        };
+        responses: {
+            /** @description Comment updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Messages"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
                 };
             };
             /** @description Internal server error */
@@ -1156,13 +1440,13 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Relationship created */
+            /** @description Relationships created */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Relationship"];
+                    "application/json": components["schemas"]["dbtypeRelationship"][];
                 };
             };
             /** @description Unauthorized */
@@ -1322,8 +1606,6 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    id1?: number;
-                    id2?: number;
                     relationship?: components["schemas"]["FamilyRelationship"];
                 };
             };

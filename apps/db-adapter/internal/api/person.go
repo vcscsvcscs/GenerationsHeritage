@@ -87,7 +87,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 	c.JSON(http.StatusOK, createdPerson)
 }
 
-func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) {
+func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) { //nolint:dupl,lll // This just does not worth abstracting anymore
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

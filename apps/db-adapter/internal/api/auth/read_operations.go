@@ -14,7 +14,7 @@ func CouldSeePersonsProfile(ctx context.Context, session neo4j.SessionWithContex
 		return nil
 	}
 
-	res, err := session.ExecuteRead(ctx, memgraph.GetFamilyTreeById(ctx, xUserID))
+	res, err := session.ExecuteRead(ctx, memgraph.GetFamilyTreeWithSpousesById(ctx, xUserID))
 	if err != nil {
 		return err
 	}
