@@ -11,14 +11,13 @@ export async function validateSessionToken(
 	token: string,
 	sessions: KVNamespace
 ): Promise<SessionValidationResult> {
-	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-	const session: Session | null = await sessions.get(sessionId, { type: 'json' });
+	const session: Session | null = await sessions.get(token, { type: 'json' });
 	if (!session) {
 		return null;
 	}
 
-	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
-		await sessions.put(sessionId, JSON.stringify(session), { expirationTtl: EXPIRATION_TTL });
+	if (Date.now() >= session.expiresAt - 1000 * 60 * 60 * 24 * 15) {
+		await sessions.put(token, JSON.stringify(session), { expirationTtl: EXPIRATION_TTL });
 	}
 
 	return session;
@@ -35,13 +34,13 @@ export async function invalidateUserSessions(userId: number, sessions: KVNamespa
 	}
 }
 
-export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date): void {
+export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: EpochTimeStamp): void {
 	event.cookies.set('session', token, {
 		httpOnly: true,
 		path: '/',
 		secure: import.meta.env.PROD,
 		sameSite: 'lax',
-		expires: expiresAt
+		expires: new Date(expiresAt)
 	});
 }
 
@@ -55,11 +54,11 @@ export function deleteSessionTokenCookie(event: RequestEvent): void {
 	});
 }
 
-export function generateSessionToken(): string {
+export function generateSessionToken(userId: string): string {
 	const tokenBytes = new Uint8Array(20);
 	crypto.getRandomValues(tokenBytes);
 	const token = encodeBase32(tokenBytes).toLowerCase();
-	return token;
+	return `${userId}:${encodeHexLowerCase(sha256(new TextEncoder().encode(token)))}`;
 }
 
 export async function createSession(
@@ -67,19 +66,19 @@ export async function createSession(
 	userId: number,
 	sessions: KVNamespace
 ): Promise<Session> {
-	const sessionId = `${userId}:${encodeHexLowerCase(sha256(new TextEncoder().encode(token)))}`;
 	const session: Session = {
-		id: sessionId,
+		id: token,
 		userId,
-		expiresAt: new Date(Date.now() + 1000 * EXPIRATION_TTL)
+		expiresAt: Date.now() + 1000 * EXPIRATION_TTL
 	};
-	await sessions.put(sessionId, JSON.stringify(session), { expirationTtl: EXPIRATION_TTL });
+	await sessions.put(token, JSON.stringify(session), { expirationTtl: EXPIRATION_TTL });
+
 	return session;
 }
 
 export interface Session {
 	id: string;
-	expiresAt: Date;
+	expiresAt: EpochTimeStamp;
 	userId: number;
 }
 

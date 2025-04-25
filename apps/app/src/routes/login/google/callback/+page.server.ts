@@ -15,7 +15,7 @@ import {
 	failed_to_create_user
 } from '$lib/paraglide/messages';
 
-import type { PageServerLoad, Actions, RequestEvent, PageData } from './$types';
+import type { PageServerLoad, Actions, RequestEvent } from './$types';
 import type { OAuth2Tokens } from 'arctic';
 import type { PersonProperties } from '$lib/model';
 import { error, redirect, fail } from '@sveltejs/kit';
@@ -55,44 +55,41 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	const first_name = claimsParser.getString('given_name');
 	const email = claimsParser.getString('email');
 
-	client.GET('/person/google/{google_id}',
-		{
-			params: {
-				path: { google_id: sub },
-			},
+	const response = await client.GET('/person/google/{google_id}', {
+		params: {
+			path: { google_id: sub }
 		}
-	).then((response) => {
-		if (response.response.status !== 200) {
-			return error(500, {
-				message: "Failed to get user from Google ID: " + response.error?.msg
-			});
-		}
+	});
 
+	if (response.response.status === 200) {
 		if (response.data?.Id) {
 			if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
-				return error(500, { message: "Server configuration error. GH_SESSIONS KeyValue store missing" });
+				return error(500, {
+					message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
+				});
 			}
 
-			const sessionToken = generateSessionToken();
-			createSession(sessionToken, response.data.Id, event.platform.env.GH_SESSIONS).then((session) => {
-				if (session === null) {
-					return error(500, {
-						message: 'Failed to create session'
-					});
-				}
+			const sessionToken = generateSessionToken(String(response.data.Id));
+			const session = await createSession(sessionToken, response.data.Id, event.platform.env.GH_SESSIONS)
+			if (session === null) {
+				return error(500, {
+					message: 'Failed to create session'
+				});
+			}
 
-				setSessionTokenCookie(event, sessionToken, session.expiresAt);
+			setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-				return redirect(302, '/');
-			});
+			return redirect(302, '/');
 		}
-	})
+	}
+
+
 
 	let personP: PersonProperties = {
 		google_id: sub,
 		first_name: first_name,
 		last_name: family_name,
-		email: email,
+		email: email
 	};
 
 	return {
@@ -105,37 +102,44 @@ export const actions: Actions = {
 };
 
 async function register(event: RequestEvent) {
-	const data = await event.request.formData();
-	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
-		return fail(500, { message: "Server configuration error. GH_SESSIONS KeyValue store missing" });
+	if (browser) {
+		return {};
 	}
 
-	const google_id = data.get('google_id');
-	if (google_id === null) {
-		return fail(400, {
-			message: missing_field({
-				field: 'google_id'
-			})
-		});
+	const data = await event.request.formData();
+	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
+		return fail(500, { message: 'Server configuration error. GH_SESSIONS KeyValue store missing' });
 	}
+
 	const first_name_f = data.get('first_name');
-	if (first_name_f === null) {
+	if (first_name_f === null || first_name_f === '') {
 		return fail(400, {
 			message: missing_field({
 				field: first_name()
 			})
 		});
 	}
+
+	const google_id = data.get('google_id');
+	if (google_id === null || google_id === '') {
+		return fail(400, {
+			message: missing_field({
+				field: 'google_id'
+			})
+		});
+	}
+
 	const last_name_f = data.get('last_name');
-	if (last_name_f === null) {
+	if (last_name_f === null || last_name_f === '') {
 		return fail(400, {
 			message: missing_field({
 				field: last_name()
 			})
 		});
 	}
+
 	const email = data.get('email');
-	if (email === null) {
+	if (email === null || email === '') {
 		return fail(400, {
 			message: missing_field({
 				field: 'Email'
@@ -143,7 +147,7 @@ async function register(event: RequestEvent) {
 		});
 	}
 	const birth_date = data.get('birth_date');
-	if (birth_date === null) {
+	if (birth_date === null || birth_date === '') {
 		return fail(400, {
 			message: missing_field({
 				field: born()
@@ -151,7 +155,7 @@ async function register(event: RequestEvent) {
 		});
 	}
 	const mothers_first_name_f = data.get('mothers_first_name');
-	if (mothers_first_name_f === null) {
+	if (mothers_first_name_f === null || mothers_first_name_f === '') {
 		return fail(400, {
 			message: missing_field({
 				field: mothers_first_name()
@@ -168,64 +172,56 @@ async function register(event: RequestEvent) {
 	}
 
 	const parsed_date = new Date(birth_date as string);
-
 	let personP: components['schemas']['PersonRegistration'] = {
 		first_name: first_name_f as string,
 		last_name: last_name_f as string,
 		email: email as string,
-		born: parsed_date.toISOString(),
+		born: parsed_date.toISOString().split('T')[0],
 		mothers_first_name: mothers_first_name_f as string,
 		mothers_last_name: mothers_last_name_f as string,
-		limit: StorageLimit,
+		limit: StorageLimit
 	};
 
-	client.POST('/person/google/{google_id}',
-		{
+	let response = await client
+		.POST('/person/google/{google_id}', {
 			params: {
-				path: { google_id: google_id.toString() },
+				path: { google_id: google_id.toString() }
 			},
 			body: personP
-		}
-	).then((response) => {
-		if (response.response.status !== 200) {
-			return fail(400, {
-				message: failed_to_create_user({
-					error: response.error?.msg
-				})
-			});
-		}
+		})
 
-		const sessionToken = generateSessionToken();
-		if (!response.data?.Id) {
-			return fail(400, {
-				message: failed_to_create_user({
-					error: 'No user ID returned'
-				})
-			});
-		}
-
-		if (!event.platform) {
-			return fail(500, {
-				message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
-			});
-		}
-
-		const session = createSession(sessionToken, response.data.Id, event.platform.env.GH_SESSIONS).then((session) => {
-			if (session === null) {
-				return fail(500, {
-					message: 'Failed to create session'
-				});
-			}
-
-			setSessionTokenCookie(event, sessionToken, session.expiresAt);
-
-			return redirect(302, '/');
+	if (response.response.status !== 200) {
+		return fail(400, {
+			message: failed_to_create_user() + response.error?.msg
 		});
-	}).catch((error) => {
+	}
+
+	const sessionToken = generateSessionToken();
+	if (!response.data?.Id) {
+		console.log(response.data)
+		return fail(400, {
+			message: failed_to_create_user() + 'No user ID returned'
+		});
+	}
+
+	if (!event.platform) {
 		return fail(500, {
-			message: failed_to_create_user({
-				error: error.message
-			})
+			message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
 		});
-	})
+	}
+
+	const session = await createSession(
+		sessionToken,
+		response.data.Id,
+		event.platform.env.GH_SESSIONS
+	)
+	if (session === null) {
+		return fail(500, {
+			message: failed_to_create_user() + 'Failed to create session'
+		});
+	}
+
+	setSessionTokenCookie(event, sessionToken, session.expiresAt);
+
+	return redirect(302, '/');
 }

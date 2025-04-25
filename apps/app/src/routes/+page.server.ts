@@ -1,7 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { deleteSessionTokenCookie, invalidateSession } from '$lib/server/session';
 import { client } from '$lib/api/client';
-import type { Actions, RequestEvent } from './$types';
+import type {  RequestEvent } from './$types';
 import { browser } from '$app/environment';
 
 export async function load(event: RequestEvent) {
@@ -14,36 +13,19 @@ export async function load(event: RequestEvent) {
 		return {};
 	}
 
-	client.GET('/family-tree-with-spouses', {
-		params: {
-			header: { "X-User-ID": event.locals.session },
-		}
-	}).then((response) => {
+	const response = await client
+		.GET('/family-tree-with-spouses', {
+			params: {
+				header: { 'X-User-ID': event.locals.session.userId },
+			}
+		})
 
-		if (response.response.status === 200) {
-			return response.data;
-		} else {
-			return fail(response.response.status, { message: response.error?.msg || 'An error occurred' });
-		}
-	});
-}
-
-export const actions: Actions = {
-	logout: logout
-};
-
-async function logout(event: RequestEvent) {
-	if (event.locals.session === null) {
-		return fail(401);
-	}
-
-	if (event.platform && event.platform.env && event.platform.env.GH_SESSIONS) {
-		invalidateSession(event.locals.session.id, event.platform.env.GH_SESSIONS);
+	if (response.response.status === 200) {
+		return response.data;
 	} else {
-		return fail(500, { message: 'Server configuration error' });
+		return fail(response.response.status, {
+			message: response.error?.msg || 'An error occurred'
+		});
 	}
 
-	deleteSessionTokenCookie(event);
-
-	return redirect(302, '/login');
 }

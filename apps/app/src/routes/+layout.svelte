@@ -4,11 +4,14 @@
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	let { children } = $props();
 	import ThemeButton from '$lib/theme-select.svelte';
+	import Logout from '$lib/logout.svelte';
+	import { page } from '$app/state';
 </script>
 
 <ParaglideJS {i18n}>
 	{@render children()}
-	<div class="absolute top-2 right-2">
+	<div class="flex flex-row absolute top-2 right-2">
 		<ThemeButton />
+		<Logout show={!page.url.pathname.includes("login")}/>
 	</div>
 </ParaglideJS>

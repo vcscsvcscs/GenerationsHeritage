@@ -27,6 +27,8 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	if (session !== null) {
 		setSessionTokenCookie(event, token, session.expiresAt);
 	} else {
+		console.log('Session token is invalid');
+		console.log(session, token);
 		deleteSessionTokenCookie(event);
 	}
 

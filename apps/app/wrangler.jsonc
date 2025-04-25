@@ -5,7 +5,9 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "generations-heritage",
-	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"compatibility_date": "2025-02-14",
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"observability": {
@@ -26,11 +28,13 @@
 	 */
 	"kv_namespaces": [
 		{
+			"id": "6f793c8813ab46549234572f4c6ae5a1",
 			"binding": "GH_SESSIONS"
 		}
 	],
 	"r2_buckets": [
 		{
+			"bucket_name": "ghstaging",
 			"binding": "GH_MEDIA"
 		}
 	],
@@ -49,14 +53,14 @@
 			},
 			"kv_namespaces": [
 				{
-					"binding": "GH_SESSIONS",
-					"id": "6f793c8813ab46549234572f4c6ae5a1"
+					"id": "6f793c8813ab46549234572f4c6ae5a1",
+					"binding": "GH_SESSIONS"
 				}
 			],
 			"r2_buckets": [
 				{
-					"binding": "GH_MEDIA",
-					"bucket_name": "ghstaging"
+					"bucket_name": "ghstaging",
+					"binding": "GH_MEDIA"
 				}
 			]
 		},
@@ -69,14 +73,14 @@
 			},
 			"kv_namespaces": [
 				{
-					"binding": "GH_SESSIONS",
-					"id": "4cedee65c36d49d7afc654bcc798d169"
+					"id": "4cedee65c36d49d7afc654bcc798d169",
+					"binding": "GH_SESSIONS"
 				}
 			],
 			"r2_buckets": [
 				{
-					"binding": "GH_MEDIA",
-					"bucket_name": "generations-heritage"
+					"bucket_name": "generations-heritage",
+					"binding": "GH_MEDIA"
 				}
 			]
 		}
