@@ -44,7 +44,8 @@
 			"name": "generations-heritage-stage",
 			"route": "https://ghstage.varghacsongor.hu/*",
 			"vars": {
-				"GOOGLE_CALLBACK_URI": "https://ghstage.varghacsongor.hu/login/google/callback"
+				"GOOGLE_CALLBACK_URI": "https://ghstage.varghacsongor.hu/login/google/callback",
+				"DB_ADAPTER": ""
 			},
 			"kv_namespaces": [
 				{
@@ -63,7 +64,8 @@
 			"name": "generations-heritage-prod",
 			"route": "https://csalad.varghacsongor.hu/*",
 			"vars": {
-				"GOOGLE_CALLBACK_URI": "https://csalad.varghacsongor.hu/login/google/callback"
+				"GOOGLE_CALLBACK_URI": "https://csalad.varghacsongor.hu/login/google/callback",
+				"DB_ADAPTER": ""
 			},
 			"kv_namespaces": [
 				{
