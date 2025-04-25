@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { title, family_tree } from '$lib/paraglide/messages.js';
+	import type { PageData } from './$types';
 	import {
 		SvelteFlowProvider,
 		Background,
@@ -9,7 +10,7 @@
 		MiniMap
 	} from '@xyflow/svelte';
 	import type { Node, Edge, NodeTypes, NodeProps } from '@xyflow/svelte';
-
+	let data: PageData = $props();
 	let nodes = $state.raw<Node[]>([]);
 	let edges = $state.raw<Edge[]>([]);
 </script>

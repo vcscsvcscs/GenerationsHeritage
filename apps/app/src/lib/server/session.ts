@@ -13,7 +13,6 @@ export async function validateSessionToken(
 ): Promise<SessionValidationResult> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 	const session: Session | null = await sessions.get(sessionId, { type: 'json' });
-
 	if (!session) {
 		return null;
 	}
@@ -21,6 +20,7 @@ export async function validateSessionToken(
 	if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
 		await sessions.put(sessionId, JSON.stringify(session), { expirationTtl: EXPIRATION_TTL });
 	}
+
 	return session;
 }
 
@@ -64,7 +64,7 @@ export function generateSessionToken(): string {
 
 export async function createSession(
 	token: string,
-	userId: string,
+	userId: number,
 	sessions: KVNamespace
 ): Promise<Session> {
 	const sessionId = `${userId}:${encodeHexLowerCase(sha256(new TextEncoder().encode(token)))}`;
@@ -80,7 +80,7 @@ export async function createSession(
 export interface Session {
 	id: string;
 	expiresAt: Date;
-	userId: string;
+	userId: number;
 }
 
 type SessionValidationResult = Session | null;

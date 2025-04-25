@@ -1,9 +1,8 @@
 import { google } from '$lib/server/oauth';
 import { ObjectParser } from '@pilcrowjs/object-parser';
-import { createUser, getUserFromGoogleId } from '$lib/server/user';
-import { DB } from '$lib/server/db';
 import { browser } from '$app/environment';
-import { Date as neoDate } from 'neo4j-driver';
+import { client } from '$lib/api/client';
+import { type components } from '$lib/api/api.gen';
 import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib/server/session';
 import { decodeIdToken } from 'arctic';
 import {
@@ -48,10 +47,6 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		return error(400, { message: 'Failed to validate authorization code with ' + e });
 	}
 
-	//	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
-	//		return error(500, { message: "Server configuration error. GH_SESSIONS KeyValue store missing" });
-	//	}
-
 	const claims = decodeIdToken(tokens.idToken());
 	const claimsParser = new ObjectParser(claims);
 
@@ -60,27 +55,44 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	const first_name = claimsParser.getString('given_name');
 	const email = claimsParser.getString('email');
 
-	const dbSession = DB.session();
-	const existingUser = await getUserFromGoogleId(dbSession, sub);
-	dbSession.close();
+	client.GET('/person/google/{google_id}',
+		{
+			params: {
+				path: { google_id: sub },
+			},
+		}
+	).then((response) => {
+		if (response.response.status !== 200) {
+			return error(500, {
+				message: "Failed to get user from Google ID: " + response.error?.msg
+			});
+		}
 
-	let eUser = existingUser.records.pop();
-	if (eUser !== null && eUser?.get('elementId') !== undefined) {
-		const sessionToken = generateSessionToken();
-		//		const session = await createSession(sessionToken, eUser.get('elementId'), event.platform.env.GH_SESSIONS);
-		//		setSessionTokenCookie(event, sessionToken, session.expiresAt);
+		if (response.data?.Id) {
+			if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
+				return error(500, { message: "Server configuration error. GH_SESSIONS KeyValue store missing" });
+			}
 
-		return redirect(302, '/');
-	}
+			const sessionToken = generateSessionToken();
+			createSession(sessionToken, response.data.Id, event.platform.env.GH_SESSIONS).then((session) => {
+				if (session === null) {
+					return error(500, {
+						message: 'Failed to create session'
+					});
+				}
+
+				setSessionTokenCookie(event, sessionToken, session.expiresAt);
+
+				return redirect(302, '/');
+			});
+		}
+	})
 
 	let personP: PersonProperties = {
 		google_id: sub,
 		first_name: first_name,
 		last_name: family_name,
 		email: email,
-		allow_admin_access: false,
-		limit: StorageLimit,
-		verified: false
 	};
 
 	return {
@@ -94,9 +106,10 @@ export const actions: Actions = {
 
 async function register(event: RequestEvent) {
 	const data = await event.request.formData();
-	//	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
-	//		return fail(500, { message: "Server configuration error. GH_SESSIONS KeyValue store missing" });
-	//	}
+	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
+		return fail(500, { message: "Server configuration error. GH_SESSIONS KeyValue store missing" });
+	}
+
 	const google_id = data.get('google_id');
 	if (google_id === null) {
 		return fail(400, {
@@ -156,35 +169,63 @@ async function register(event: RequestEvent) {
 
 	const parsed_date = new Date(birth_date as string);
 
-	let personP: PersonProperties = {
-		google_id: google_id as string,
+	let personP: components['schemas']['PersonRegistration'] = {
 		first_name: first_name_f as string,
 		last_name: last_name_f as string,
 		email: email as string,
-		born: new neoDate(
-			parsed_date.getFullYear(),
-			parsed_date.getUTCMonth(),
-			parsed_date.getUTCDate()
-		),
+		born: parsed_date.toISOString(),
 		mothers_first_name: mothers_first_name_f as string,
 		mothers_last_name: mothers_last_name_f as string,
-		allow_admin_access: false,
 		limit: StorageLimit,
-		verified: false
 	};
 
-	const dbSession = DB.session();
-	const user = (await createUser(dbSession, personP)).records.pop();
-	if (user === null || user === undefined) {
-		dbSession.close();
+	client.POST('/person/google/{google_id}',
+		{
+			params: {
+				path: { google_id: google_id.toString() },
+			},
+			body: personP
+		}
+	).then((response) => {
+		if (response.response.status !== 200) {
+			return fail(400, {
+				message: failed_to_create_user({
+					error: response.error?.msg
+				})
+			});
+		}
 
-		return fail(500, { message: failed_to_create_user() });
-	}
-	dbSession.close();
+		const sessionToken = generateSessionToken();
+		if (!response.data?.Id) {
+			return fail(400, {
+				message: failed_to_create_user({
+					error: 'No user ID returned'
+				})
+			});
+		}
 
-	const sessionToken = generateSessionToken();
-	//	const session = await createSession(sessionToken, user.get('elementId'), event.platform.env.GH_SESSIONS);
-	//	setSessionTokenCookie(event, sessionToken, session.expiresAt);
+		if (!event.platform) {
+			return fail(500, {
+				message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
+			});
+		}
 
-	return redirect(302, '/');
+		const session = createSession(sessionToken, response.data.Id, event.platform.env.GH_SESSIONS).then((session) => {
+			if (session === null) {
+				return fail(500, {
+					message: 'Failed to create session'
+				});
+			}
+
+			setSessionTokenCookie(event, sessionToken, session.expiresAt);
+
+			return redirect(302, '/');
+		});
+	}).catch((error) => {
+		return fail(500, {
+			message: failed_to_create_user({
+				error: error.message
+			})
+		});
+	})
 }

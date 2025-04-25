@@ -67,13 +67,13 @@
 							</div>
 						{/if}
 						<label class="fieldset-label" for="email">Email</label>
-						<input type="email" class="input" placeholder="Email" value={data.props.email} />
+						<input type="email" class="input" placeholder="Email" value={data.props?.email} />
 						<input
 							type="text"
 							class="hidden"
 							id="google_id"
 							placeholder="Google ID"
-							value={data.props.google_id}
+							value={data.props?.google_id}
 						/>
 						<label class="fieldset-label" for="first_name">{first_name()}</label>
 						<input
@@ -81,7 +81,7 @@
 							class="input"
 							id="first_name"
 							placeholder={first_name()}
-							value={data.props.first_name}
+							value={data.props?.first_name}
 						/>
 						<label class="fieldset-label" for="last_name">{last_name()}</label>
 						<input
@@ -89,16 +89,7 @@
 							class="input"
 							id="last_name"
 							placeholder={last_name()}
-							value={data.props.last_name}
-						/>
-						<label class="fieldset-label" for="allow_admin_access"
-							>{allow_family_tree_admin_access()}</label
-						>
-						<input
-							type="checkbox"
-							class="input"
-							id="allow_admin_access"
-							checked={data.props.allow_admin_access}
+							value={data.props?.last_name}
 						/>
 						<label class="fieldset-label" for="birth_date">{born()}</label>
 						<input
