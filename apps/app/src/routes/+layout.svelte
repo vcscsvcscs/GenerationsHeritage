@@ -10,7 +10,7 @@
 
 <ParaglideJS {i18n}>
 	{@render children()}
-	<div class="flex flex-row absolute top-2 right-2">
+	<div class="flex flex-row absolute top-2 right-2 items-center gap-2">
 		<ThemeButton />
 		<Logout show={!page.url.pathname.includes("login")}/>
 	</div>
