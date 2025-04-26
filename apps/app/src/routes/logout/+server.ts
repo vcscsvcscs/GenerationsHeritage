@@ -5,7 +5,7 @@ import type { RequestEvent } from './$types';
 
 export function GET(event: RequestEvent): Response {
 	if (event.locals.session === null) {
-		return error(401, { message: 'Unauthorized' });
+		return redirect(302, '/login');
 	}
 
 	if (event.platform && event.platform.env && event.platform.env.GH_SESSIONS) {
