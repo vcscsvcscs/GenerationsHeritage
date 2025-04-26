@@ -339,6 +339,8 @@ export interface components {
             aliases?: string[] | null;
             mothers_first_name?: string | null;
             mothers_last_name?: string | null;
+            /** @enum {string|null} */
+            biological_sex?: "male" | "female" | "intersex" | "unknown" | "other" | null;
             /** Format: date */
             born?: string | null;
             place_of_birth?: string | null;
@@ -429,6 +431,8 @@ export interface components {
             /** Format: email */
             email?: string | null;
             limit: number;
+            /** @enum {string} */
+            biological_sex?: "male" | "female" | "intersex" | "unknown" | "other";
             /** Format: date */
             born: string;
             mothers_first_name: string;
@@ -477,6 +481,8 @@ export interface components {
             born?: string;
             /** Format: date */
             died?: string | null;
+            /** @enum {string|null} */
+            biological_sex?: "male" | "female" | "intersex" | "unknown" | "other" | null;
             profile_picture?: string | null;
         };
         FamilyTree: {

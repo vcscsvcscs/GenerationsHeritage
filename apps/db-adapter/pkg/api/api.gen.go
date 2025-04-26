@@ -13,6 +13,33 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for OptimizedPersonNodeBiologicalSex.
+const (
+	OptimizedPersonNodeBiologicalSexFemale   OptimizedPersonNodeBiologicalSex = "female"
+	OptimizedPersonNodeBiologicalSexIntersex OptimizedPersonNodeBiologicalSex = "intersex"
+	OptimizedPersonNodeBiologicalSexMale     OptimizedPersonNodeBiologicalSex = "male"
+	OptimizedPersonNodeBiologicalSexOther    OptimizedPersonNodeBiologicalSex = "other"
+	OptimizedPersonNodeBiologicalSexUnknown  OptimizedPersonNodeBiologicalSex = "unknown"
+)
+
+// Defines values for PersonPropertiesBiologicalSex.
+const (
+	PersonPropertiesBiologicalSexFemale   PersonPropertiesBiologicalSex = "female"
+	PersonPropertiesBiologicalSexIntersex PersonPropertiesBiologicalSex = "intersex"
+	PersonPropertiesBiologicalSexMale     PersonPropertiesBiologicalSex = "male"
+	PersonPropertiesBiologicalSexOther    PersonPropertiesBiologicalSex = "other"
+	PersonPropertiesBiologicalSexUnknown  PersonPropertiesBiologicalSex = "unknown"
+)
+
+// Defines values for PersonRegistrationBiologicalSex.
+const (
+	Female   PersonRegistrationBiologicalSex = "female"
+	Intersex PersonRegistrationBiologicalSex = "intersex"
+	Male     PersonRegistrationBiologicalSex = "male"
+	Other    PersonRegistrationBiologicalSex = "other"
+	Unknown  PersonRegistrationBiologicalSex = "unknown"
+)
+
 // Defines values for CreatePersonAndRelationshipJSONBodyType.
 const (
 	CreatePersonAndRelationshipJSONBodyTypeChild   CreatePersonAndRelationshipJSONBodyType = "child"
@@ -31,6 +58,19 @@ const (
 
 // Admin defines model for Admin.
 type Admin struct {
+	EndElementId *string `json:"EndElementId,omitempty"`
+	EndId        *int    `json:"EndId,omitempty"`
+	Props        *struct {
+		Added *int `json:"added,omitempty"`
+	} `json:"Props,omitempty"`
+	AdminSince *int    `json:"adminSince,omitempty"`
+	FirstName  *string `json:"first_name,omitempty"`
+	Id         *int    `json:"id,omitempty"`
+	LastName   *string `json:"last_name,omitempty"`
+}
+
+// AdminRelationship defines model for AdminRelationship.
+type AdminRelationship struct {
 	EndElementId *string `json:"EndElementId,omitempty"`
 	EndId        *int    `json:"EndId,omitempty"`
 	Id           *int    `json:"Id,omitempty"`
@@ -99,16 +139,20 @@ type Messages struct {
 
 // OptimizedPersonNode defines model for OptimizedPersonNode.
 type OptimizedPersonNode struct {
-	Born           *openapi_types.Date `json:"born,omitempty"`
-	Died           *openapi_types.Date `json:"died"`
-	FirstName      *string             `json:"first_name,omitempty"`
-	Id             *int                `json:"id,omitempty"`
-	Labels         *[]string           `json:"labels,omitempty"`
-	LastName       *string             `json:"last_name,omitempty"`
-	MiddleName     *string             `json:"middle_name,omitempty"`
-	ProfilePicture *string             `json:"profile_picture"`
-	Type           *string             `json:"type"`
+	BiologicalSex  *OptimizedPersonNodeBiologicalSex `json:"biological_sex"`
+	Born           *openapi_types.Date               `json:"born,omitempty"`
+	Died           *openapi_types.Date               `json:"died"`
+	FirstName      *string                           `json:"first_name,omitempty"`
+	Id             *int                              `json:"id,omitempty"`
+	Labels         *[]string                         `json:"labels,omitempty"`
+	LastName       *string                           `json:"last_name,omitempty"`
+	MiddleName     *string                           `json:"middle_name,omitempty"`
+	ProfilePicture *string                           `json:"profile_picture"`
+	Type           *string                           `json:"type"`
 }
+
+// OptimizedPersonNodeBiologicalSex defines model for OptimizedPersonNode.BiologicalSex.
+type OptimizedPersonNodeBiologicalSex string
 
 // Person defines model for Person.
 type Person struct {
@@ -128,22 +172,23 @@ type PersonProperties struct {
 		Name        *string             `json:"name,omitempty"`
 		Url         *string             `json:"url,omitempty"`
 	} `json:"audios"`
-	Baptized   *string             `json:"baptized"`
-	BloodType  *string             `json:"blood_type"`
-	Born       *openapi_types.Date `json:"born"`
-	Died       *openapi_types.Date `json:"died"`
-	Email      *string             `json:"email"`
-	ExtraNames *[]string           `json:"extra_names"`
-	EyeColour  *string             `json:"eye_colour"`
-	FirstName  *string             `json:"first_name"`
-	GoogleId   *string             `json:"google_id"`
-	HairColour *string             `json:"hair_colour"`
-	Height     *float32            `json:"height"`
-	Hobbies    *[]string           `json:"hobbies"`
-	Ideologies *[]string           `json:"ideologies"`
-	Interests  *[]string           `json:"interests"`
-	InviteCode *string             `json:"invite_code"`
-	Languages  *[]struct {
+	Baptized      *string                        `json:"baptized"`
+	BiologicalSex *PersonPropertiesBiologicalSex `json:"biological_sex"`
+	BloodType     *string                        `json:"blood_type"`
+	Born          *openapi_types.Date            `json:"born"`
+	Died          *openapi_types.Date            `json:"died"`
+	Email         *string                        `json:"email"`
+	ExtraNames    *[]string                      `json:"extra_names"`
+	EyeColour     *string                        `json:"eye_colour"`
+	FirstName     *string                        `json:"first_name"`
+	GoogleId      *string                        `json:"google_id"`
+	HairColour    *string                        `json:"hair_colour"`
+	Height        *float32                       `json:"height"`
+	Hobbies       *[]string                      `json:"hobbies"`
+	Ideologies    *[]string                      `json:"ideologies"`
+	Interests     *[]string                      `json:"interests"`
+	InviteCode    *string                        `json:"invite_code"`
+	Languages     *[]struct {
 		Language *string `json:"language,omitempty"`
 		Level    *string `json:"level"`
 	} `json:"languages"`
@@ -206,16 +251,23 @@ type PersonProperties struct {
 	Weight *float32 `json:"weight"`
 }
 
+// PersonPropertiesBiologicalSex defines model for PersonProperties.BiologicalSex.
+type PersonPropertiesBiologicalSex string
+
 // PersonRegistration defines model for PersonRegistration.
 type PersonRegistration struct {
-	Born             openapi_types.Date   `json:"born"`
-	Email            *openapi_types.Email `json:"email"`
-	FirstName        string               `json:"first_name"`
-	LastName         string               `json:"last_name"`
-	Limit            int                  `json:"limit"`
-	MothersFirstName string               `json:"mothers_first_name"`
-	MothersLastName  string               `json:"mothers_last_name"`
+	BiologicalSex    *PersonRegistrationBiologicalSex `json:"biological_sex,omitempty"`
+	Born             openapi_types.Date               `json:"born"`
+	Email            *openapi_types.Email             `json:"email"`
+	FirstName        string                           `json:"first_name"`
+	LastName         string                           `json:"last_name"`
+	Limit            int                              `json:"limit"`
+	MothersFirstName string                           `json:"mothers_first_name"`
+	MothersLastName  string                           `json:"mothers_last_name"`
 }
+
+// PersonRegistrationBiologicalSex defines model for PersonRegistration.BiologicalSex.
+type PersonRegistrationBiologicalSex string
 
 // Recipe defines model for Recipe.
 type Recipe struct {

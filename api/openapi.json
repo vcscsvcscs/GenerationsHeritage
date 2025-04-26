@@ -1647,7 +1647,7 @@
                                         "admins": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/OptimizedPersonNode"
+                                                "$ref": "#/components/schemas/Admin"
                                             }
                                         }
                                     }
@@ -1739,7 +1739,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Admin"
+                                    "$ref": "#/components/schemas/AdminRelationship"
                                 }
                             }
                         }
@@ -1826,7 +1826,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Admin"
+                                    "$ref": "#/components/schemas/AdminRelationship"
                                 }
                             }
                         }
@@ -1996,7 +1996,7 @@
                                         "admins": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/OptimizedPersonNode"
+                                                "$ref": "#/components/schemas/Admin"
                                             }
                                         }
                                     }
@@ -2539,6 +2539,17 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "biological_sex": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female",
+                            "intersex",
+                            "unknown",
+                            "other"
+                        ],
+                        "nullable": true
+                    },
                     "born": {
                         "type": "string",
                         "format": "date",
@@ -2871,6 +2882,16 @@
                     "limit": {
                         "type": "integer"
                     },
+                    "biological_sex": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female",
+                            "intersex",
+                            "unknown",
+                            "other"
+                        ]
+                    },
                     "born": {
                         "type": "string",
                         "format": "date"
@@ -2967,7 +2988,7 @@
                     "StartId": {
                         "type": "integer"
                     },
-                    "StartElementId":{
+                    "StartElementId": {
                         "type": "string"
                     },
                     "EndId": {
@@ -3017,6 +3038,17 @@
                     "died": {
                         "type": "string",
                         "format": "date",
+                        "nullable": true
+                    },
+                    "biological_sex": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female",
+                            "intersex",
+                            "unknown",
+                            "other"
+                        ],
                         "nullable": true
                     },
                     "profile_picture": {
@@ -3188,6 +3220,37 @@
             "Admin": {
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "first_name": {
+                        "type": "string"
+                    },
+                    "adminSince": {
+                        "type": "integer"
+                    },
+                    "last_name": {
+                        "type": "string"
+                    },
+                    "EndId": {
+                        "type": "integer"
+                    },
+                    "EndElementId": {
+                        "type": "string"
+                    },
+                    "Props": {
+                        "type": "object",
+                        "properties": {
+                            "added": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "AdminRelationship": {
+                "type": "object",
+                "properties": {
                     "Id": {
                         "type": "integer"
                     },
@@ -3216,7 +3279,7 @@
                     }
                 }
             },
-            "Comment":{
+            "Comment": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -3261,16 +3324,16 @@
                     }
                 }
             },
-            "Messages":{
+            "Messages": {
                 "type": "object",
                 "properties": {
-                    "people":{
+                    "people": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/OptimizedPersonNode"
                         }
                     },
-                    "comments":{
+                    "comments": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Comment"
