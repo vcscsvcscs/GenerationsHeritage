@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageProps } from './$types';
+	import type { PageData } from './$types';
 	import {
 		register,
 		title,
@@ -11,12 +11,24 @@
 		mothers_last_name,
 		last_name,
 		first_name,
-		email
+		email,
+		biological_sex,
+		male,
+		female,
+		other
 	} from '$lib/paraglide/messages';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import FamilyTree from '../../highresolution_icon_no_background_croped.png';
-	let { data, form }: PageProps = $props();
+	let {
+		data,
+		form
+	}: {
+		data: PageData;
+		form: {
+			message: string;
+		};
+	} = $props();
 
 	let birth_date: HTMLInputElement;
 	let birth_date_value: HTMLInputElement;
@@ -121,6 +133,17 @@
 							bind:this={birth_date}
 						/>
 						<input type="text" class="hidden" name="birth_date" bind:this={birth_date_value} />
+						<label class="fieldset-label" for="biological_sex">{biological_sex()}</label>
+						<select
+							name="biological_sex"
+							class="select select-bordered w-full max-w-xs"
+							id="biological_sex"
+							placeholder={biological_sex()}
+						>
+							<option value="male">{male()} </option>
+							<option value="female">{female()} </option>
+							<option value="other">{other()} </option>
+						</select>
 						<label class="fieldset-label" for="mothers_last_name">{mothers_last_name()}</label>
 						<input
 							type="text"

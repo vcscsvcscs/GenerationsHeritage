@@ -531,6 +531,17 @@ export interface components {
             could_make_it?: boolean | null;
         };
         Admin: {
+            id?: number;
+            first_name?: string;
+            adminSince?: number;
+            last_name?: string;
+            EndId?: number;
+            EndElementId?: string;
+            Props?: {
+                added?: number;
+            };
+        };
+        AdminRelationship: {
             Id?: number;
             Type?: string;
             StartId?: number;
@@ -1670,7 +1681,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        admins?: components["schemas"]["OptimizedPersonNode"][];
+                        admins?: components["schemas"]["Admin"][];
                     };
                 };
             };
@@ -1729,7 +1740,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Admin"];
+                    "application/json": components["schemas"]["AdminRelationship"];
                 };
             };
             /** @description Bad request */
@@ -1787,7 +1798,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Admin"];
+                    "application/json": components["schemas"]["AdminRelationship"];
                 };
             };
             /** @description Bad request */
@@ -1903,7 +1914,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        admins?: components["schemas"]["OptimizedPersonNode"][];
+                        admins?: components["schemas"]["Admin"][];
                     };
                 };
             };

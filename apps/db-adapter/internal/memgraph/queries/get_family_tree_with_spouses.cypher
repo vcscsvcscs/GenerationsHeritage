@@ -16,6 +16,7 @@ RETURN collect({
   middle_name: ppl.middle_name,
   last_name: ppl.last_name, 
   born: ppl.born,
+  biological_sex: ppl.biological_sex,
   died: ppl.died,
   profile_picture: ppl.profile_picture
 }) as people, 

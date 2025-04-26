@@ -12,7 +12,8 @@ import {
 	mothers_first_name,
 	mothers_last_name,
 	born,
-	failed_to_create_user
+	failed_to_create_user,
+	biological_sex
 } from '$lib/paraglide/messages';
 
 import type { PageServerLoad, Actions, RequestEvent } from './$types';
@@ -154,6 +155,20 @@ async function register(event: RequestEvent) {
 			})
 		});
 	}
+
+	const bbiological_sex = data.get('biological_sex');
+	if (bbiological_sex === null || bbiological_sex === '') {
+		return fail(400, {
+			message: missing_field({
+				field: biological_sex()
+			})
+		});
+	} else if (!['male', 'female', 'intersex', 'unknown', 'other'].includes(bbiological_sex.toString())) {
+		return fail(400, {
+			message: `Invalid value for biological_sex. Must be one of "male", "female", "intersex", "unknown", or "other".`
+		});
+	}
+
 	const mothers_first_name_f = data.get('mothers_first_name');
 	if (mothers_first_name_f === null || mothers_first_name_f === '') {
 		return fail(400, {
@@ -179,6 +194,7 @@ async function register(event: RequestEvent) {
 		born: parsed_date.toISOString().split('T')[0],
 		mothers_first_name: mothers_first_name_f as string,
 		mothers_last_name: mothers_last_name_f as string,
+		biological_sex: bbiological_sex as components['schemas']['PersonRegistration']['biological_sex'],
 		limit: StorageLimit
 	};
 
