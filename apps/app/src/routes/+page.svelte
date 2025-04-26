@@ -5,9 +5,18 @@
 	import '@xyflow/svelte/dist/style.css';
 	import type { Node, Edge, NodeTypes, NodeProps } from '@xyflow/svelte';
 	import PersonNode from '$lib/graph/PersonNode.svelte';
+	import PersonModal from '$lib/profile/Modal.svelte';
 	import type { components } from '$lib/api/api.gen';
+	import { handleNodeClick } from '$lib/graph/node_click';
+	import PersonMenu from '$lib/graph/PersonMenu.svelte';
+	import type { NodeMenu } from '$lib/graph/model';
+
 	let { data, form }: PageProps = $props();
 	const nodeTypes: NodeTypes = { personNode: PersonNode };
+	let selectedPerson: components['schemas']['PersonProperties'] & {id:number|null} = $state({id: null});
+	let openPersonPanel = $state(false);
+	let openPersonMenu: NodeMenu = $state({});
+
 	let ppl = data.people;
 	if (ppl === undefined) {
 		ppl = [];
@@ -25,6 +34,17 @@
 		}
 	]);
 	let edges = $state.raw<Edge[]>([]);
+
+	handleNodeClick(
+		(
+			person: components['schemas']['PersonProperties'] & {
+				id: number;
+			}
+		) => {
+			openPersonPanel = true;
+			selectedPerson = person;
+		}
+	);
 </script>
 
 <svelte:head>
@@ -43,6 +63,8 @@
 		>
 			<MiniMap class="!bg-base-300" />
 			<Controls class="!bg-base-300" />
+			<PersonModal person={selectedPerson} open={openPersonPanel} />
+			<PersonMenu />
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
