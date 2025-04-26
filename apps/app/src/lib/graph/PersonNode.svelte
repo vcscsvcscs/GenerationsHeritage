@@ -17,27 +17,45 @@
 	$: isTarget = connection.current.toHandle?.id !== id;
 </script>
 
-<div class="rounded-badge card card-compact bg-base-content">
+<div class="card card-compact bg-primary-content text-primary rounded-full w-40 h-40 flex flex-col items-center justify-center shadow-lg">
 	{#if !isConnecting}
 		<Handle class="customHandle" position={Position.Right} type="source" style="z-index: 1;" />
 	{/if}
-	<!-- <Handle class="customHandle" position={Position.Right} type="source" /> -->
-
 	<Handle class="customHandle" position={Position.Left} type="target" isConnectableStart={false} />
-	<div class="card-body w-30 items-center text-center">
-		<div class="avatar">
-			<figure class="mask mask-squircle w-24">
-				<img src={data.profile_picture} alt="Picture of {data.last_name} {data.first_name}" />
-			</figure>
+
+	<div class="avatar mb-2">
+        {#if isConnecting && isTarget}
+            <Handle position={Position.Left} type="target" isConnectableStart={false} style="z-index: 1;" />
+        {/if}
+		<div class="w-24 rounded-full ring ring-accent ring-offset-accent ring-offset-1 border-0 bg-accent">
+            {#if isConnecting && isTarget}
+                <Handle position={Position.Left} type="target" isConnectableStart={false} style="z-index: 1;" />
+            {/if}
+			<img src={data.profile_picture||'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'} alt="Picture of {data.last_name} {data.first_name}" />
 		</div>
-		<h2 class="card-title text-base-content">
-			{data.first_name}
-			{data.middle_name ? data.middle_name : ''}
-			{data.last_name}
+	</div>
+
+	<div class="text-center px-2">
+		<h2 class="font-semibold text-sm leading-tight">
+			{data.first_name} {data.middle_name ? data.middle_name : ''} {data.last_name}
 		</h2>
-		<h3 class="card-title text-base-content">
-			{data.born}
-			{data.death ? ' - ' + data.death : ''}
+		<h3 class="text-xs opacity-70">
+			{data.born}{data.death ? ' - ' + data.death : ''}
 		</h3>
 	</div>
 </div>
+
+<style>
+    :global(div.customHandle) {
+    width: 100%;
+    height: 100%;
+    background: blue;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+    transform: none;
+    border: none;
+    opacity: 0;
+  }
+</style>
