@@ -196,7 +196,7 @@ async function register(event: RequestEvent) {
 		});
 	}
 
-	const sessionToken = generateSessionToken();
+
 	if (!response.data?.Id) {
 		console.log(response.data)
 		return fail(400, {
@@ -210,6 +210,7 @@ async function register(event: RequestEvent) {
 		});
 	}
 
+	const sessionToken = generateSessionToken(String(response.data.Id));
 	const session = await createSession(
 		sessionToken,
 		response.data.Id,

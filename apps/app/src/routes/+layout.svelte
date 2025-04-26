@@ -3,8 +3,8 @@
 	import { i18n } from '$lib/i18n';
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	let { children } = $props();
-	import ThemeButton from '$lib/theme-select.svelte';
-	import Logout from '$lib/logout.svelte';
+	import ThemeButton from '$lib/ThemeSelect.svelte';
+	import Logout from '$lib/Logout.svelte';
 	import { page } from '$app/state';
 </script>
 
