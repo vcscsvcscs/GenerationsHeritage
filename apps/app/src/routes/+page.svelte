@@ -13,9 +13,11 @@
 
 	let { data, form }: PageProps = $props();
 	const nodeTypes: NodeTypes = { personNode: PersonNode };
-	let selectedPerson: components['schemas']['PersonProperties'] & {id:number|null} = $state({id: null});
+	let selectedPerson: components['schemas']['PersonProperties'] & { id: number | null } = $state({
+		id: null
+	});
 	let openPersonPanel = $state(false);
-	let openPersonMenu: NodeMenu = $state({});
+	let openPersonMenu: NodeMenu | undefined = undefined;
 
 	let ppl = data.people;
 	if (ppl === undefined) {
@@ -64,7 +66,9 @@
 			<MiniMap class="!bg-base-300" />
 			<Controls class="!bg-base-300" />
 			<PersonModal person={selectedPerson} open={openPersonPanel} />
-			<PersonMenu />
+			{#if openPersonMenu !== undefined}
+				<PersonMenu {...openPersonMenu!} />
+			{/if}
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>

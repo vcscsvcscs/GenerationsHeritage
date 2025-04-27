@@ -1,30 +1,35 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { type NodeMenu } from '$lib/graph/model';
 	import {
 		add_relationship,
 		remove,
 		create_relationship_and_person,
-
 		add_administrator
-
 	} from '$lib/paraglide/messages';
 
-	let props: NodeMenu = $props();
+	export let top: number | undefined;
+	export let left: number | undefined;
+	export let right: number | undefined;
+	export let bottom: number | undefined;
+	export let onClick: () => void;
+	export let deleteNode: () => void;
+	export let createRelationshipAndNode: () => void;
+	export let addRelationship: () => void;
+	export let addAdmin: (() => void) | undefined;
 
 	let contextMenu: HTMLDivElement;
 	onMount(() => {
-		if (props.top) {
-			contextMenu.style.top = `${props.top}px`;
+		if (top) {
+			contextMenu.style.top = `${top}px`;
 		}
-		if (props.left) {
-			contextMenu.style.left = `${props.left}px`;
+		if (left) {
+			contextMenu.style.left = `${left}px`;
 		}
-		if (props.right) {
-			contextMenu.style.right = `${props.right}px`;
+		if (right) {
+			contextMenu.style.right = `${right}px`;
 		}
-		if (props.bottom) {
-			contextMenu.style.bottom = `${props.bottom}px`;
+		if (bottom) {
+			contextMenu.style.bottom = `${bottom}px`;
 		}
 	});
 </script>
@@ -34,19 +39,19 @@
 	tabindex="-1"
 	bind:this={contextMenu}
 	class="context-menu bg-primary-100 rounded-lg shadow-lg"
-	onclick={props.onClick}
+	onclick={onClick}
 	onkeydown={(e) => {
 		if (e.key === 'Esc' || e.key === ' ' || e.key === 'Escape') {
-			props.onClick();
+			onClick();
 		}
 	}}
 >
-	<button onclick={props.createRelationshipAndNode} class="btn"
-		>{create_relationship_and_person()}</button
-	>
-	<button onclick={props.addRelationship} class="btn">{add_relationship()}</button>
-	<button onclick={props.addAdmin} class="btn">{add_administrator()}</button>
-	<button onclick={props.deleteNode} class="btn">{remove()}</button>
+	<button onclick={createRelationshipAndNode} class="btn">
+		{create_relationship_and_person()}
+	</button>
+	<button onclick={addRelationship} class="btn">{add_relationship()}</button>
+	<button onclick={addAdmin} class="btn">{add_administrator()}</button>
+	<button onclick={deleteNode} class="btn">{remove()}</button>
 </div>
 
 <style>

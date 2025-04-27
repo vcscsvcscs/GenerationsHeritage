@@ -6,11 +6,15 @@ const config: StorybookConfig = {
 		'@storybook/addon-svelte-csf',
 		'@storybook/addon-essentials',
 		'@chromatic-com/storybook',
-		'@storybook/addon-interactions'
+		'@storybook/addon-interactions',
 	],
 	framework: {
 		name: '@storybook/sveltekit',
-		options: {}
-	}
+		options: {
+			builder: {
+				viteConfigPath: '../vite.config.ts',
+			},
+		}
+	},
 };
 export default config;
