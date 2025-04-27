@@ -34,7 +34,11 @@ export async function invalidateUserSessions(userId: number, sessions: KVNamespa
 	}
 }
 
-export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: EpochTimeStamp): void {
+export function setSessionTokenCookie(
+	event: RequestEvent,
+	token: string,
+	expiresAt: EpochTimeStamp
+): void {
 	event.cookies.set('session', token, {
 		httpOnly: true,
 		path: '/',

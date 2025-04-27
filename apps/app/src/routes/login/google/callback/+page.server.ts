@@ -71,7 +71,11 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 			}
 
 			const sessionToken = generateSessionToken(String(response.data.Id));
-			const session = await createSession(sessionToken, response.data.Id, event.platform.env.GH_SESSIONS)
+			const session = await createSession(
+				sessionToken,
+				response.data.Id,
+				event.platform.env.GH_SESSIONS
+			);
 			if (session === null) {
 				return error(500, {
 					message: 'Failed to create session'
@@ -83,8 +87,6 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 			return redirect(302, '/');
 		}
 	}
-
-
 
 	let personP: PersonProperties = {
 		google_id: sub,
@@ -163,7 +165,9 @@ async function register(event: RequestEvent) {
 				field: biological_sex()
 			})
 		});
-	} else if (!['male', 'female', 'intersex', 'unknown', 'other'].includes(bbiological_sex.toString())) {
+	} else if (
+		!['male', 'female', 'intersex', 'unknown', 'other'].includes(bbiological_sex.toString())
+	) {
 		return fail(400, {
 			message: `Invalid value for biological_sex. Must be one of "male", "female", "intersex", "unknown", or "other".`
 		});
@@ -194,17 +198,17 @@ async function register(event: RequestEvent) {
 		born: parsed_date.toISOString().split('T')[0],
 		mothers_first_name: mothers_first_name_f as string,
 		mothers_last_name: mothers_last_name_f as string,
-		biological_sex: bbiological_sex as components['schemas']['PersonRegistration']['biological_sex'],
+		biological_sex:
+			bbiological_sex as components['schemas']['PersonRegistration']['biological_sex'],
 		limit: StorageLimit
 	};
 
-	let response = await client
-		.POST('/person/google/{google_id}', {
-			params: {
-				path: { google_id: google_id.toString() }
-			},
-			body: personP
-		})
+	let response = await client.POST('/person/google/{google_id}', {
+		params: {
+			path: { google_id: google_id.toString() }
+		},
+		body: personP
+	});
 
 	if (response.response.status !== 200) {
 		return fail(400, {
@@ -212,9 +216,13 @@ async function register(event: RequestEvent) {
 		});
 	}
 
+	if (response.data === undefined) {
+		return fail(400, {
+			message: failed_to_create_user() + 'No user data returned'
+		});
+	}
 
-	if (!response.data?.Id) {
-		console.log(response.data)
+	if (response.data.Id === undefined) {
 		return fail(400, {
 			message: failed_to_create_user() + 'No user ID returned'
 		});
@@ -231,7 +239,7 @@ async function register(event: RequestEvent) {
 		sessionToken,
 		response.data.Id,
 		event.platform.env.GH_SESSIONS
-	)
+	);
 	if (session === null) {
 		return fail(500, {
 			message: failed_to_create_user() + 'Failed to create session'

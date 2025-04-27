@@ -41,7 +41,7 @@
 	<select
 		bind:value={current_theme}
 		data-choose-theme
-		class="btn btn-ghost btn-xs min-h-0 h-8 px-4 py-0 text-sm"
+		class="btn btn-ghost btn-xs h-8 min-h-0 px-4 py-0 text-sm"
 		onchange={set_theme}
 	>
 		<option value="" disabled={current_theme !== ''}>

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/svelte';
 import PersonMenu from './PersonMenu.svelte';
 
 const meta = {
-	title: 'graph/PersonMenu',
+	title: 'lib/graph/PersonMenu',
 	component: PersonMenu,
 	tags: ['autodocs'],
 	argTypes: {
@@ -14,8 +14,8 @@ const meta = {
 		deleteNode: { action: 'deleteNode clicked' },
 		createRelationshipAndNode: { action: 'createRelationshipAndNode clicked' },
 		addRelationship: { action: 'addRelationship clicked' },
-		addAdmin: { action: 'addAdmin clicked' },
-	},
+		addAdmin: { action: 'addAdmin clicked' }
+	}
 } satisfies Meta<PersonMenu>;
 
 export default meta;
@@ -32,7 +32,7 @@ export const Default: Story = {
 		deleteNode: () => console.log('delete node'),
 		createRelationshipAndNode: () => console.log('create relationship and node'),
 		addRelationship: () => console.log('add relationship'),
-		addAdmin: () => console.log('add admin'),
+		addAdmin: () => console.log('add admin')
 	}
 };
 
@@ -49,7 +49,7 @@ export const TopLeftPosition: Story = {
 		deleteNode: () => console.log('delete node'),
 		createRelationshipAndNode: () => console.log('create relationship and node'),
 		addRelationship: () => console.log('add relationship'),
-		addAdmin: () => console.log('add admin'),
+		addAdmin: () => console.log('add admin')
 	}
 };
 
@@ -66,7 +66,7 @@ export const BottomRightPosition: Story = {
 		deleteNode: () => console.log('delete node'),
 		createRelationshipAndNode: () => console.log('create relationship and node'),
 		addRelationship: () => console.log('add relationship'),
-		addAdmin: () => console.log('add admin'),
+		addAdmin: () => console.log('add admin')
 	}
 };
 
@@ -83,6 +83,6 @@ export const MiddleRightPosition: Story = {
 		deleteNode: () => console.log('delete node'),
 		createRelationshipAndNode: () => console.log('create relationship and node'),
 		addRelationship: () => console.log('add relationship'),
-		addAdmin: () => console.log('add admin'),
+		addAdmin: () => console.log('add admin')
 	}
 };

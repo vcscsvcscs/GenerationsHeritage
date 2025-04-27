@@ -1,15 +1,20 @@
 <script lang="ts">
-	import { title, family_tree, people } from '$lib/paraglide/messages.js';
 	import type { PageProps } from './$types';
+	import { title, family_tree } from '$lib/paraglide/messages.js';
+
 	import { SvelteFlowProvider, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
-	import type { Node, Edge, NodeTypes, NodeProps } from '@xyflow/svelte';
+	import type { Node, Edge, NodeTypes, NodeEventWithPointer } from '@xyflow/svelte';
+
 	import PersonNode from '$lib/graph/PersonNode.svelte';
 	import PersonModal from '$lib/profile/Modal.svelte';
-	import type { components } from '$lib/api/api.gen';
-	import { handleNodeClick } from '$lib/graph/node_click';
 	import PersonMenu from '$lib/graph/PersonMenu.svelte';
+	import CreatePerson from '$lib/profile/create/Modal.svelte';
+
+	import type { components } from '$lib/api/api.gen';
 	import type { NodeMenu } from '$lib/graph/model';
+
+	import { handleNodeClick } from '$lib/graph/node_click';
 
 	let { data, form }: PageProps = $props();
 	const nodeTypes: NodeTypes = { personNode: PersonNode };
@@ -17,7 +22,7 @@
 		id: null
 	});
 	let openPersonPanel = $state(false);
-	let openPersonMenu: NodeMenu | undefined = undefined;
+	let openPersonMenu: NodeMenu | undefined = $state(undefined);
 
 	let ppl = data.people;
 	if (ppl === undefined) {
@@ -37,16 +42,61 @@
 	]);
 	let edges = $state.raw<Edge[]>([]);
 
-	handleNodeClick(
+	let relationshipStart: number | null ;
+	let createPerson = $state(false);
+
+	let clientWidth: number | undefined = $state();
+	let clientHeight: number | undefined = $state();
+	const handleContextMenu: NodeEventWithPointer<MouseEvent> = ({ event, node }) => {
+		event.preventDefault();
+
+		if (clientHeight === undefined || clientWidth === undefined) {
+			clientHeight = window.innerHeight;
+			clientWidth = window.innerWidth;
+		}
+
+		openPersonMenu = {
+			onClick: () => {
+				openPersonMenu = undefined;
+			},
+			deleteNode: () => {
+				openPersonMenu = undefined;
+			},
+			createRelationshipAndNode: () => {
+				openPersonMenu = undefined;
+			},
+			addRelationship: () => {
+				openPersonMenu = undefined;
+			},
+			addAdmin: () => {
+				openPersonMenu = undefined;
+			},
+			addRecipe: () => {
+				openPersonMenu = undefined;
+			},
+			top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
+			left: event.clientX < clientWidth - 200 ? event.clientX : undefined,
+			right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
+			bottom: event.clientY >= clientHeight - 200 ? clientHeight - event.clientY : undefined
+		};
+	};
+
+	let handleNodeClickFunc = handleNodeClick(
 		(
 			person: components['schemas']['PersonProperties'] & {
 				id: number;
 			}
 		) => {
 			openPersonPanel = true;
+			console.log('person', person);
 			selectedPerson = person;
 		}
 	);
+
+	let handlePaneClick = ({ event }: { event: MouseEvent }) => {
+		openPersonPanel = false;
+		openPersonMenu = undefined;
+	};
 </script>
 
 <svelte:head>
@@ -58,6 +108,9 @@
 		<SvelteFlow
 			bind:nodes
 			bind:edges
+			onnodeclick={handleNodeClickFunc}
+			onnodecontextmenu={handleContextMenu}
+			onpaneclick={handlePaneClick}
 			class="!bg-base-200"
 			{nodeTypes}
 			fitView
@@ -65,7 +118,17 @@
 		>
 			<MiniMap class="!bg-base-300" />
 			<Controls class="!bg-base-300" />
-			<PersonModal person={selectedPerson} open={openPersonPanel} />
+			{#if openPersonPanel}
+				<PersonModal
+					person={selectedPerson}
+					closeModal={() => {
+						openPersonPanel = false;
+					}}
+				/>
+			{/if}
+			{#if createPerson}
+				<CreatePerson relationship={relationshipStart}></CreatePerson>
+			{/if}
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />
 			{/if}

@@ -1,12 +1,12 @@
 {
-  "recommendations": [
-    "inlang.vs-code-extension",
-    "42Crunch.vscode-openapi",
-    "bruno-api-client.bruno",
-    "svelte.svelte-vscode",
-    "github.vscode-github-actions",
-    "GitHub.copilot",
-    "pixl-garden.BongoCat",
-    "golang.go"
-  ]
+	"recommendations": [
+		"inlang.vs-code-extension",
+		"42Crunch.vscode-openapi",
+		"bruno-api-client.bruno",
+		"svelte.svelte-vscode",
+		"github.vscode-github-actions",
+		"GitHub.copilot",
+		"pixl-garden.BongoCat",
+		"golang.go"
+	]
 }

@@ -15,7 +15,8 @@
 		biological_sex,
 		male,
 		female,
-		other
+		other,
+		intersex
 	} from '$lib/paraglide/messages';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
@@ -129,7 +130,7 @@
 							type="text"
 							class="input pika-single"
 							id="birth_date"
-							value={born()}
+							placeholder={born()}
 							bind:this={birth_date}
 						/>
 						<input type="text" class="hidden" name="birth_date" bind:this={birth_date_value} />
@@ -142,6 +143,7 @@
 						>
 							<option value="male">{male()} </option>
 							<option value="female">{female()} </option>
+							<option value="intersex">{intersex()} </option>
 							<option value="other">{other()} </option>
 						</select>
 						<label class="fieldset-label" for="mothers_last_name">{mothers_last_name()}</label>

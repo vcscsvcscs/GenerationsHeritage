@@ -5,9 +5,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "generations-heritage",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_flags": ["nodejs_compat"],
 	"compatibility_date": "2025-02-14",
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"observability": {
