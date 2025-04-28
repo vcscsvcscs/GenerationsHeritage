@@ -9,7 +9,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	}
 
 	const response = await client.GET(
-		event.url.searchParams.get('with_out_spouse') === 'true'
+		event.url.searchParams.get('with_out_spouse') === 'false'
 			? '/family-tree-with-spouses'
 			: '/family-tree',
 		{
