@@ -60,6 +60,7 @@
 		"wrangler": "^4.13.2"
 	},
 	"dependencies": {
+		"@dagrejs/dagre": "^1.1.4",
 		"@inlang/paraglide-sveltekit": "^0.15.0",
 		"@pilcrowjs/object-parser": "^0.0.4",
 		"@types/pikaday": "^1.7.9",
