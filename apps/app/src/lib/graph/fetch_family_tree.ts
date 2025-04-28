@@ -1,22 +1,41 @@
-import type {Layout} from '$lib/graph/model';
+import type { components } from '$lib/api/api.gen';
+import type { Layout } from '$lib/graph/model';
+import type { Edge, Node } from '@xyflow/svelte';
 
+export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layout {
+	
+	if (
+		data === null ||
+		data?.people === null ||
+		data?.people === undefined ||
+		data?.people.length === 0
+	) {
+		throw new Error('Family tree is empty');
+	}
 
-export async function fetchFamilyTree(with_out_spouse: boolean): Promise<Layout> {
-    const url = with_out_spouse
-        ? '/api/family_tree?with_out_spouse=true'
-        : '/api/family_tree?with_out_spouse=false';
-    const response = await fetch(url, {
-        method: 'GET'
-    })
+	const nodes: Node[] = data.people.map((person) => {
+		let newNode = { data: { ...person } } as Node;
+		if (person.id !== null && person.id !== undefined) {
+			newNode.id = person.id.toString();
+		}
 
-    if (response.status !== 200){
-        throw new Error(await response.text());
-    }
+		return newNode;
+	});
 
-    let layout: Layout = {
-        Nodes: [],
-        Edges: []
-    }
+	let relationships: Edge[] = [];
+	if (data.relationships) {
+		relationships = data.relationships.map((relationship) => {
+			let newEdge = { data: { ...relationship.properties } } as Edge;
+			if (relationship.start !== null && relationship.start !== undefined) {
+				newEdge.source = relationship.start.toString();
+			}
+			if (relationship.end !== null && relationship.end !== undefined) {
+				newEdge.target = relationship.end.toString();
+			}
 
-    return layout;
+			return newEdge;
+		});
+	}
+
+	return { Nodes: nodes, Edges: relationships };
 }
