@@ -1,6 +1,7 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { client } from '$lib/api/client';
-import type {  RequestEvent } from './$types';
+import { redirect } from '@sveltejs/kit';
+import { parseFamilyTree } from '$lib/graph/fetch_family_tree';
+import type { components } from '$lib/api/api.gen';
+import type { RequestEvent } from './$types';
 import { browser } from '$app/environment';
 
 export async function load(event: RequestEvent) {
@@ -13,19 +14,17 @@ export async function load(event: RequestEvent) {
 		return {};
 	}
 
-	const response = await client
-		.GET('/family-tree-with-spouses', {
-			params: {
-				header: { 'X-User-ID': event.locals.session.userId },
-			}
-		})
+	const response = await event.fetch('/api/family_tree?with_out_spouse=false', {
+		method: 'GET'
+	});
 
-	if (response.response.status === 200) {
-		return response.data;
-	} else {
-		return fail(response.response.status, {
-			message: response.error?.msg || 'An error occurred'
-		});
+	if (response.status !== 200) {
+		throw new Error(await response.text());
 	}
 
+	const data = (await response.json()) as components['schemas']['FamilyTree'];
+
+	let layout = parseFamilyTree(data)
+
+	return layout;
 }

@@ -27,7 +27,7 @@
 	<div class="avatar mb-2">
 		{#if isConnecting && isTarget}
 			<Handle
-				isValidConnection={isValidConnection}
+				{isValidConnection}
 				position={Position.Left}
 				type="target"
 				isConnectableStart={false}
@@ -39,7 +39,7 @@
 		>
 			{#if isConnecting && isTarget}
 				<Handle
-					isValidConnection={isValidConnection}
+					{isValidConnection}
 					position={Position.Left}
 					type="target"
 					isConnectableStart={false}

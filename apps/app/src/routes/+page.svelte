@@ -1,8 +1,14 @@
 <script lang="ts">
-	import type { PageProps } from './$types';
+	import { nodeTypes } from '$lib/graph/model';
 	import { title, family_tree } from '$lib/paraglide/messages.js';
 
-	import { SvelteFlowProvider, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
+	import {
+		SvelteFlowProvider,
+		SvelteFlow,
+		Controls,
+		MiniMap,
+		ConnectionLineType
+	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
 	import type { Node, Edge, NodeTypes, NodeEventWithPointer } from '@xyflow/svelte';
 
@@ -15,34 +21,34 @@
 	import type { NodeMenu } from '$lib/graph/model';
 
 	import { handleNodeClick } from '$lib/graph/node_click';
+	import { onMount } from 'svelte';
 
-	let { data, form }: PageProps = $props();
-	const nodeTypes: NodeTypes = { personNode: PersonNode };
+	import { FamilyTree } from '$lib/graph/layout';
+	import { tailwindClassToPixels } from '$lib/tailwindSizeToPx';
+	import type { Layout } from '$lib/graph/model';
+	let { data }: { data: Layout } = $props();
+
 	let selectedPerson: components['schemas']['PersonProperties'] & { id: number | null } = $state({
 		id: null
 	});
 	let openPersonPanel = $state(false);
 	let openPersonMenu: NodeMenu | undefined = $state(undefined);
+	let with_out_spouse = $state(false);
 
-	let ppl = data.people;
-	if (ppl === undefined) {
-		ppl = [];
-	}
-	if (ppl[0].id === undefined) {
-		ppl[0].id = 0;
-	}
-
-	let nodes = $state.raw<Node[]>([
-		{
-			id: String(ppl[0].id),
-			type: 'personNode',
-			data: ppl[0] as components['schemas']['PersonProperties'],
-			position: { x: 0, y: 0 }
-		}
-	]);
+	let familyTreeDAG = new FamilyTree();
+	let nodes = $state.raw<Node[]>([]);
 	let edges = $state.raw<Edge[]>([]);
+	let layout = familyTreeDAG.getLayoutedElements(
+		data.Nodes,
+		data.Edges,
+		tailwindClassToPixels('w-40') || 160,
+		tailwindClassToPixels('h-40') || 160,
+		'TB'
+	);
+	nodes = layout.Nodes;
+	edges = layout.Edges;
 
-	let relationshipStart: number | null ;
+	let relationshipStart: number | null = $state(null);
 	let createPerson = $state(false);
 
 	let clientWidth: number | undefined = $state();
@@ -60,18 +66,24 @@
 				openPersonMenu = undefined;
 			},
 			deleteNode: () => {
+				relationshipStart = Number(node.id);
 				openPersonMenu = undefined;
 			},
 			createRelationshipAndNode: () => {
+				relationshipStart = Number(node.id);
+				createPerson = true;
 				openPersonMenu = undefined;
 			},
 			addRelationship: () => {
+				relationshipStart = Number(node.id);
 				openPersonMenu = undefined;
 			},
 			addAdmin: () => {
+				relationshipStart = Number(node.id);
 				openPersonMenu = undefined;
 			},
 			addRecipe: () => {
+				relationshipStart = Number(node.id);
 				openPersonMenu = undefined;
 			},
 			top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
@@ -79,6 +91,24 @@
 			right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
 			bottom: event.clientY >= clientHeight - 200 ? clientHeight - event.clientY : undefined
 		};
+	};
+
+	let onCreation = (newNodes: Array<Node> | null, newEdges: Array<Edge> | null) => {
+		if (newNodes !== null) {
+			nodes = [...nodes, ...newNodes];
+		}
+
+		if (newEdges !== null) {
+			edges = [...edges, ...newEdges];
+		}
+
+		familyTreeDAG.getLayoutedElements(
+			nodes,
+			edges,
+			tailwindClassToPixels('w-40') || 160,
+			tailwindClassToPixels('h-40') || 160,
+			'TB'
+		);
 	};
 
 	let handleNodeClickFunc = handleNodeClick(
@@ -96,6 +126,7 @@
 	let handlePaneClick = ({ event }: { event: MouseEvent }) => {
 		openPersonPanel = false;
 		openPersonMenu = undefined;
+		relationshipStart = null;
 	};
 </script>
 
@@ -115,6 +146,8 @@
 			{nodeTypes}
 			fitView
 			onlyRenderVisibleElements
+			connectionLineType={ConnectionLineType.SmoothStep}
+			defaultEdgeOptions={{ type: 'smoothstep' }}
 		>
 			<MiniMap class="!bg-base-300" />
 			<Controls class="!bg-base-300" />
@@ -127,7 +160,13 @@
 				/>
 			{/if}
 			{#if createPerson}
-				<CreatePerson relationship={relationshipStart}></CreatePerson>
+				<CreatePerson
+					{onCreation}
+					closeModal={() => {
+						createPerson = false;
+					}}
+					relationshipStartID={relationshipStart}
+				></CreatePerson>
 			{/if}
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />
