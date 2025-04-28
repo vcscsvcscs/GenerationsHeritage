@@ -7,16 +7,23 @@
 	import LifeEventsTimeline from './LifeEventsTimeline.svelte';
 	import OtherDetails from './OtherDetails.svelte';
 	import type { components } from '$lib/api/api.gen.js';
+	import { life_events } from '$lib/paraglide/messages';
 	let {
 		closeModal = () => {},
 		person = {}
 	}: { closeModal: () => void; person: components['schemas']['PersonProperties'] } = $props();
 
 	let editorMode = $state(false);
-	let draftPerson = $state({});
+	let draftPerson = $state({} as components['schemas']['PersonProperties']);
 
-	draftPerson = person;
 	editorMode = false;
+
+	function handleDraftPersonChange(
+		field: keyof components['schemas']['PersonProperties'],
+		value: any
+	) {
+		draftPerson[field] = value;
+	}
 
 	function close() {
 		closeModal();
@@ -32,7 +39,6 @@
 		// Save logic here
 		editorMode = false;
 	}
-
 </script>
 
 <div class="modal modal-open" transition:fade>
@@ -41,10 +47,13 @@
 			<ModalButtons {editorMode} onClose={close} onSave={save} onToggleEdit={toggleEdit} />
 			<div class="divider"></div>
 		</div>
-
-		<ProfileHeader {draftPerson} {editorMode} />
-		<MediaGallery {draftPerson} />
-		<LifeEventsTimeline {draftPerson} />
-		<OtherDetails {draftPerson} {editorMode} />
+		<ProfileHeader {person} {editorMode} onChange={handleDraftPersonChange} />
+		<MediaGallery {person} />
+		<LifeEventsTimeline
+			person_life_events={person.life_events}
+			{editorMode}
+			onChange={handleDraftPersonChange}
+		/>
+		<OtherDetails {person} {editorMode} onChange={handleDraftPersonChange} />
 	</div>
 </div>

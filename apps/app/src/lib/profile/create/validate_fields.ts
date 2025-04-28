@@ -6,14 +6,14 @@ export function validatePersonRegistration(
 ): string | null {
 	if (!data.first_name || data.first_name.trim() === '') {
 		return missing_field({
-            field: first_name(),
-        });
+			field: first_name()
+		});
 	}
 
 	if (!data.last_name || data.last_name.trim() === '') {
 		return missing_field({
-            field: last_name(),
-        });
+			field: last_name()
+		});
 	}
 
 	if (
@@ -37,14 +37,14 @@ export function validatePersonRegistration(
 
 	if (!data.mothers_first_name || data.mothers_first_name.trim() === '') {
 		return missing_field({
-            field: mothers_first_name(),
-        });
+			field: mothers_first_name()
+		});
 	}
 
 	if (!data.mothers_last_name || data.mothers_last_name.trim() === '') {
 		return missing_field({
-            field: 'Mother\'s last name',
-        });
+			field: "Mother's last name"
+		});
 	}
 
 	return null; // No errors

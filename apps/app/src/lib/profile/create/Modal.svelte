@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import {
-		register,
+		create,
 		close,
 		born,
 		mothers_first_name,
@@ -13,42 +13,134 @@
 		male,
 		female,
 		other,
-		intersex
+		intersex,
+		create_relationship_and_person,
+		child,
+		sibling,
+		parent,
+		spouse,
+		relation,
+		relation_type,
+		notes,
+		until,
+		optional_field,
+		from_time
 	} from '$lib/paraglide/messages';
 	import { onMount } from 'svelte';
 	import type { components } from '$lib/api/api.gen.js';
 	import { validatePersonRegistration, validateFamilyRelationship } from './validate_fields';
+	import type { Node, Edge } from '@xyflow/svelte';
 
 	let {
 		closeModal = () => {},
-		relationship = null,
-	}: { closeModal : ()=>void,relationship: number | null } = $props();
+		onCreation = (nodes: Array<Node> | null, edges: Array<Edge> | null) => {},
+		onOnlyPersonCreation = (person: components['schemas']['Person']) => {},
+		relationshipStartID = null
+	}: {
+		closeModal: () => void;
+		onCreation: (newNodes: Array<Node> | null, newEdges: Array<Edge> | null) => void;
+		onOnlyPersonCreation: (person: components['schemas']['Person']) => void | undefined;
+		relationshipStartID: number | null;
+	} = $props();
+
 	let birth_date: HTMLInputElement;
-	let draftRelationship: components['schemas']['FamilyRelationship'] & {type: string} | null = {} as components['schemas']['FamilyRelationship'] & {type: string} | null;
-	let draftPerson :components['schemas']['PersonRegistration'] = {} as components['schemas']['PersonRegistration'];
+	let relationship_from_time: HTMLInputElement;
+	let relationship_until: HTMLInputElement;
+
+	let draftRelationship: (components['schemas']['FamilyRelationship'] & { type: string }) | null =
+		$state({} as components['schemas']['FamilyRelationship'] & { type: string });
+	let draftPerson: components['schemas']['PersonRegistration'] = $state(
+		{} as components['schemas']['PersonRegistration']
+	);
 	let error: string | undefined | null = $state();
 
 	function onClose() {
 		closeModal();
 	}
 
-	async function create(event: SubmitEvent) {
+	async function onCreate(event: SubmitEvent) {
 		event.preventDefault();
 		error = validatePersonRegistration(draftPerson);
 		if (error) {
 			return;
 		}
 
-		if (relationship !== null && draftRelationship !== null) {
-			error = validateFamilyRelationship(draftRelationship);
-			if (error) {
+		if (relationshipStartID !== null) {
+			if (draftRelationship !== null) {
+				error = validateFamilyRelationship(draftRelationship);
+				if (error) {
+					return;
+				}
+			}
+
+			let requestBody = {
+				relationship: draftRelationship,
+				type: draftRelationship!.type,
+				person: draftPerson
+			} as {
+				person: components['schemas']['PersonRegistration'];
+				type?: 'child' | 'parent' | 'spouse' | 'sibling';
+				relationship: components['schemas']['FamilyRelationship'];
+			};
+			let response = await fetch(`/api/person_and_relationship/${relationshipStartID}`, {
+				method: 'POST',
+				body: JSON.stringify(requestBody),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error = 'Error creating person and relationship';
 				return;
+			}
+			let data = (await response.json()) as {
+				person?: components['schemas']['Person'];
+				relationships?: components['schemas']['Relationship'][];
+			};
+			if (onCreation !== undefined) {
+				let edges: Array<Edge> = [];
+				data.relationships?.map((relationship) =>
+					edges.push({
+						id: String(relationship.id),
+						source: String(relationship.start),
+						target: String(relationship.end),
+						data: {
+							...relationship.properties
+						}
+					})
+				);
+
+				let newNode = {
+					id: String(data.person?.Id),
+					data: {
+						...data.person?.Props
+					},
+					position: { x: 0, y: 0 },
+					type: 'personNode'
+				} as Node;
+				onCreation([newNode], edges);
+				closeModal();
+			}
+		} else {
+			let requestBody = draftPerson as components['schemas']['PersonRegistration'];
+			let response = await fetch(`/api/person`, {
+				method: 'POST',
+				body: JSON.stringify(requestBody),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			if (!response.ok) {
+				error = 'Error creating person';
+				return;
+			}
+
+			if (onOnlyPersonCreation !== undefined) {
+				onOnlyPersonCreation(await response.json());
 			}
 		}
 
-		const url = `/api/person`;
-		const response = await fetch(url);
-		result = await response.text();
 		closeModal();
 	}
 
@@ -63,7 +155,44 @@
 						birth_date.placeholder = '';
 					},
 					onSelect: function (date) {
-						birth_date.value = date.toISOString();
+						birth_date.value = date.toISOString().split('T')[0];
+						draftPerson.born = date.toISOString().split('T')[0];
+					}
+				});
+				// Clean up when component unmounts
+				return () => picker.destroy();
+			});
+		}
+		if (relationship_from_time) {
+			import('pikaday').then(({ default: Pikaday }) => {
+				const picker = new Pikaday({
+					format: 'YYYY-MM-DD',
+					minDate: new Date(1900, 0, 1),
+					field: relationship_from_time,
+					onOpen: function () {
+						relationship_from_time.placeholder = '';
+					},
+					onSelect: function (date) {
+						relationship_from_time.value = date.toISOString().split('T')[0];
+						draftRelationship.from = date.toISOString().split('T')[0];
+					}
+				});
+				// Clean up when component unmounts
+				return () => picker.destroy();
+			});
+		}
+		if (relationship_until) {
+			import('pikaday').then(({ default: Pikaday }) => {
+				const picker = new Pikaday({
+					format: 'YYYY-MM-DD',
+					minDate: new Date(1900, 0, 1),
+					field: relationship_until,
+					onOpen: function () {
+						relationship_until.placeholder = '';
+					},
+					onSelect: function (date) {
+						relationship_until.value = date.toISOString().split('T')[0];
+						draftRelationship.to = date.toISOString().split('T')[0];
 					}
 				});
 				// Clean up when component unmounts
@@ -74,17 +203,25 @@
 </script>
 
 <div class="modal modal-open" transition:fade>
-	<div class="modal-box max-h-screen w-full max-w-5xl overflow-y-auto">
-		<div class="bg-base-100 sticky top-0 z-10">
-			<button class="btn btn-error btn-sm" onclick={onClose}>
-				{close()}
-			</button>
-			<div class="divider"></div>
+	<div
+		class="modal-box flex max-h-screen w-full max-w-5xl flex-col items-center justify-center overflow-y-auto"
+	>
+		<div class="flex w-full max-w-5xl items-center justify-between p-2">
+			<h3 class="text-left text-lg font-bold">{create_relationship_and_person()}</h3>
+			<div>
+				<button class="btn btn-error btn-sm" onclick={onClose}>
+					{close()}
+				</button>
+			</div>
 		</div>
-		<form onsubmit={create}>
-			<fieldset class="fieldset">
+		<div class="divider"></div>
+
+		<form onsubmit={onCreate} class="w-full">
+			<fieldset
+				class="fieldset grid w-full grid-cols-1 items-center gap-y-4 md:grid-cols-2 md:gap-x-6"
+			>
 				{#if error}
-					<div role="alert" class="alert alert-error">
+					<div role="alert" class="alert alert-error col-span-full">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="h-6 w-6 shrink-0 stroke-current"
@@ -101,74 +238,144 @@
 						<span>{error}</span>
 					</div>
 				{/if}
-				{#if relationship !== undefined}
-					<input type="hidden" name="relationship" value={relationship} />
+				{#if relationshipStartID !== undefined}
+					<input type="hidden" name="relationshipStartID" value={relationshipStartID} />
+					<div class="flex flex-col">
+						<label class="label" for="relationship_type">{relation_type()}</label>
+						<select
+							name="relationship_type"
+							class="select select-bordered"
+							id="relationship_type"
+							bind:value={draftRelationship.type}
+						>
+							<option value="child">{child()}</option>
+							<option value="parent">{parent()}</option>
+							<option value="sibling">{sibling()}</option>
+							<option value="spouse">{spouse()}</option>
+						</select>
+					</div>
+					<div class="flex flex-col">
+						<label class="label" for="relationship_notes"
+							>{relation() + ' ' + notes().toLowerCase()}:</label
+						>
+						<textarea
+							name="relationship_notes"
+							class="textarea"
+							bind:value={draftRelationship.notes}
+							placeholder={notes().toLowerCase() + ' ' + optional_field().toLowerCase()}
+						></textarea>
+					</div>
+					<div class="flex flex-col">
+						<label class="label" for="from_time">{from_time()}</label>
+						<input
+							type="text"
+							name="from_time"
+							id="from_time"
+							class="input input-bordered validator pika-single"
+							placeholder={optional_field()}
+							bind:this={relationship_from_time}
+						/>
+					</div>
+					<div class="flex flex-col">
+						<label class="label" for="until">{until()}</label>
+						<input
+							type="text"
+							name="until"
+							id="until"
+							class="input input-bordered validator pika-single"
+							placeholder={optional_field()}
+							bind:this={relationship_until}
+						/>
+					</div>
+					<div class="divider margin-t-2 col-span-full"></div>
 				{/if}
-				<label class="fieldset-label" for="email">{email()}</label>
-				<input
-					type="email"
-					name="email"
-					class="input"
-					placeholder={email()}
-					bind:value={draftPerson.email}
-				/>
-				<label class="fieldset-label" for="first_name">{first_name()}</label>
-				<input
-					type="text"
-					class="input"
-					name="first_name"
-					id="first_name"
-					placeholder={first_name()}
-				/>
-				<label class="fieldset-label" for="last_name">{last_name()}</label>
-				<input
-					type="text"
-					class="input"
-					name="last_name"
-					id="last_name"
-					placeholder={last_name()}
-				/>
-				<label class="fieldset-label" for="birth_date">{born()}</label>
-				<input
-					type="text"
-					class="input pika-single"
-					id="birth_date"
-					placeholder={born()}
-					bind:value={draftPerson.born}
-					bind:this={birth_date}
-				/>
-				<label class="fieldset-label" for="biological_sex">{biological_sex()}</label>
-				<select
-					name="biological_sex"
-					class="select select-bordered w-full max-w-xs"
-					id="biological_sex"
-					placeholder={biological_sex()}
-					bind:value={draftPerson.biological_sex}
-				>
-					<option value="male">{male()} </option>
-					<option value="female">{female()} </option>
-					<option value="intersex">{intersex()} </option>
-					<option value="other">{other()} </option>
-				</select>
-				<label class="fieldset-label" for="mothers_last_name">{mothers_last_name()}</label>
-				<input
-					type="text"
-					class="input"
-					name="mothers_last_name"
-					id="mothers_last_name"
-					placeholder={mothers_last_name()}
-					bind:value={draftPerson.mothers_last_name}
-				/>
-				<label class="fieldset-label" for="mothers_first_name">{mothers_first_name()}</label>
-				<input
-					type="text"
-					class="input"
-					name="mothers_first_name"
-					id="mothers_first_name"
-					placeholder={mothers_first_name()}
-					bind:value={draftPerson.mothers_first_name}
-				/>
-				<button class="btn btn-neutral mt-4">{register()}</button>
+
+				<!-- Inputs -->
+				<div class="flex flex-col">
+					<label class="label" for="first_name">{first_name()}</label>
+					<input
+						type="text"
+						name="first_name"
+						class="input input-bordered"
+						placeholder={first_name()}
+						bind:value={draftPerson.first_name}
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label class="label" for="last_name">{last_name()}</label>
+					<input
+						type="text"
+						name="last_name"
+						class="input input-bordered"
+						placeholder={last_name()}
+						bind:value={draftPerson.last_name}
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label class="label" for="email">{email()}</label>
+					<input
+						type="email"
+						name="email"
+						class="input input-bordered validator"
+						placeholder={email() + ' ' + optional_field().toLowerCase()}
+						bind:value={draftPerson.email}
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label class="label" for="birth_date">{born()}</label>
+					<input
+						type="text"
+						name="birth_date"
+						class="input input-bordered validator pika-single"
+						placeholder={born()}
+						bind:this={birth_date}
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label class="label" for="biological_sex">{biological_sex()}</label>
+					<select
+						name="biological_sex"
+						class="select select-bordered"
+						id="biological_sex"
+						bind:value={draftPerson.biological_sex}
+					>
+						<option value="male">{male()}</option>
+						<option value="female">{female()}</option>
+						<option value="intersex">{intersex()}</option>
+						<option value="other">{other()}</option>
+					</select>
+				</div>
+
+				<div class="flex flex-col">
+					<label class="label" for="mothers_last_name">{mothers_last_name()}</label>
+					<input
+						type="text"
+						name="mothers_last_name"
+						class="input input-bordered"
+						placeholder={mothers_last_name()}
+						bind:value={draftPerson.mothers_last_name}
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label class="label" for="mothers_first_name">{mothers_first_name()}</label>
+					<input
+						type="text"
+						name="mothers_first_name"
+						class="input input-bordered"
+						placeholder={mothers_first_name()}
+						bind:value={draftPerson.mothers_first_name}
+					/>
+				</div>
+
+				<!-- Submit button spans full width -->
+				<div class="col-span-full mt-4 flex justify-center">
+					<button type="submit" class="btn btn-neutral mt-4">{create()}</button>
+				</div>
 			</fieldset>
 		</form>
 	</div>
