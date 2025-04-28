@@ -32,13 +32,12 @@ export class FamilyTree extends dagre.graphlib.Graph {
 
 		let newEdges: Edge[] = [];
 		edges.forEach((edge) => {
-			let newEdge = edge;
+			let newEdge = {...edge};
 			if (edge.data?.type === 'spouse') {
 				newEdge.style = "dashed; stroke: #000; stroke-width: 2px; color: red;";
 				
 				const sourceNode = this.node(edge.source);
 				const targetNode = this.node(edge.target);
-
 				if (!sourceNode || !targetNode) {
 					return;
 				}
@@ -80,7 +79,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			newEdge.type = 'smoothstep'
 			
 
-			newEdges.push(newEdge);
+			newEdges.push(newEdge), newEdge;
 		});
 
 		const layoutedNodes = nodes.map((node) => {
@@ -100,6 +99,6 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			};
 		});
 
-		return { Nodes: layoutedNodes, Edges: edges };
+		return { Nodes: layoutedNodes, Edges: newEdges };
 	}
 }

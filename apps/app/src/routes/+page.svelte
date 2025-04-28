@@ -192,7 +192,6 @@
 			fitView
 			onlyRenderVisibleElements
 			connectionLineType={ConnectionLineType.SmoothStep}
-			defaultEdgeOptions={{ type: 'smoothstep' }}
 		>
 			<MiniMap class="!bg-base-300" />
 			<Controls class="!bg-base-300" />
