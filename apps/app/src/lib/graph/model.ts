@@ -1,5 +1,5 @@
 import type { Node, Edge, NodeTypes } from '@xyflow/svelte';
-import PersonNode  from './PersonNode.svelte';
+import PersonNode from './PersonNode.svelte';
 
 export const nodeTypes: NodeTypes = { personNode: PersonNode };
 

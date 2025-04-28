@@ -3,7 +3,6 @@ import type { Layout } from '$lib/graph/model';
 import type { Edge, Node } from '@xyflow/svelte';
 
 export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layout {
-	
 	if (
 		data === null ||
 		data?.people === null ||
@@ -25,12 +24,13 @@ export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layo
 	let relationships: Edge[] = [];
 	if (data.relationships) {
 		relationships = data.relationships.map((relationship) => {
-			let newEdge = { data: { ...relationship.properties } } as Edge;
-			if (relationship.start !== null && relationship.start !== undefined) {
-				newEdge.source = relationship.start.toString();
+			let newEdge = { data: { ...relationship.Props } } as Edge;
+            newEdge.data!.type = relationship.Type?.toLowerCase();
+			if (relationship.StartElementId !== null && relationship.StartElementId !== undefined) {
+				newEdge.source = relationship.StartElementId;
 			}
-			if (relationship.end !== null && relationship.end !== undefined) {
-				newEdge.target = relationship.end.toString();
+			if (relationship.EndElementId !== null && relationship.EndElementId !== undefined) {
+				newEdge.target = relationship.EndElementId;
 			}
 
 			return newEdge;

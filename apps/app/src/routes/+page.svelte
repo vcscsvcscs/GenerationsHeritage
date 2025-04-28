@@ -26,7 +26,7 @@
 	import { FamilyTree } from '$lib/graph/layout';
 	import { tailwindClassToPixels } from '$lib/tailwindSizeToPx';
 	import type { Layout } from '$lib/graph/model';
-	let { data }: { data: Layout } = $props();
+	let { data }: { data: Layout & { id: string } } = $props();
 
 	let selectedPerson: components['schemas']['PersonProperties'] & { id: number | null } = $state({
 		id: null
@@ -66,7 +66,29 @@
 				openPersonMenu = undefined;
 			},
 			deleteNode: () => {
-				relationshipStart = Number(node.id);
+				if (Number(data.id) === Number(node.id)) {
+					relationshipStart = null;
+					openPersonMenu = undefined;
+
+					return;
+				}
+				fetch('/api/person/' + node.id, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				})
+					.then((response) => {
+						if (response.ok) {
+							nodes = nodes.filter((n) => n.id !== node.id);
+							edges = edges.filter((e) => e.source !== node.id && e.target !== node.id);
+						} else {
+							alert('Error deleting person');
+						}
+					})
+					.catch((error) => {
+						console.error('Error:', error);
+					});
 				openPersonMenu = undefined;
 			},
 			createRelationshipAndNode: () => {
@@ -102,13 +124,16 @@
 			edges = [...edges, ...newEdges];
 		}
 
-		familyTreeDAG.getLayoutedElements(
+		let newLayout = familyTreeDAG.getLayoutedElements(
 			nodes,
 			edges,
 			tailwindClassToPixels('w-40') || 160,
 			tailwindClassToPixels('h-40') || 160,
 			'TB'
 		);
+
+		edges = newLayout.Edges;
+		nodes = newLayout.Nodes;
 	};
 
 	let handleNodeClickFunc = handleNodeClick(
@@ -118,8 +143,28 @@
 			}
 		) => {
 			openPersonPanel = true;
-			console.log('person', person);
 			selectedPerson = person;
+			fetch('/api/person/' + person.id, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+				.then((response) => {
+					if (response.ok) {
+						return response.json() as Promise<components['schemas']['Person']>;
+					} else {
+						alert('Error fetching person data');
+						return null;
+					}
+				})
+				.then((data) => {
+					if (data) {
+						selectedPerson = data.Props as components['schemas']['PersonProperties'] & {
+							id: number | null;
+						};
+					}
+				});
 		}
 	);
 
@@ -161,6 +206,9 @@
 			{/if}
 			{#if createPerson}
 				<CreatePerson
+					onOnlyPersonCreation={() => {
+						createPerson = false;
+					}}
 					{onCreation}
 					closeModal={() => {
 						createPerson = false;

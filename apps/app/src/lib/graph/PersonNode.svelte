@@ -9,43 +9,19 @@
 	export let id: NodeProps['id'];
 	export let data: NodeProps['data'] & components['schemas']['PersonProperties'];
 	const connection = useConnection();
-	let isConnecting = false;
-	let isTarget = false;
-
-	$: isConnecting = connection.current.fromHandle !== null;
-	$: isTarget = connection.current.toHandle?.id !== id;
 </script>
 
 <div
 	class="card card-compact bg-primary-content text-primary flex h-40 w-40 flex-col items-center justify-center rounded-full shadow-lg"
 >
-	{#if !isConnecting}
-		<Handle class="customHandle" position={Position.Right} type="source" style="z-index: 1;" />
-	{/if}
-	<Handle class="customHandle" position={Position.Left} type="target" isConnectableStart={false} />
+	<Handle class="customHandle" isValidConnection={isValidConnection} position={Position.Bottom} type="source" style="z-index: 1;" />
+
+	<Handle class="customHandle" isValidConnection={isValidConnection} position={Position.Top} type="target" isConnectableStart={false} />
 
 	<div class="avatar mb-2">
-		{#if isConnecting && isTarget}
-			<Handle
-				{isValidConnection}
-				position={Position.Left}
-				type="target"
-				isConnectableStart={false}
-				style="z-index: 1;"
-			/>
-		{/if}
 		<div
 			class="ring-accent ring-offset-accent bg-accent w-24 rounded-full border-0 ring ring-offset-1"
 		>
-			{#if isConnecting && isTarget}
-				<Handle
-					{isValidConnection}
-					position={Position.Left}
-					type="target"
-					isConnectableStart={false}
-					style="z-index: 1;"
-				/>
-			{/if}
 			<img
 				src={data.profile_picture || 'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
 				alt="Picture of {data.last_name} {data.first_name}"

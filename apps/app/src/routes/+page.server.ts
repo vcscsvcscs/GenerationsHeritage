@@ -3,6 +3,7 @@ import { parseFamilyTree } from '$lib/graph/fetch_family_tree';
 import type { components } from '$lib/api/api.gen';
 import type { RequestEvent } from './$types';
 import { browser } from '$app/environment';
+import type { Layout } from '$lib/graph/model';
 
 export async function load(event: RequestEvent) {
 	if (event.locals.session === null /*|| event.locals.familytree === nul*/) {
@@ -24,7 +25,8 @@ export async function load(event: RequestEvent) {
 
 	const data = (await response.json()) as components['schemas']['FamilyTree'];
 
-	let layout = parseFamilyTree(data)
+	let layout = parseFamilyTree(data) as Layout & {id: string};
+	layout.id = event.locals.session.userId;
 
 	return layout;
 }

@@ -2,7 +2,6 @@ import dagre from '@dagrejs/dagre';
 import type { Layout } from './model';
 import type { Edge, Node } from '@xyflow/svelte';
 import { Position } from '@xyflow/svelte';
-import PersonNode from './PersonNode.svelte';
 
 export class FamilyTree extends dagre.graphlib.Graph {
 	constructor() {
@@ -18,27 +17,25 @@ export class FamilyTree extends dagre.graphlib.Graph {
 	): Layout {
 		const isHorizontal = direction === 'LR';
 		this.setGraph({ rankdir: direction });
-
+		this.setDefaultEdgeLabel(() => ({}))
 		nodes.forEach((node) => {
-			this.setNode(node.id, { width: nodeWidth, height: nodeHeight});
+			this.setNode(node.id, { width: nodeWidth, height: nodeHeight });
 		});
 
 		edges.forEach((edge) => {
-			if (edge.data?.type === 'child') {
+			if (edge.data!.type === 'child') {
 				this.setEdge(edge.source, edge.target);
 			}
 		});
 
 		dagre.layout(this);
 
+		let newEdges: Edge[] = [];
 		edges.forEach((edge) => {
-			if (edge.data?.type === 'parent' || edge.data?.type === 'sibling') {
-				this.setEdge(edge.source, edge.target);
-			}
-		});
-
-		edges.forEach((edge) => {
+			let newEdge = edge;
 			if (edge.data?.type === 'spouse') {
+				newEdge.style = "dashed; stroke: #000; stroke-width: 2px; color: red;";
+				
 				const sourceNode = this.node(edge.source);
 				const targetNode = this.node(edge.target);
 
@@ -80,6 +77,10 @@ export class FamilyTree extends dagre.graphlib.Graph {
 				targetNode.x = desiredX;
 				targetNode.y = sourceNode.y;
 			}
+			newEdge.type = 'smoothstep'
+			
+
+			newEdges.push(newEdge);
 		});
 
 		const layoutedNodes = nodes.map((node) => {
@@ -91,7 +92,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			// so it matches the React Flow node anchor point (top left).
 			return {
 				...node,
-                type: 'personNode', 
+				type: 'personNode',
 				position: {
 					x: nodeWithPosition.x - nodeWidth / 2,
 					y: nodeWithPosition.y - nodeHeight / 2
