@@ -719,11 +719,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Message"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Comments */
             200: {
