@@ -329,16 +329,6 @@
                         }
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Message"
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "Comments",
