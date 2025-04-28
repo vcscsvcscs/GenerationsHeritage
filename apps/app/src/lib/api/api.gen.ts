@@ -487,7 +487,7 @@ export interface components {
         };
         FamilyTree: {
             people?: components["schemas"]["OptimizedPersonNode"][];
-            relationships?: components["schemas"]["Relationship"][];
+            relationships?: components["schemas"]["dbtypeRelationship"][];
         };
         RecipeProperties: {
             name?: string | null;
