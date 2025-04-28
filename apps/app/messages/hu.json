@@ -62,8 +62,8 @@
 	"file": "Fájl",
 	"first_name": "Keresztnév",
 	"flower": "Virág",
-	"fruit": "Gyümölcs",
 	"from_time": "Tól",
+	"fruit": "Gyümölcs",
 	"hair_colour": "Hajszín",
 	"hello_world": "Helló, {name} innen: hu!",
 	"height": "Magasság",
@@ -155,5 +155,6 @@
 	"weight": "Súly",
 	"welcome": "Üdvözöljük a Generációk Öröksége oldalán",
 	"yes": "Igen",
-	"zip_code": "Irányítószám"
+	"zip_code": "Irányítószám",
+	"add_life_event": "Életesemény hozzadása"
 }

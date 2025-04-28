@@ -62,8 +62,8 @@
 	"file": "File",
 	"first_name": "First Name",
 	"flower": "Flower",
-	"fruit": "Fruit",
 	"from_time": "From",
+	"fruit": "Fruit",
 	"hair_colour": "Hair Colour",
 	"hello_world": "Hello, {name} from en!",
 	"height": "Height",
@@ -157,5 +157,6 @@
 	"weight": "Weight",
 	"welcome": "Welcome to Generations Heritage",
 	"yes": "Yes",
-	"zip_code": "Zip Code"
+	"zip_code": "Zip Code",
+	"add_life_event": "Add life-event"
 }
