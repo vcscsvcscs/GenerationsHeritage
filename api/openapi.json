@@ -124,7 +124,7 @@
                                         "relationships": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Relationship"
+                                                "$ref": "#/components/schemas/dbtypeRelationship"
                                             }
                                         }
                                     }
