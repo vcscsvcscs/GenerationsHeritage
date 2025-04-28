@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { client } from '$lib/api/client';
 import type { RequestEvent } from './$types';
 import type { components } from '$lib/api/api.gen';
@@ -9,12 +9,17 @@ export async function POST(event: RequestEvent): Promise<Response> {
     }
 
     const response = await client.POST(
-        '/person',
+        '/person_and_relationship/{id}',
         {
             params: {
+                path: { id: Number(event.params.ID) },
                 header: { 'X-User-ID': event.locals.session.userId }
             },
-            body: await event.request.json() as components['schemas']['PersonRegistration']
+            body: await event.request.json() as {
+                person: components["schemas"]["PersonRegistration"];
+                type?: "child" | "parent" | "spouse" | "sibling";
+                relationship: components["schemas"]["FamilyRelationship"];
+            }
         }
     );
 
