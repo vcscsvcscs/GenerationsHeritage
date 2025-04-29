@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: gh-auth-service-certificate
+  name: gh-authz-certificate
   annotations:
     argocd.argoproj.io/hook: PreSync
 spec:
@@ -9,15 +9,15 @@ spec:
   duration: 2160h # 90d
   renewBefore: 360h # 15d
   dnsNames:
-    - gh-auth-service.generations-heritage.svc.cluster.local
-    - gh-auth-service
+    - gh-authz.generations-heritage.svc.cluster.local
+    - gh-authz
     - localhost
   ipAddresses:
     - 127.0.0.1
   subject:
     organizations:
       - GenerationsHeritage
-  secretName: gh-auth-service-tls
+  secretName: gh-authz-tls
   privateKey:
     algorithm: RSA
     encoding: PKCS1

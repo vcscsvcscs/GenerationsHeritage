@@ -2,29 +2,29 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/instance: gh-auth-service
-    app.kubernetes.io/name: gh-auth-service
+    app.kubernetes.io/instance: gh-authz
+    app.kubernetes.io/name: gh-authz
   annotations:
     argocd.argoproj.io/sync-wave: "1"
     argocd.argoproj.io/hook: Synce
-  name: gh-auth-service
+  name: gh-authz
   namespace: generations-heritage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: gh-auth-service
-      app.kubernetes.io/name: gh-auth-service
+      app.kubernetes.io/instance: gh-authz
+      app.kubernetes.io/name: gh-authz
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: gh-auth-service
-        app.kubernetes.io/name: gh-auth-service
+        app.kubernetes.io/instance: gh-authz
+        app.kubernetes.io/name: gh-authz
     spec:
       containers:
         - image: vcscsvcscs/gheritage-auth-service:latest
           imagePullPolicy: Always
-          name: gh-auth-service
+          name: gh-authz
           ports:
           - containerPort: 443
             name: gin
@@ -38,14 +38,14 @@ spec:
               cpu: 100m
               memory: 50Mi
           volumeMounts:
-            - name: gh-auth-service-certs
-              mountPath: /etc/gh-auth-service/ssl
+            - name: gh-authz-certs
+              mountPath: /etc/gh-authz/ssl
             - name: zitadel-service-account
-              mountPath: /etc/gh-auth-service/zitadel
+              mountPath: /etc/gh-authz/zitadel
       volumes:
-      - name: gh-auth-service-certs
+      - name: gh-authz-certs
         secret:
-          secretName: gh-auth-service-tls
+          secretName: gh-authz-tls
       - name: zitadel-service-account
         secret:
           secretName: zitadel-service-account

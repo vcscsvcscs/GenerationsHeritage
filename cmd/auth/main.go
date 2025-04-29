@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	cert             = flag.String("cert", "/etc/gh-auth-service/ssl/tls.crt", "Specify the path of TLS cert")
-	key              = flag.String("key", "/etc/gh-auth-service/ssl/tls.key", "Specify the path of TLS key")
-	zitadelAccessKey = flag.String("zitadel-access-key", "/etc/gh-auth-service/zitadel/api-key.json", "Specify the path of Zitadel access key")
+	cert             = flag.String("cert", "/etc/gh-authz/ssl/tls.crt", "Specify the path of TLS cert")
+	key              = flag.String("key", "/etc/gh-authz/ssl/tls.key", "Specify the path of TLS key")
+	zitadelAccessKey = flag.String("zitadel-access-key", "/etc/gh-authz/zitadel/api-key.json", "Specify the path of Zitadel access key")
 	httpsPort        = flag.String("https", ":443", "Specify port for http secure hosting(example for format :443)")
 	httpPort         = flag.String("http", ":80", "Specify port for http hosting(example for format :80)")
 	zitadelURI       = flag.String("zitadel-uri", "zitadel.varghacsongor.hu", "Specify the Zitadel URI")
