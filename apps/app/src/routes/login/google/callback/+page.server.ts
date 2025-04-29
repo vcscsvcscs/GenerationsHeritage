@@ -29,6 +29,12 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		return {};
 	}
 
+	let already_loaded = event.cookies.get('already_loaded') ?? null;
+	if (already_loaded !== null) {
+		return {};
+	}
+
+
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
 	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
 	const code = event.url.searchParams.get('code');
@@ -95,6 +101,14 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		email: email
 	};
 
+	event.cookies.set('already_loaded', 'true',{
+		path: '/login/google/callback',
+		sameSite: 'lax',
+		httpOnly: true,
+		maxAge: 60 * 10,
+		secure: import.meta.env.PROD,
+	})
+
 	return {
 		props: personP
 	};
@@ -110,13 +124,26 @@ async function register(event: RequestEvent) {
 	}
 
 	const data = await event.request.formData();
+	let parsedData: components['schemas']['PersonRegistration'] = {
+		first_name: data.get('first_name'),
+		last_name: data.get('last_name'),
+		email: data.get('email'),
+		biological_sex: data.get('biological_sex'),
+		born: data.get('birth_date'),
+		mothers_first_name: data.get('mothers_first_name'),
+		mothers_last_name: data.get('mothers_last_name'),
+		google_id: data.get('google_id'),
+		limit: StorageLimit,
+	} as components['schemas']['PersonRegistration'];
+
 	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
-		return fail(500, { message: 'Server configuration error. GH_SESSIONS KeyValue store missing' });
+		return fail(500, { data: parsedData, message: 'Server configuration error. GH_SESSIONS KeyValue store missing' });
 	}
 
 	const first_name_f = data.get('first_name');
 	if (first_name_f === null || first_name_f === '') {
 		return fail(400, {
+			data:parsedData,
 			message: missing_field({
 				field: first_name()
 			})
@@ -126,6 +153,7 @@ async function register(event: RequestEvent) {
 	const google_id = data.get('google_id');
 	if (google_id === null || google_id === '') {
 		return fail(400, {
+			data: parsedData,
 			message: missing_field({
 				field: 'google_id'
 			})
@@ -135,6 +163,7 @@ async function register(event: RequestEvent) {
 	const last_name_f = data.get('last_name');
 	if (last_name_f === null || last_name_f === '') {
 		return fail(400, {
+			data: parsedData,
 			message: missing_field({
 				field: last_name()
 			})
@@ -161,6 +190,7 @@ async function register(event: RequestEvent) {
 	const bbiological_sex = data.get('biological_sex');
 	if (bbiological_sex === null || bbiological_sex === '') {
 		return fail(400, {
+			data: parsedData,
 			message: missing_field({
 				field: biological_sex()
 			})
@@ -169,6 +199,7 @@ async function register(event: RequestEvent) {
 		!['male', 'female', 'intersex', 'unknown', 'other'].includes(bbiological_sex.toString())
 	) {
 		return fail(400, {
+			data: parsedData,
 			message: `Invalid value for biological_sex. Must be one of "male", "female", "intersex", "unknown", or "other".`
 		});
 	}
@@ -176,6 +207,7 @@ async function register(event: RequestEvent) {
 	const mothers_first_name_f = data.get('mothers_first_name');
 	if (mothers_first_name_f === null || mothers_first_name_f === '') {
 		return fail(400, {
+			data: parsedData,
 			message: missing_field({
 				field: mothers_first_name()
 			})
@@ -184,6 +216,7 @@ async function register(event: RequestEvent) {
 	const mothers_last_name_f = data.get('mothers_last_name');
 	if (mothers_last_name_f === null) {
 		return fail(400, {
+			data: parsedData,
 			message: missing_field({
 				field: mothers_last_name()
 			})
@@ -205,6 +238,7 @@ async function register(event: RequestEvent) {
 
 	let response = await client.POST('/person/google/{google_id}', {
 		params: {
+			data: parsedData,
 			path: { google_id: google_id.toString() }
 		},
 		body: personP
@@ -212,24 +246,28 @@ async function register(event: RequestEvent) {
 
 	if (response.response.status !== 200) {
 		return fail(400, {
+			data: parsedData,
 			message: failed_to_create_user() + response.error?.msg
 		});
 	}
 
 	if (response.data === undefined) {
 		return fail(400, {
+			data: parsedData,
 			message: failed_to_create_user() + 'No user data returned'
 		});
 	}
 
 	if (response.data.Id === undefined) {
 		return fail(400, {
+			data: parsedData,
 			message: failed_to_create_user() + 'No user ID returned'
 		});
 	}
 
 	if (!event.platform) {
 		return fail(500, {
+			data: parsedData,
 			message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
 		});
 	}
@@ -242,11 +280,21 @@ async function register(event: RequestEvent) {
 	);
 	if (session === null) {
 		return fail(500, {
+			data: parsedData,
 			message: failed_to_create_user() + 'Failed to create session'
 		});
 	}
 
 	setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
+	event.cookies.delete('already_loaded',
+		{
+			path: '/login/google/callback',
+			sameSite: 'lax',
+			httpOnly: true,
+			maxAge: 0,
+			secure: import.meta.env.PROD
+		}
+	);
 	return redirect(302, '/');
 }

@@ -1,7 +1,11 @@
-import type { Node, Edge, NodeTypes } from '@xyflow/svelte';
+import type { Node, Edge, NodeTypes, EdgeTypes } from '@xyflow/svelte';
+import FamilyEdge from './FamilyEdge.svelte';
 import PersonNode from './PersonNode.svelte';
 
 export const nodeTypes: NodeTypes = { personNode: PersonNode };
+export const edgeTypes: EdgeTypes = {
+		familyEdge: FamilyEdge
+};
 
 export type NodeMenu = {
 	onClick: () => void;

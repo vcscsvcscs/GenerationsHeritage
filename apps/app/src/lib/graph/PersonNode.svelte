@@ -7,7 +7,6 @@
 	type $$Props = NodeProps;
 
 	export let data: NodeProps['data'] & components['schemas']['PersonProperties'];
-	const connection = useConnection();
 </script>
 
 <div
@@ -16,6 +15,7 @@
 	<Handle
 		class="customHandle"
 		{isValidConnection}
+		isConnectable={true}
 		position={Position.Bottom}
 		type="source"
 		style="z-index: 1;"
@@ -25,11 +25,12 @@
 		class="customHandle"
 		{isValidConnection}
 		position={Position.Top}
+		isConnectable={true}
 		type="target"
 		isConnectableStart={false}
 	/>
 
-	<div class="avatar mb-2">
+	<div class="avatar mb-2" style="z-index: 2; cursor: pointer;">
 		<div
 			class="ring-accent ring-offset-accent bg-accent w-24 rounded-full border-0 ring ring-offset-1"
 		>

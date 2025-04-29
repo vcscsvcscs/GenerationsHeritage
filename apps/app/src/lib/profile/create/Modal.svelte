@@ -35,7 +35,7 @@
 		closeModal = () => {},
 		onCreation = (nodes: Array<Node> | null, edges: Array<Edge> | null) => {},
 		onOnlyPersonCreation = (person: components['schemas']['Person']) => {},
-		relationshipStartID = null
+		relationshipStartID
 	}: {
 		closeModal: () => void;
 		onCreation: (newNodes: Array<Node> | null, newEdges: Array<Edge> | null) => void;

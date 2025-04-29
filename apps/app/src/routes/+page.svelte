@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { nodeTypes } from '$lib/graph/model';
+	import { nodeTypes, edgeTypes } from '$lib/graph/model';
 	import { title, family_tree } from '$lib/paraglide/messages.js';
 
 	import {
@@ -7,10 +7,10 @@
 		SvelteFlow,
 		Controls,
 		MiniMap,
-		ConnectionLineType
+		ConnectionLineType,
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
-	import type { Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
+	import type {OnConnectEnd, Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
 
 	import PersonModal from '$lib/profile/Modal.svelte';
 	import PersonMenu from '$lib/graph/PersonMenu.svelte';
@@ -173,8 +173,17 @@
 	let handlePaneClick = ({ event }: { event: MouseEvent }) => {
 		openPersonPanel = false;
 		openPersonMenu = undefined;
-		relationshipStart = null;
 	};
+
+	const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
+		if (connectionState.isValid) return;
+		const sourceNodeId = connectionState.fromNode?.id
+		if (sourceNodeId === undefined) return;
+		relationshipStart = Number(sourceNodeId);
+		createPerson = true;
+		console.log('createPerson', createPerson);
+		console.log('relationshipStart', relationshipStart);
+	}
 </script>
 
 <svelte:head>
@@ -186,11 +195,13 @@
 			<SvelteFlow
 				bind:nodes
 				bind:edges
+				onconnectend={handleConnectEnd}
 				onnodeclick={handleNodeClickFunc}
 				onnodecontextmenu={handleContextMenu}
 				onpaneclick={handlePaneClick}
 				class="!bg-base-200"
 				{nodeTypes}
+				{edgeTypes}
 				fitView
 				onlyRenderVisibleElements
 				connectionLineType={ConnectionLineType.SmoothStep}

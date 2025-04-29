@@ -34,8 +34,6 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		edges.forEach((edge) => {
 			let newEdge = { ...edge };
 			if (edge.data?.type === 'spouse') {
-				newEdge.style = 'dashed; stroke: #000; stroke-width: 2px; color: red;';
-
 				const sourceNode = this.node(edge.source);
 				const targetNode = this.node(edge.target);
 				if (!sourceNode || !targetNode) {
@@ -76,7 +74,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 				targetNode.x = desiredX;
 				targetNode.y = sourceNode.y;
 			}
-			newEdge.type = 'smoothstep';
+			newEdge.type = 'familyEdge';
 
 			newEdges.push(newEdge);
 		});
