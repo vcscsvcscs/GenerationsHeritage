@@ -10,6 +10,8 @@ export type NodeMenu = {
 	addRelationship: () => void;
 	addRecipe: (() => void) | undefined;
 	addAdmin: (() => void) | undefined;
+	id: string;
+	XUserId: string;
 	top: number | undefined;
 	left: number | undefined;
 	right: number | undefined;

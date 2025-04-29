@@ -44,8 +44,8 @@
 	} = $props();
 
 	let birth_date: HTMLInputElement;
-	let relationship_from_time: HTMLInputElement;
-	let relationship_until: HTMLInputElement;
+	let relationship_from_time: HTMLInputElement = $state({} as HTMLInputElement);
+	let relationship_until: HTMLInputElement = $state({} as HTMLInputElement);
 
 	let draftRelationship: (components['schemas']['FamilyRelationship'] & { type: string }) | null =
 		$state({} as components['schemas']['FamilyRelationship'] & { type: string });
@@ -266,22 +266,22 @@
 						></textarea>
 					</div>
 					<div class="flex flex-col">
-						<label class="label" for="from_time">{from_time()}</label>
+						<label class="label" for="relationship_from_time">{from_time()}</label>
 						<input
 							type="text"
-							name="from_time"
-							id="from_time"
+							name="relationship_from_time"
+							id="relationship_from_time"
 							class="input input-bordered validator pika-single"
 							placeholder={optional_field()}
 							bind:this={relationship_from_time}
 						/>
 					</div>
 					<div class="flex flex-col">
-						<label class="label" for="until">{until()}</label>
+						<label class="label" for="relationship_until">{until()}</label>
 						<input
 							type="text"
-							name="until"
-							id="until"
+							name="relationship_until"
+							id="relationship_until"
 							class="input input-bordered validator pika-single"
 							placeholder={optional_field()}
 							bind:this={relationship_until}

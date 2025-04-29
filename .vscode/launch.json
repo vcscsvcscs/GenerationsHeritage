@@ -11,7 +11,7 @@
             "mode": "debug",
             "program": "${workspaceFolder}/apps/db-adapter/main.go",
             "env": {
-                "HTTP_PORT": ":8080",
+                "HTTP_PORT": ":5237",
                 "MEMGRAPH_URI": "bolt://127.0.0.1:7687",
                 "MEMGRAPH_USER": "memgraph",
                 "MEMGRAPH_PASSWORD": "memgraph"

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { switchToLanguage } from './switchToLanguage';
 import { i18n } from '$lib/i18n';
 import { goto } from '$app/navigation';
@@ -28,8 +29,8 @@ describe('switchToLanguage', () => {
 		const canonicalPath = '/canonical-path';
 		const localisedPath = '/en/canonical-path';
 
-		i18n.route.mockReturnValue(canonicalPath);
-		i18n.resolveRoute.mockReturnValue(localisedPath);
+		(i18n.route as Mock).mockReturnValue(canonicalPath);
+		(i18n.resolveRoute as Mock).mockReturnValue(localisedPath);
 
 		switchToLanguage(newLanguage);
 

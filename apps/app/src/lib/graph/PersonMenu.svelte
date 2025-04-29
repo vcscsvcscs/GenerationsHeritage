@@ -7,6 +7,8 @@
 		add_administrator
 	} from '$lib/paraglide/messages';
 
+	export let id: string;
+	export let XUserId: string;
 	export let top: number | undefined;
 	export let left: number | undefined;
 	export let right: number | undefined;
@@ -18,6 +20,7 @@
 	export let addAdmin: (() => void) | undefined;
 
 	let contextMenu: HTMLDivElement;
+	let isAdmin: boolean = false;
 	onMount(() => {
 		if (top) {
 			contextMenu.style.top = `${top}px`;
@@ -31,6 +34,16 @@
 		if (bottom) {
 			contextMenu.style.bottom = `${bottom}px`;
 		}
+		fetch(`/api/admin/${id}/${XUserId}`
+		).then((response) => {
+				if(response.status === 200){
+					isAdmin = true;
+				}else {
+					isAdmin = false
+				}
+			}).catch((error) => {
+				console.error('Error fetching admin status:', error);
+			});
 	});
 </script>
 
@@ -51,7 +64,9 @@
 	</button>
 	<button onclick={addRelationship} class="btn">{add_relationship()}</button>
 	<button onclick={addAdmin} class="btn">{add_administrator()}</button>
-	<button onclick={deleteNode} class="btn">{remove()}</button>
+	{#if (Number(XUserId) !== Number(id)) && isAdmin}
+		<button onclick={deleteNode} class="btn">{remove()}</button>
+	{/if}
 </div>
 
 <style>

@@ -20,7 +20,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
 		}
 	});
 
-	if (response.response.ok) {
+	if (response.response.ok && response.response.status === 200) {
 		return new Response(JSON.stringify(response.data), {
 			status: response.response.status
 		});

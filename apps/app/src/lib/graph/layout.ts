@@ -78,7 +78,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			}
 			newEdge.type = 'smoothstep';
 
-			newEdges.push(newEdge), newEdge;
+			newEdges.push(newEdge);
 		});
 
 		const layoutedNodes = nodes.map((node) => {

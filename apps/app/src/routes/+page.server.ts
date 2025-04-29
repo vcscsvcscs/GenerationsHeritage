@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { parseFamilyTree } from '$lib/graph/fetch_family_tree';
+import { parseFamilyTree } from '$lib/graph/parse_family_tree';
 import type { components } from '$lib/api/api.gen';
 import type { RequestEvent } from './$types';
 import { browser } from '$app/environment';
@@ -24,7 +24,6 @@ export async function load(event: RequestEvent) {
 	}
 
 	const data = (await response.json()) as components['schemas']['FamilyTree'];
-
 	const layout = parseFamilyTree(data) as Layout & { id: string };
 	layout.id = event.locals.session.userId;
 

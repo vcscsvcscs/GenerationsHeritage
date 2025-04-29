@@ -10,9 +10,8 @@
 		ConnectionLineType
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
-	import type { Node, Edge, NodeTypes, NodeEventWithPointer } from '@xyflow/svelte';
+	import type { Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
 
-	import PersonNode from '$lib/graph/PersonNode.svelte';
 	import PersonModal from '$lib/profile/Modal.svelte';
 	import PersonMenu from '$lib/graph/PersonMenu.svelte';
 	import CreatePerson from '$lib/profile/create/Modal.svelte';
@@ -21,11 +20,12 @@
 	import type { NodeMenu } from '$lib/graph/model';
 
 	import { handleNodeClick } from '$lib/graph/node_click';
-	import { onMount } from 'svelte';
 
 	import { FamilyTree } from '$lib/graph/layout';
 	import { tailwindClassToPixels } from '$lib/tailwindSizeToPx';
 	import type { Layout } from '$lib/graph/model';
+	import SideBar from '$lib/sidebar/sideBar.svelte';
+
 	let { data }: { data: Layout & { id: string } } = $props();
 
 	let selectedPerson: components['schemas']['PersonProperties'] & { id: number | null } = $state({
@@ -62,6 +62,7 @@
 		}
 
 		openPersonMenu = {
+			XUserId: data.id,
 			onClick: () => {
 				openPersonMenu = undefined;
 			},
@@ -108,6 +109,7 @@
 				relationshipStart = Number(node.id);
 				openPersonMenu = undefined;
 			},
+			id: node.id,
 			top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
 			left: event.clientX < clientWidth - 200 ? event.clientX : undefined,
 			right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
@@ -178,46 +180,48 @@
 <svelte:head>
 	<title>{title({ page: family_tree() })}</title>
 </svelte:head>
-
-<div style="height:100vh;" class="!bg-base-200 flex flex-col">
-	<SvelteFlowProvider>
-		<SvelteFlow
-			bind:nodes
-			bind:edges
-			onnodeclick={handleNodeClickFunc}
-			onnodecontextmenu={handleContextMenu}
-			onpaneclick={handlePaneClick}
-			class="!bg-base-200"
-			{nodeTypes}
-			fitView
-			onlyRenderVisibleElements
-			connectionLineType={ConnectionLineType.SmoothStep}
-		>
-			<MiniMap class="!bg-base-300" />
-			<Controls class="!bg-base-300" />
-			{#if openPersonPanel}
-				<PersonModal
-					person={selectedPerson}
-					closeModal={() => {
-						openPersonPanel = false;
-					}}
-				/>
-			{/if}
-			{#if createPerson}
-				<CreatePerson
-					onOnlyPersonCreation={() => {
-						createPerson = false;
-					}}
-					{onCreation}
-					closeModal={() => {
-						createPerson = false;
-					}}
-					relationshipStartID={relationshipStart}
-				></CreatePerson>
-			{/if}
-			{#if openPersonMenu !== undefined}
-				<PersonMenu {...openPersonMenu!} />
-			{/if}
-		</SvelteFlow>
-	</SvelteFlowProvider>
+<div class="drawer">
+	<div style="height:100vh;" class="!bg-base-200 drawer-content flex flex-col">
+		<SvelteFlowProvider>
+			<SvelteFlow
+				bind:nodes
+				bind:edges
+				onnodeclick={handleNodeClickFunc}
+				onnodecontextmenu={handleContextMenu}
+				onpaneclick={handlePaneClick}
+				class="!bg-base-200"
+				{nodeTypes}
+				fitView
+				onlyRenderVisibleElements
+				connectionLineType={ConnectionLineType.SmoothStep}
+			>
+				<MiniMap class="!bg-base-300" />
+				<Controls class="!bg-base-300" />
+				{#if openPersonPanel}
+					<PersonModal
+						person={selectedPerson}
+						closeModal={() => {
+							openPersonPanel = false;
+						}}
+					/>
+				{/if}
+				{#if createPerson}
+					<CreatePerson
+						onOnlyPersonCreation={() => {
+							createPerson = false;
+						}}
+						{onCreation}
+						closeModal={() => {
+							createPerson = false;
+						}}
+						relationshipStartID={relationshipStart}
+					></CreatePerson>
+				{/if}
+				{#if openPersonMenu !== undefined}
+					<PersonMenu {...openPersonMenu!} />
+				{/if}
+			</SvelteFlow>
+		</SvelteFlowProvider>
+	</div>
+	<SideBar />
 </div>

@@ -53,6 +53,7 @@ func (srv *server) GetFamilyTreeWithSpousesById(
 	err = FlattenFamilyTree(res, &results)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
 		return
 	}
 

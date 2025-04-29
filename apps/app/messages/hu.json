@@ -156,5 +156,7 @@
 	"welcome": "Üdvözöljük a Generációk Öröksége oldalán",
 	"yes": "Igen",
 	"zip_code": "Irányítószám",
-	"add_life_event": "Életesemény hozzadása"
+	"add_life_event": "Életesemény hozzadása",
+	"deleted_profiles": "Törölt profilok",
+	"managed_profiles": "Adminisztrált profilok"
 }
