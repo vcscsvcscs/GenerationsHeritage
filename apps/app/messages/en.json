@@ -159,5 +159,6 @@
 	"yes": "Yes",
 	"zip_code": "Zip Code",
 	"add_life_event": "Add life-event",
-	"deleted_profiles": "Deleted profiles"
+	"deleted_profiles": "Deleted profiles",
+	"managed_profiles": "Managed profiles"
 }
