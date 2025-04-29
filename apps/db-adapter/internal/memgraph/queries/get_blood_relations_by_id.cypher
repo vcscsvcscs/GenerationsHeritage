@@ -1,11 +1,25 @@
 MATCH (n:Person)
 WHERE id(n) = $id
-OPTIONAL MATCH (n)-[p:Parent*..]->(family:Person)
-OPTIONAL MATCH (family)-[c:Child*1..4]->(children:Person)
-OPTIONAL MATCH (family)-[s:Sibling]->(siblings:Person)
+OPTIONAL MATCH (n)-[p:Parent*..]->(ancestors:Person)
+optional MATCH (n)-[cc:Child*..]->(descendants:Person)
+OPTIONAL MATCH (ancestors)-[c:Child*1..4]->(children:Person)
+OPTIONAL MATCH (ancestors)-[s:Sibling]->(siblings:Person)
 OPTIONAL MATCH (n)-[ds:Sibling]->(direct_siblings:Person)
-WITH collections.to_set(collect(n)+collect(family)+collect(children)+collect(direct_siblings)+collect(siblings)) as people, 
-collections.to_set(collect(c) + collect(p) + collect(s) + collect(ds)) as relationships
+WITH collections.to_set(
+  collect(n)+
+  collect(descendants)+
+  collect(ancestors)+
+  collect(children)+
+  collect(direct_siblings)+
+  collect(siblings)
+  ) as people, 
+collections.to_set(
+  collect(c) +
+  collect(cc) + 
+  collect(p) + 
+  collect(s) + 
+  collect(ds)
+  ) as relationships
 UNWIND people as ppl
 RETURN collect({
   id: id(ppl),
