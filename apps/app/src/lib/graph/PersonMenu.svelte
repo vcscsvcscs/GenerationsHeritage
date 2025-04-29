@@ -34,14 +34,15 @@
 		if (bottom) {
 			contextMenu.style.bottom = `${bottom}px`;
 		}
-		fetch(`/api/admin/${id}/${XUserId}`
-		).then((response) => {
-				if(response.status === 200){
+		fetch(`/api/admin/${id}/${XUserId}`)
+			.then((response) => {
+				if (response.status === 200) {
 					isAdmin = true;
-				}else {
-					isAdmin = false
+				} else {
+					isAdmin = false;
 				}
-			}).catch((error) => {
+			})
+			.catch((error) => {
 				console.error('Error fetching admin status:', error);
 			});
 	});
@@ -64,7 +65,7 @@
 	</button>
 	<button onclick={addRelationship} class="btn">{add_relationship()}</button>
 	<button onclick={addAdmin} class="btn">{add_administrator()}</button>
-	{#if (Number(XUserId) !== Number(id)) && isAdmin}
+	{#if Number(XUserId) !== Number(id) && isAdmin}
 		<button onclick={deleteNode} class="btn">{remove()}</button>
 	{/if}
 </div>

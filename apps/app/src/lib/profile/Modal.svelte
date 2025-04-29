@@ -7,7 +7,7 @@
 	import LifeEventsTimeline from './LifeEventsTimeline.svelte';
 	import OtherDetails from './OtherDetails.svelte';
 	import type { components } from '$lib/api/api.gen.js';
-	import { life_events } from '$lib/paraglide/messages';
+
 	let {
 		closeModal = () => {},
 		person = {}

@@ -35,7 +35,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			message: 'Family tree is empty'
 		});
 	}
-	
+
 	var graphToReturn: components['schemas']['FamilyTree'] = {
 		people: [],
 		relationships: response.data.relationships

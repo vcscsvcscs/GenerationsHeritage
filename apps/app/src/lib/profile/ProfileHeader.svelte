@@ -17,7 +17,8 @@
 		middle_name,
 		mothers_first_name,
 		mothers_last_name,
-		profile_picture
+		profile_picture,
+		create_invite_code
 	} from '$lib/paraglide/messages';
 	import { callMessageFunction } from '$lib/i18n';
 	import type { MessageKeys } from '$lib/i18n';
@@ -80,14 +81,14 @@
 	<div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
 		<div>
 			<p>
-				<strong>{first_name()}:</strong>
+				<strong>{first_name()}: </strong>
 				{#if editorMode}<input
 						bind:value={person.first_name}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.first_name ?? '-'}{/if}
 			</p>
 			<p>
-				<strong>{last_name()}:</strong>
+				<strong>{last_name()}: </strong>
 				{#if editorMode}<input
 						bind:value={person.last_name}
 						class="input input-sm input-bordered w-full"
@@ -101,7 +102,7 @@
 					/>{:else}{person.middle_name ?? '-'}{/if}
 			</p>
 			<p>
-				<strong>{born()}:</strong>
+				<strong>{born()}: </strong>
 				{#if editorMode}<input
 						type="text"
 						class="pika-single w-full"
@@ -112,7 +113,7 @@
 				{:else}{person.born ?? '-'}{/if}
 			</p>
 			<p>
-				<strong>{died()}:</strong>
+				<strong>{died()}: </strong>
 				{#if editorMode}<input
 						type="text"
 						class="pika-single w-full"
@@ -123,7 +124,7 @@
 					/>{:else}{person.died ?? '-'}{/if}
 			</p>
 			<p>
-				<strong>{biological_sex()}:</strong>
+				<strong>{biological_sex()}: </strong>
 				{#if editorMode}
 					<select
 						name="biological_sex"
@@ -162,8 +163,11 @@
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.mothers_last_name ?? '-'}{/if}
 			</p>
-			<p><strong> {id()}:</strong>{person.id ?? '-'}</p>
-			<p><strong> Limit:</strong>{person.limit ?? '-'}</p>
+			<p><strong>{id()}: </strong>{' ' + (person.id ?? '-')}</p>
+			<p><strong>Limit: </strong>{' ' + (person.limit ?? '-')}</p>
+			{#if editorMode && (person.google_id === undefined || person.google_id === null || person.google_id !== '')}
+				<button class="btn btn-accent-soft btn-sm">{create_invite_code()}</button>
+			{/if}
 		</div>
 	</div>
 </div>

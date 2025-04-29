@@ -34,7 +34,6 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		return {};
 	}
 
-
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
 	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
 	const code = event.url.searchParams.get('code');
@@ -101,13 +100,13 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		email: email
 	};
 
-	event.cookies.set('already_loaded', 'true',{
+	event.cookies.set('already_loaded', 'true', {
 		path: '/login/google/callback',
 		sameSite: 'lax',
 		httpOnly: true,
 		maxAge: 60 * 10,
-		secure: import.meta.env.PROD,
-	})
+		secure: import.meta.env.PROD
+	});
 
 	return {
 		props: personP
@@ -133,17 +132,20 @@ async function register(event: RequestEvent) {
 		mothers_first_name: data.get('mothers_first_name'),
 		mothers_last_name: data.get('mothers_last_name'),
 		google_id: data.get('google_id'),
-		limit: StorageLimit,
+		limit: StorageLimit
 	} as components['schemas']['PersonRegistration'];
 
 	if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
-		return fail(500, { data: parsedData, message: 'Server configuration error. GH_SESSIONS KeyValue store missing' });
+		return fail(500, {
+			data: parsedData,
+			message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
+		});
 	}
 
 	const first_name_f = data.get('first_name');
 	if (first_name_f === null || first_name_f === '') {
 		return fail(400, {
-			data:parsedData,
+			data: parsedData,
 			message: missing_field({
 				field: first_name()
 			})
@@ -287,14 +289,12 @@ async function register(event: RequestEvent) {
 
 	setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-	event.cookies.delete('already_loaded',
-		{
-			path: '/login/google/callback',
-			sameSite: 'lax',
-			httpOnly: true,
-			maxAge: 0,
-			secure: import.meta.env.PROD
-		}
-	);
+	event.cookies.delete('already_loaded', {
+		path: '/login/google/callback',
+		sameSite: 'lax',
+		httpOnly: true,
+		maxAge: 0,
+		secure: import.meta.env.PROD
+	});
 	return redirect(302, '/');
 }

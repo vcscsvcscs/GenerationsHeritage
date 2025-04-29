@@ -4,7 +4,7 @@ import PersonNode from './PersonNode.svelte';
 
 export const nodeTypes: NodeTypes = { personNode: PersonNode };
 export const edgeTypes: EdgeTypes = {
-		familyEdge: FamilyEdge
+	familyEdge: FamilyEdge
 };
 
 export type NodeMenu = {

@@ -7,10 +7,10 @@
 		SvelteFlow,
 		Controls,
 		MiniMap,
-		ConnectionLineType,
+		ConnectionLineType
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
-	import type {OnConnectEnd, Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
+	import type { OnConnectEnd, Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
 
 	import PersonModal from '$lib/profile/Modal.svelte';
 	import PersonMenu from '$lib/graph/PersonMenu.svelte';
@@ -165,6 +165,7 @@
 						selectedPerson = data.Props as components['schemas']['PersonProperties'] & {
 							id: number | null;
 						};
+						selectedPerson.id = person.id;
 					}
 				});
 		}
@@ -177,13 +178,13 @@
 
 	const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
 		if (connectionState.isValid) return;
-		const sourceNodeId = connectionState.fromNode?.id
+		const sourceNodeId = connectionState.fromNode?.id;
 		if (sourceNodeId === undefined) return;
 		relationshipStart = Number(sourceNodeId);
 		createPerson = true;
 		console.log('createPerson', createPerson);
 		console.log('relationshipStart', relationshipStart);
-	}
+	};
 </script>
 
 <svelte:head>

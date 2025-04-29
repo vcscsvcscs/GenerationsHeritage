@@ -5,7 +5,7 @@
 {#if show}
 	<label for="my-drawer" class="btn btn-circle drawer-button swap swap-rotate">
 		<!-- this hidden checkbox controls the state -->
-        <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+		<input id="my-drawer" type="checkbox" class="drawer-toggle" />
 
 		<!-- hamburger icon -->
 		<svg
