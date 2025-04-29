@@ -6,7 +6,6 @@
 	import { isValidConnection } from './connection.js';
 	type $$Props = NodeProps;
 
-	export let id: NodeProps['id'];
 	export let data: NodeProps['data'] & components['schemas']['PersonProperties'];
 	const connection = useConnection();
 </script>
@@ -14,9 +13,21 @@
 <div
 	class="card card-compact bg-primary-content text-primary flex h-40 w-40 flex-col items-center justify-center rounded-full shadow-lg"
 >
-	<Handle class="customHandle" isValidConnection={isValidConnection} position={Position.Bottom} type="source" style="z-index: 1;" />
+	<Handle
+		class="customHandle"
+		{isValidConnection}
+		position={Position.Bottom}
+		type="source"
+		style="z-index: 1;"
+	/>
 
-	<Handle class="customHandle" isValidConnection={isValidConnection} position={Position.Top} type="target" isConnectableStart={false} />
+	<Handle
+		class="customHandle"
+		{isValidConnection}
+		position={Position.Top}
+		type="target"
+		isConnectableStart={false}
+	/>
 
 	<div class="avatar mb-2">
 		<div
