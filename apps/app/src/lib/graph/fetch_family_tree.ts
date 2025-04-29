@@ -24,8 +24,8 @@ export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layo
 	let relationships: Edge[] = [];
 	if (data.relationships) {
 		relationships = data.relationships.map((relationship) => {
-			let newEdge = { data: { ...relationship.Props } } as Edge;
-            newEdge.data!.type = relationship.Type?.toLowerCase();
+			const newEdge = { data: { ...relationship.Props } } as Edge;
+			newEdge.data!.type = relationship.Type?.toLowerCase();
 			if (relationship.StartElementId !== null && relationship.StartElementId !== undefined) {
 				newEdge.source = relationship.StartElementId;
 			}

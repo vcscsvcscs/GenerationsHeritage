@@ -103,24 +103,24 @@
 			<p>
 				<strong>{born()}:</strong>
 				{#if editorMode}<input
-					type="text"
-					class="pika-single w-full"
-					id="birth_date"
-					bind:this={birth_date}
-					bind:value={person.born}
-				/>
+						type="text"
+						class="pika-single w-full"
+						id="birth_date"
+						bind:this={birth_date}
+						bind:value={person.born}
+					/>
 				{:else}{person.born ?? '-'}{/if}
 			</p>
 			<p>
 				<strong>{died()}:</strong>
 				{#if editorMode}<input
-					type="text"
-					class="pika-single w-full"
-					id="death_date"
-					placeholder={died()}
-					bind:this={death_date}
-					bind:value={person.died}
-				/>{:else}{person.died ?? '-'}{/if}
+						type="text"
+						class="pika-single w-full"
+						id="death_date"
+						placeholder={died()}
+						bind:this={death_date}
+						bind:value={person.died}
+					/>{:else}{person.died ?? '-'}{/if}
 			</p>
 			<p>
 				<strong>{biological_sex()}:</strong>

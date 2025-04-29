@@ -25,7 +25,7 @@ export async function load(event: RequestEvent) {
 
 	const data = (await response.json()) as components['schemas']['FamilyTree'];
 
-	let layout = parseFamilyTree(data) as Layout & {id: string};
+	const layout = parseFamilyTree(data) as Layout & { id: string };
 	layout.id = event.locals.session.userId;
 
 	return layout;
