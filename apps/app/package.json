@@ -18,11 +18,10 @@
 		"build-storybook": "storybook build",
 		"deploy-stage": "npm run build && wrangler pages deploy --env staging",
 		"deploy-prod": "npm run build && wrangler pages deploy --env production",
-		"cf-typegen": "wrangler types && move worker-configuration.d.ts src/"
+		"cf-typegen": "wrangler types && mv worker-configuration.d.ts src/"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^3.2.4",
-		"@cloudflare/workers-types": "^4.20250214.0",
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@playwright/test": "^1.50.1",
