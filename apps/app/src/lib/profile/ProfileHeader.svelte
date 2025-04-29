@@ -79,7 +79,7 @@
 		{/if}
 	</div>
 	<div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
-		<div>
+		<div class="flex flex-col gap-2">
 			<p>
 				<strong>{first_name()}: </strong>
 				{#if editorMode}<input
@@ -141,7 +141,7 @@
 				{:else}{callMessageFunction(person.biological_sex as MessageKeys) ?? '-'}{/if}
 			</p>
 		</div>
-		<div>
+		<div class="flex flex-col gap-2">
 			<p>
 				<strong>{email()}:</strong>
 				{#if editorMode}<input
@@ -165,8 +165,8 @@
 			</p>
 			<p><strong>{id()}: </strong>{' ' + (person.id ?? '-')}</p>
 			<p><strong>Limit: </strong>{' ' + (person.limit ?? '-')}</p>
-			{#if editorMode && (person.google_id === undefined || person.google_id === null || person.google_id !== '')}
-				<button class="btn btn-accent-soft btn-sm">{create_invite_code()}</button>
+			{#if editorMode && (person.google_id === undefined || person.google_id === null || person.google_id === '')}
+				<button class="btn btn-soft btn-accent btn-m">{create_invite_code()}</button>
 			{/if}
 		</div>
 	</div>

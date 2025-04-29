@@ -63,12 +63,4 @@
 	}
 </script>
 
-<BaseEdge path={edgePath} {markerEnd} {style} />
-<EdgeLabelRenderer>
-	<div
-		class="button-edge__label nodrag nopan"
-		style:transform="translate(-50%, -50%) translate({labelX}px,{labelY}px)"
-	>
-		<button class="button-edge__button" onclick={onEdgeClick}>{edgeLabel}</button>
-	</div>
-</EdgeLabelRenderer>
+<BaseEdge path={edgePath} {markerEnd} {style} onclick={onEdgeClick}/>

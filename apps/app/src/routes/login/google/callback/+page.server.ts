@@ -29,11 +29,6 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		return {};
 	}
 
-	let already_loaded = event.cookies.get('already_loaded') ?? null;
-	if (already_loaded !== null) {
-		return {};
-	}
-
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
 	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
 	const code = event.url.searchParams.get('code');
@@ -50,6 +45,17 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	try {
 		tokens = await google.validateAuthorizationCode(code, codeVerifier);
 	} catch (e) {
+		let already_loaded = event.cookies.get('already_loaded') ?? null;
+		if (already_loaded !== null) {
+			event.cookies.delete('already_loaded', {
+				path: '/login/google/callback',
+				sameSite: 'lax',
+				httpOnly: true,
+				maxAge: 0,
+				secure: import.meta.env.PROD
+			});
+			return {};
+		}
 		return error(400, { message: 'Failed to validate authorization code with ' + e });
 	}
 

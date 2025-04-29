@@ -34,6 +34,7 @@
 	let birth_date: HTMLInputElement;
 	let birth_date_value: HTMLInputElement;
 	onMount(() => {
+		
 		if (birth_date) {
 			import('pikaday').then(({ default: Pikaday }) => {
 				const picker = new Pikaday({

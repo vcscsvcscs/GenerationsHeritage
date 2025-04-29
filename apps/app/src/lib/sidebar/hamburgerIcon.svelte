@@ -1,12 +1,10 @@
-<script>
+<script lang="ts">
 	export let show = false;
+	export let clicked = false;
 </script>
 
 {#if show}
-	<label for="my-drawer" class="btn btn-circle drawer-button swap swap-rotate">
-		<!-- this hidden checkbox controls the state -->
-		<input id="my-drawer" type="checkbox" class="drawer-toggle" />
-
+	<label for="my-drawer" class={"drawer-button btn btn-circle swap swap-rotate" + (clicked?" swap-active":"")}>
 		<!-- hamburger icon -->
 		<svg
 			class="swap-off fill-current"

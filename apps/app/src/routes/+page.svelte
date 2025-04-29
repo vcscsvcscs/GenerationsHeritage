@@ -25,6 +25,7 @@
 	import { tailwindClassToPixels } from '$lib/tailwindSizeToPx';
 	import type { Layout } from '$lib/graph/model';
 	import SideBar from '$lib/sidebar/sideBar.svelte';
+	import HamburgerIcon from '$lib/sidebar/hamburgerIcon.svelte';
 
 	let { data }: { data: Layout & { id: string } } = $props();
 
@@ -185,12 +186,15 @@
 		console.log('createPerson', createPerson);
 		console.log('relationshipStart', relationshipStart);
 	};
+	let sideBarOpen = $state(false);
 </script>
 
 <svelte:head>
 	<title>{title({ page: family_tree() })}</title>
 </svelte:head>
 <div class="drawer">
+	<!-- this hidden checkbox controls the state -->
+	<input id="my-drawer" type="checkbox" class="drawer-toggle" onchange={()=>{sideBarOpen = !sideBarOpen}}/>
 	<div style="height:100vh;" class="!bg-base-200 drawer-content flex flex-col">
 		<SvelteFlowProvider>
 			<SvelteFlow
@@ -236,4 +240,7 @@
 		</SvelteFlowProvider>
 	</div>
 	<SideBar />
+</div>
+<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
+	<HamburgerIcon clicked={sideBarOpen} show={true} />
 </div>

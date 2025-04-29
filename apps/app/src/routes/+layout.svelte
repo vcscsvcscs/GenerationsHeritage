@@ -6,14 +6,10 @@
 	import ThemeButton from '$lib/ThemeSelect.svelte';
 	import Logout from '$lib/Logout.svelte';
 	import { page } from '$app/state';
-	import HamburgerIcon from '$lib/sidebar/hamburgerIcon.svelte';
 </script>
 
 <ParaglideJS {i18n}>
 	{@render children()}
-	<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
-		<HamburgerIcon show={!page.url.pathname.includes('login')} />
-	</div>
 	<div class="absolute top-2 right-2 flex flex-row items-center gap-2">
 		<ThemeButton />
 		<Logout show={!page.url.pathname.includes('login')} />

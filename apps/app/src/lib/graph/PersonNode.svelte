@@ -1,16 +1,29 @@
 <!-- <svelte:options immutable /> -->
 
 <script lang="ts">
-	import { Handle, Position, useConnection, type NodeProps } from '@xyflow/svelte';
+	import { Handle, Position, type NodeProps } from '@xyflow/svelte';
 	import type { components } from '$lib/api/api.gen';
 	import { isValidConnection } from './connection.js';
 	type $$Props = NodeProps;
 
 	export let data: NodeProps['data'] & components['schemas']['PersonProperties'];
+
+	let nodeColor = ' bg-neutral text-neutral-content';
+	switch (data.biological_sex) {
+		case ('female'):
+			nodeColor = ' bg-secondary text-secondary-content';
+			break;
+		case ('male'):
+			nodeColor = ' bg-primary text-primary-content';
+			break;
+		case ('intersex'):
+			nodeColor = ' bg-accent text-accent-content';
+			break;
+	}
 </script>
 
 <div
-	class="card card-compact bg-primary-content text-primary flex h-40 w-40 flex-col items-center justify-center rounded-full shadow-lg"
+	class={"card card-compact flex h-40 w-40 flex-col items-center justify-center rounded-full shadow-lg" + nodeColor}
 >
 	<Handle
 		class="customHandle"
@@ -32,7 +45,7 @@
 
 	<div class="avatar mb-2" style="z-index: 2; cursor: pointer;">
 		<div
-			class="ring-accent ring-offset-accent bg-accent w-24 rounded-full border-0 ring ring-offset-1"
+			class="bg-accent w-24 rounded-full border-0 ring-offset-1"
 		>
 			<img
 				src={data.profile_picture || 'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
