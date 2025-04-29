@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { components } from '$lib/api/api.gen.ts';
 	import { child, spouse, parent, sibling } from '$lib/paraglide/messages';
-	import { getSmoothStepPath, BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/svelte';
+	import { getSmoothStepPath, BaseEdge, type EdgeProps } from '@xyflow/svelte';
 
 	let {
 		sourceX,

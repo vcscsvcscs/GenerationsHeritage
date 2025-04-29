@@ -96,17 +96,18 @@
 			}
 			let data = (await response.json()) as {
 				person?: components['schemas']['Person'];
-				relationships?: components['schemas']['Relationship'][];
+				relationships?: components['schemas']['dbtypeRelationship'][];
 			};
 			if (onCreation !== undefined) {
 				let edges: Array<Edge> = [];
 				data.relationships?.map((relationship) =>
 					edges.push({
-						id: String(relationship.id),
-						source: String(relationship.start),
-						target: String(relationship.end),
+						id: String(relationship.Id),
+						source: String(relationship.StartElementId),
+						target: String(relationship.EndElementId),
 						data: {
-							...relationship.properties
+							...relationship.Props,
+							type: relationship.Type
 						}
 					})
 				);

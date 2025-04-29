@@ -37,8 +37,6 @@
 	let with_out_spouse = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
-	let nodes = $state.raw<Node[]>([]);
-	let edges = $state.raw<Edge[]>([]);
 	let layout = familyTreeDAG.getLayoutedElements(
 		data.Nodes,
 		data.Edges,
@@ -46,8 +44,11 @@
 		tailwindClassToPixels('h-40') || 160,
 		'TB'
 	);
-	nodes = layout.Nodes;
-	edges = layout.Edges;
+	console.log('layout', layout);
+	console.log('dagEdges',familyTreeDAG.edges());
+	console.log('dagNodes',familyTreeDAG.nodes());
+	let nodes = $state.raw<Node[]>(layout.Nodes);
+	let edges = $state.raw<Edge[]>(layout.Edges);
 
 	let relationshipStart: number | null = $state(null);
 	let createPerson = $state(false);
@@ -134,7 +135,7 @@
 			tailwindClassToPixels('h-40') || 160,
 			'TB'
 		);
-
+		console.log('newLayout', newLayout);
 		edges = newLayout.Edges;
 		nodes = newLayout.Nodes;
 	};

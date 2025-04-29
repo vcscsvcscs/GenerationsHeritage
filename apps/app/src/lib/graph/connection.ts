@@ -2,7 +2,7 @@ import type { Connection } from '@xyflow/svelte';
 import type { EdgeBase } from '@xyflow/system';
 
 export function isValidConnection(edge: EdgeBase | Connection) {
-	if (edge.source !== edge.target) {
+	if (Number(edge.source) !== Number(edge.target)) {
 		return true;
 	}
 
