@@ -103,7 +103,7 @@ type FamilyRelationship struct {
 // FamilyTree defines model for FamilyTree.
 type FamilyTree struct {
 	People        *[]OptimizedPersonNode `json:"people,omitempty"`
-	Relationships *[]Relationship        `json:"relationships,omitempty"`
+	Relationships *[]DbtypeRelationship  `json:"relationships,omitempty"`
 }
 
 // Likes defines model for Likes.
@@ -496,9 +496,6 @@ type UpdateRelationshipJSONBody struct {
 type UpdateRelationshipParams struct {
 	XUserID int `json:"X-User-ID"`
 }
-
-// GetCommentsOnPersonJSONRequestBody defines body for GetCommentsOnPerson for application/json ContentType.
-type GetCommentsOnPersonJSONRequestBody = Message
 
 // EditCommentJSONRequestBody defines body for EditComment for application/json ContentType.
 type EditCommentJSONRequestBody = Message
