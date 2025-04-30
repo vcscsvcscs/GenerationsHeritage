@@ -27,6 +27,7 @@
 >
 	<Handle
 		class="customHandle"
+		id='child'
 		{isValidConnection}
 		isConnectable={true}
 		position={Position.Bottom}
@@ -34,8 +35,43 @@
 		style="z-index: 1;"
 	/>
 
+		<Handle
+		class="customHandle"
+		{isValidConnection}
+		position={Position.Left}
+		isConnectable={true}
+		type="target"
+		isConnectableStart={false}
+	/>
+
+	<Handle
+	class="customHandle"
+	{isValidConnection}
+	position={Position.Right}
+	isConnectable={true}
+	type="target"
+	isConnectableStart={false}
+/>
+<Handle
+class="customHandle"
+{isValidConnection}
+position={Position.Left}
+isConnectable={true}
+type="source"
+isConnectableStart={true}
+/>
+
+<Handle
+class="customHandle"
+{isValidConnection}
+position={Position.Right}
+isConnectable={true}
+type="source"
+isConnectableStart={true}
+/>
 	<Handle
 		class="customHandle"
+		id='parent'
 		{isValidConnection}
 		position={Position.Top}
 		isConnectable={true}
