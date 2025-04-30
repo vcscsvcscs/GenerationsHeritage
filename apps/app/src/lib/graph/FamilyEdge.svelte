@@ -17,7 +17,6 @@
 		data
 	}: EdgeProps = $props();
 
-
 	let edgeType = (
 		data as components['schemas']['FamilyRelationship'] & { type: string }
 	).type.toLowerCase();
@@ -70,7 +69,7 @@
 		edgeLabel = edgeType;
 	}
 
-	let  [path, labelX, labelY] = $derived(
+	let [path, labelX, labelY] = $derived(
 		getBezierPath({
 			sourceX,
 			sourceY,
@@ -81,7 +80,7 @@
 		})
 	);
 
-	edgeColor = edgeColor +'stroke-opacity:unset; stroke-width=20;' +(style ?? '');
+	edgeColor = edgeColor + 'stroke-opacity:unset; stroke-width=20;' + (style ?? '');
 
 	const onEdgeClick = () => {
 		window.dispatchEvent(
@@ -96,4 +95,4 @@
 	};
 </script>
 
-<BaseEdge {path} {labelX} {labelY} {markerEnd} style={edgeColor} onclick={onEdgeClick}/>
+<BaseEdge {path} {labelX} {labelY} {markerEnd} style={edgeColor} onclick={onEdgeClick} />

@@ -38,7 +38,7 @@
 				mediaType = 'photo';
 			}}
 		>
-			{'+ '+photos()}
+			{'+ ' + photos()}
 		</button>
 		<button
 			class="btn btn-soft btn-xs"
@@ -47,7 +47,7 @@
 				mediaType = 'video';
 			}}
 		>
-			{'+ '+video()}
+			{'+ ' + video()}
 		</button>
 	</div>
 {/if}

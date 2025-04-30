@@ -69,7 +69,12 @@
 				return;
 			} else {
 				const errorDetails = await response.json();
-				alert('Error saving person data, status: ' + response.status + ' ' + JSON.stringify(errorDetails));
+				alert(
+					'Error saving person data, status: ' +
+						response.status +
+						' ' +
+						JSON.stringify(errorDetails)
+				);
 			}
 		} catch (error) {
 			alert('An unexpected error occurred: ' + error);

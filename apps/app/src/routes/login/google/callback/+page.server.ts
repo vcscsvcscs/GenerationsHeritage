@@ -192,8 +192,8 @@ async function register(event: RequestEvent) {
 			message: missing_field({
 				field: born()
 			})
-		}); 
-	}else {
+		});
+	} else {
 		birth_date = birth_date.toString();
 	}
 
@@ -249,17 +249,19 @@ async function register(event: RequestEvent) {
 	let invite_code = data.get('invite_code');
 	if (invite_code !== null) {
 		invite_code = invite_code.toString();
-	}else {
+	} else {
 		invite_code = '';
 	}
 
-	let responseData :{
-		Id?: number;
-		ElementId?: string;
-		Labels?: string[];
-		Props?: components["schemas"]["PersonProperties"];
-	} | undefined = undefined;
-	if (!(invite_code.length > 0)){
+	let responseData:
+		| {
+				Id?: number;
+				ElementId?: string;
+				Labels?: string[];
+				Props?: components['schemas']['PersonProperties'];
+		  }
+		| undefined = undefined;
+	if (!(invite_code.length > 0)) {
 		let response = await client.POST('/person/google/{google_id}', {
 			params: {
 				data: parsedData,
@@ -282,7 +284,7 @@ async function register(event: RequestEvent) {
 			});
 		}
 		responseData = response.data;
-	}else {
+	} else {
 		let response = await client.PATCH('/person/google/{google_id}', {
 			params: {
 				path: { google_id: google_id.toString() }
@@ -290,7 +292,7 @@ async function register(event: RequestEvent) {
 			body: {
 				invite_code: invite_code,
 				person: personP
-			},
+			}
 		});
 		if (response.response.status !== 200) {
 			return fail(400, {

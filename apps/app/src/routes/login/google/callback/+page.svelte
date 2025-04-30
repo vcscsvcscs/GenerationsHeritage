@@ -17,12 +17,8 @@
 		female,
 		other,
 		intersex,
-
 		invite_code,
-
 		have_invite_code
-
-
 	} from '$lib/paraglide/messages';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
@@ -40,7 +36,6 @@
 	let birth_date: HTMLInputElement;
 	let birth_date_value: HTMLInputElement;
 	onMount(() => {
-		
 		if (birth_date) {
 			import('pikaday').then(({ default: Pikaday }) => {
 				const picker = new Pikaday({

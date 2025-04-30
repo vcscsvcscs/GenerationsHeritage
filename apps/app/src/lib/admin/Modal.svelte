@@ -7,9 +7,7 @@
 		from_time,
 		admin,
 		create_relationship_and_person,
-
 		add_relationship
-
 	} from '$lib/paraglide/messages';
 	import ModalButtons from './ModalButtons.svelte';
 	import type { components, operations } from '$lib/api/api.gen';
@@ -19,8 +17,8 @@
 		editProfile = () => {},
 		onChange = () => {},
 		addRelationship = () => {},
-		createProfile = ()=> {},
-		createRelationshipAndProfile = () => {},
+		createProfile = () => {},
+		createRelationshipAndProfile = () => {}
 	} = $props<{
 		closeModal: () => void;
 		onChange?: () => void;
@@ -31,29 +29,29 @@
 	}>();
 
 	let managed_profiles_list: components['schemas']['Admin'][] = $state([]);
-	function fetchManagedProfiles(){
-	fetch(`/api/managed_profiles`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	})
-		.then((response) => {
-			if (!response.ok) {
-				console.log('Cannot get managed profiles, status: ' + response.status);
-				return;
+	function fetchManagedProfiles() {
+		fetch(`/api/managed_profiles`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
 			}
+		})
+			.then((response) => {
+				if (!response.ok) {
+					console.log('Cannot get managed profiles, status: ' + response.status);
+					return;
+				}
 
-			return response.json();
-		})
-		.then((data) => {
-			if (data) {
-				managed_profiles_list = [...(data as components['schemas']['Admin'][])];
-			}
-		})
-		.catch((error) => {
-			console.error('Error fetching managed profiles:', error);
-		});
+				return response.json();
+			})
+			.then((data) => {
+				if (data) {
+					managed_profiles_list = [...(data as components['schemas']['Admin'][])];
+				}
+			})
+			.catch((error) => {
+				console.error('Error fetching managed profiles:', error);
+			});
 	}
 
 	fetchManagedProfiles();
@@ -122,24 +120,27 @@
 						<div class="text-xs font-semibold uppercase opacity-60">{profile.label![0]}</div>
 					</div>
 					<button
-					class="btn btn-success btn-soft"
-					onclick={() => {
-						addRelationship(profile.id!);
-					}}>
-					{add_relationship()}
-				</button>
+						class="btn btn-success btn-soft"
+						onclick={() => {
+							addRelationship(profile.id!);
+						}}
+					>
+						{add_relationship()}
+					</button>
 					<button
-					class="btn btn-success btn-soft"
-					onclick={() => {
-						createRelationshipAndProfile(profile.id!);
-					}}>
-					{create_relationship_and_person()}
-				</button>
+						class="btn btn-success btn-soft"
+						onclick={() => {
+							createRelationshipAndProfile(profile.id!);
+						}}
+					>
+						{create_relationship_and_person()}
+					</button>
 					<button
 						class="btn btn-secondary"
 						onclick={() => {
 							editProfile(profile.id!);
-						}}>
+						}}
+					>
 						{edit()}
 					</button>
 					{#if profile.label?.includes('DeletedPerson')}

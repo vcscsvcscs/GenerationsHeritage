@@ -35,10 +35,10 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			if (String(edge.data?.type).toLowerCase() === 'child') {
 				newEdge.sourceHandle = 'child';
 				newEdge.targetHandle = 'parent';
-			}else if (String(edge.data?.type).toLowerCase() === 'parent') {
-				return
+			} else if (String(edge.data?.type).toLowerCase() === 'parent') {
+				return;
 			}
-			
+
 			const sourceNode = this.node(edge.source);
 			const targetNode = this.node(edge.target);
 			if (!sourceNode || !targetNode) {
@@ -79,7 +79,6 @@ export class FamilyTree extends dagre.graphlib.Graph {
 
 				targetNode.x = desiredX;
 				targetNode.y = sourceNode.y;
-			
 			}
 
 			if (String(edge.data?.type).toLowerCase() === 'spouse') {

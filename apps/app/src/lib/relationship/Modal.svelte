@@ -9,7 +9,7 @@
 		relation_type,
 		sibling,
 		spouse,
-		until,
+		until
 	} from '$lib/paraglide/messages';
 	import type { Edge } from '@xyflow/svelte';
 	import ModalButtons from '$lib/relationship/ModalButtons.svelte';
@@ -41,7 +41,13 @@
 	let relationshiptype: 'sibling' | 'child' | 'parent' | 'spouse' | undefined = $state('sibling');
 
 	async function getRelationships(startId: string, endId: string) {
-		if (startId === undefined || endId === undefined || startId === '' || endId === '' || startId === endId) {
+		if (
+			startId === undefined ||
+			endId === undefined ||
+			startId === '' ||
+			endId === '' ||
+			startId === endId
+		) {
 			return;
 		}
 
@@ -60,7 +66,7 @@
 		relationships.push((await response.json()) as components['schemas']['dbtypeRelationship']);
 	}
 
-	if (!createRelationship){
+	if (!createRelationship) {
 		getRelationships(startNode, endNode);
 		getRelationships(endNode, startNode);
 	}
@@ -92,7 +98,6 @@
 			} else {
 				console.log(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
 			}
-
 		}
 
 		closeModal();
@@ -126,7 +131,7 @@
 		});
 
 		if (!response.ok) {
-			console.log('Cannot create relationship'+', status: ' + response.status);
+			console.log('Cannot create relationship' + ', status: ' + response.status);
 			return;
 		}
 
@@ -177,8 +182,8 @@
 				<p><strong>{id().toLowerCase()}:</strong>{startNode}</p>
 			</div>
 			<div class="form-control mt-1">
-				<label for="endNode" class="label">{relation()+' '+id().toLowerCase()}:</label>
-				<input id="endNode" type="text" bind:value={endNode} class="input input-bordered w-full"/>
+				<label for="endNode" class="label">{relation() + ' ' + id().toLowerCase()}:</label>
+				<input id="endNode" type="text" bind:value={endNode} class="input input-bordered w-full" />
 			</div>
 		{/if}
 		{#if !createRelationship}

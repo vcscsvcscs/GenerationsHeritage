@@ -44,7 +44,7 @@
 			.catch((error) => {
 				console.error('Error fetching admin status:', error);
 			});
-			fetch(`/api/admin/${edge.target}/${XUserId}`)
+		fetch(`/api/admin/${edge.target}/${XUserId}`)
 			.then((response) => {
 				if (response.status === 200) {
 					isAdmin = true;

@@ -10,24 +10,25 @@
 
 	let nodeColor = ' bg-neutral text-neutral-content';
 	switch (data.biological_sex) {
-		case ('female'):
+		case 'female':
 			nodeColor = ' bg-secondary text-secondary-content';
 			break;
-		case ('male'):
+		case 'male':
 			nodeColor = ' bg-primary text-primary-content';
 			break;
-		case ('intersex'):
+		case 'intersex':
 			nodeColor = ' bg-accent text-accent-content';
 			break;
 	}
 </script>
 
 <div
-	class={"card card-compact flex h-40 w-40 flex-col items-center justify-center rounded-full shadow-lg" + nodeColor}
+	class={'card card-compact flex h-40 w-40 flex-col items-center justify-center rounded-full shadow-lg' +
+		nodeColor}
 >
 	<Handle
 		class="customHandle"
-		id='child'
+		id="child"
 		{isValidConnection}
 		isConnectable={true}
 		position={Position.Bottom}
@@ -35,7 +36,7 @@
 		style="z-index: 1;"
 	/>
 
-		<Handle
+	<Handle
 		class="customHandle"
 		{isValidConnection}
 		position={Position.Left}
@@ -45,33 +46,33 @@
 	/>
 
 	<Handle
-	class="customHandle"
-	{isValidConnection}
-	position={Position.Right}
-	isConnectable={true}
-	type="target"
-	isConnectableStart={false}
-	/>
-	<Handle
-	class="customHandle"
-	{isValidConnection}
-	position={Position.Left}
-	isConnectable={true}
-	type="source"
-	isConnectableStart={true}
-	/>
-
-	<Handle
-	class="customHandle"
-	{isValidConnection}
-	position={Position.Right}
-	isConnectable={true}
-	type="source"
-	isConnectableStart={true}
+		class="customHandle"
+		{isValidConnection}
+		position={Position.Right}
+		isConnectable={true}
+		type="target"
+		isConnectableStart={false}
 	/>
 	<Handle
 		class="customHandle"
-		id='parent'
+		{isValidConnection}
+		position={Position.Left}
+		isConnectable={true}
+		type="source"
+		isConnectableStart={true}
+	/>
+
+	<Handle
+		class="customHandle"
+		{isValidConnection}
+		position={Position.Right}
+		isConnectable={true}
+		type="source"
+		isConnectableStart={true}
+	/>
+	<Handle
+		class="customHandle"
+		id="parent"
 		{isValidConnection}
 		position={Position.Top}
 		isConnectable={true}
@@ -80,9 +81,7 @@
 	/>
 
 	<div class="avatar mb-2" style="z-index: 2; cursor: pointer;">
-		<div
-			class="bg-accent w-24 rounded-full border-0 ring-offset-1"
-		>
+		<div class="bg-accent w-24 rounded-full border-0 ring-offset-1">
 			<img
 				src={data.profile_picture || 'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
 				alt="Picture of {data.last_name} {data.first_name}"

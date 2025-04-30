@@ -2,11 +2,11 @@
 	import { date, description, file, media_title, title, upload } from '$lib/paraglide/messages';
 
 	export let closeModal: () => void;
-    export let onCreation:(newMedia:{
-		url: string,
-		name: string,
-		description: string,
-		date: string
+	export let onCreation: (newMedia: {
+		url: string;
+		name: string;
+		description: string;
+		date: string;
 	}) => void = () => {};
 	export let mediaType: 'audio' | 'video' | 'photo' = 'photo';
 
@@ -48,14 +48,14 @@
 		// Clean up
 		selectedFile = null;
 		newMedia = { url: '', name: '', description: '', date: '' };
-        onCreation(newMedia);
+		onCreation(newMedia);
 		closeModal();
 	}
 </script>
 
 <div class="modal modal-open z-8">
 	<div class="modal-box w-full max-w-xl">
-		<h3 class="text-lg font-bold">{upload()+mediaType}</h3>
+		<h3 class="text-lg font-bold">{upload() + mediaType}</h3>
 
 		<div class="form-control mt-4">
 			<label for="mfile" class="label">{upload() + ' ' + file()}</label>

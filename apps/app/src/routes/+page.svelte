@@ -343,5 +343,9 @@
 </div>
 
 <div class="absolute top-2 left-2 flex flex-row items-center gap-2">
-	<HamburgerIcon open_admin_panel={()=>{adminMenu=!adminMenu}}/>
+	<HamburgerIcon
+		open_admin_panel={() => {
+			adminMenu = !adminMenu;
+		}}
+	/>
 </div>

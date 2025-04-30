@@ -20,9 +20,7 @@
 		mothers_last_name,
 		profile_picture,
 		create_invite_code,
-
 		invite_code
-
 	} from '$lib/paraglide/messages';
 	import { callMessageFunction } from '$lib/i18n';
 	import type { MessageKeys } from '$lib/i18n';
@@ -118,7 +116,7 @@
 						bind:this={birth_date}
 						placeholder={person.born}
 						onchange={() => onChange('born', birth_date.value)}
-				/>
+					/>
 				{:else}{person.born ?? '-'}{/if}
 			</p>
 			<p>
@@ -127,7 +125,7 @@
 						type="text"
 						class="pika-single w-full"
 						id="death_date"
-						placeholder={person.died??died()}
+						placeholder={person.died ?? died()}
 						bind:this={death_date}
 						onchange={() => onChange('died', death_date.value)}
 					/>{:else}{person.died ?? '-'}{/if}
@@ -179,16 +177,19 @@
 			<p><strong>{id()}: </strong>{' ' + (person.id ?? '-')}</p>
 			<p><strong>Limit: </strong>{' ' + (person.limit ?? '-')}</p>
 			{#if editorMode && (person.google_id === undefined || person.google_id === null || person.google_id === '')}
-				{#if new_invite_code===undefined}
-				<button class="btn btn-soft btn-accent btn-m" onclick={()=>{
-					new_invite_code = uuidv4();
-					person.invite_code = new_invite_code;
-					onChange('invite_code',new_invite_code);
-					}}>{create_invite_code()}</button>
+				{#if new_invite_code === undefined}
+					<button
+						class="btn btn-soft btn-accent btn-m"
+						onclick={() => {
+							new_invite_code = uuidv4();
+							person.invite_code = new_invite_code;
+							onChange('invite_code', new_invite_code);
+						}}>{create_invite_code()}</button
+					>
 				{:else}
-				<p>
-					<strong>{invite_code()}:</strong>{person.invite_code}
-				</p>
+					<p>
+						<strong>{invite_code()}:</strong>{person.invite_code}
+					</p>
 				{/if}
 			{/if}
 		</div>
