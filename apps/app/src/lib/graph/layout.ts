@@ -33,13 +33,18 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		let newEdges: Edge[] = [];
 		edges.forEach((edge) => {
 			let newEdge = { ...edge };
-			if (edge.data?.type === 'spouse') {
-				const sourceNode = this.node(edge.source);
-				const targetNode = this.node(edge.target);
-				if (!sourceNode || !targetNode) {
-					return;
-				}
+			if (edge.data?.type === 'child') {
+				newEdge.sourceHandle = 'child';
+				newEdge.targetHandle = 'parent';
+			}
+			
+			const sourceNode = this.node(edge.source);
+			const targetNode = this.node(edge.target);
+			if (!sourceNode || !targetNode) {
+				return;
+			}
 
+			if (edge.data?.type === 'spouse') {
 				const padding = 50; // distance between spouse and source
 				const spouseWidth = nodeWidth;
 
@@ -74,6 +79,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 				targetNode.x = desiredX;
 				targetNode.y = sourceNode.y;
 			}
+			newEdge.hidden = false;
 			newEdge.type = 'familyEdge';
 
 			newEdges.push(newEdge);
@@ -81,11 +87,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 
 		const layoutedNodes = nodes.map((node) => {
 			const nodeWithPosition = this.node(node.id);
-			node.targetPosition = isHorizontal ? Position.Left : Position.Top;
-			node.sourcePosition = isHorizontal ? Position.Right : Position.Bottom;
 
-			// We are shifting the dagre node position (anchor=center center) to the top left
-			// so it matches the React Flow node anchor point (top left).
 			return {
 				...node,
 				type: 'personNode',
