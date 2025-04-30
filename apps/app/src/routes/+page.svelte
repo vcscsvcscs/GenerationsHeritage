@@ -24,7 +24,6 @@
 	import { FamilyTree } from '$lib/graph/layout';
 	import { tailwindClassToPixels } from '$lib/tailwindSizeToPx';
 	import type { Layout } from '$lib/graph/model';
-	import SideBar from '$lib/sidebar/sideBar.svelte';
 	import HamburgerIcon from '$lib/sidebar/hamburgerIcon.svelte';
 
 	let { data }: { data: Layout & { id: string } } = $props();
@@ -45,8 +44,6 @@
 		'TB'
 	);
 	console.log('layout', layout);
-	console.log('dagEdges',familyTreeDAG.edges());
-	console.log('dagNodes',familyTreeDAG.nodes());
 	let nodes = $state.raw<Node[]>(layout.Nodes);
 	let edges = $state.raw<Edge[]>(layout.Edges);
 
@@ -135,7 +132,6 @@
 			tailwindClassToPixels('h-40') || 160,
 			'TB'
 		);
-		console.log('newLayout', newLayout);
 		edges = newLayout.Edges;
 		nodes = newLayout.Nodes;
 	};
@@ -184,64 +180,56 @@
 		if (sourceNodeId === undefined) return;
 		relationshipStart = Number(sourceNodeId);
 		createPerson = true;
-		console.log('createPerson', createPerson);
-		console.log('relationshipStart', relationshipStart);
 	};
-	let sideBarOpen = $state(false);
 </script>
 
 <svelte:head>
 	<title>{title({ page: family_tree() })}</title>
 </svelte:head>
-<div class="drawer">
-	<!-- this hidden checkbox controls the state -->
-	<input id="my-drawer" type="checkbox" class="drawer-toggle" onchange={()=>{sideBarOpen = !sideBarOpen}}/>
-	<div style="height:100vh;" class="!bg-base-200 drawer-content flex flex-col">
-		<SvelteFlowProvider>
-			<SvelteFlow
-				bind:nodes
-				bind:edges
-				onconnectend={handleConnectEnd}
-				onnodeclick={handleNodeClickFunc}
-				onnodecontextmenu={handleContextMenu}
-				onpaneclick={handlePaneClick}
-				class="!bg-base-200"
-				{nodeTypes}
-				{edgeTypes}
-				fitView
-				onlyRenderVisibleElements
-				connectionLineType={ConnectionLineType.SmoothStep}
-			>
-				<MiniMap class="!bg-base-300" />
-				<Controls class="!bg-base-300" />
-				{#if openPersonPanel}
-					<PersonModal
-						person={selectedPerson}
-						closeModal={() => {
-							openPersonPanel = false;
-						}}
-					/>
-				{/if}
-				{#if createPerson}
-					<CreatePerson
-						onOnlyPersonCreation={() => {
-							createPerson = false;
-						}}
-						{onCreation}
-						closeModal={() => {
-							createPerson = false;
-						}}
-						relationshipStartID={relationshipStart}
-					></CreatePerson>
-				{/if}
-				{#if openPersonMenu !== undefined}
-					<PersonMenu {...openPersonMenu!} />
-				{/if}
-			</SvelteFlow>
-		</SvelteFlowProvider>
-	</div>
-	<SideBar />
+<div style="height:100vh;" class="!bg-base-200 drawer-content flex flex-col">
+	<SvelteFlowProvider>
+		<SvelteFlow
+			bind:nodes={nodes}
+			bind:edges={edges}
+			onconnectend={handleConnectEnd}
+			onnodeclick={handleNodeClickFunc}
+			onnodecontextmenu={handleContextMenu}
+			onpaneclick={handlePaneClick}
+			class="!bg-base-200"
+			{nodeTypes}
+			{edgeTypes}
+			fitView
+			onlyRenderVisibleElements={false}
+		>
+			<MiniMap class="!bg-base-300" />
+			<Controls class="!bg-base-300" />
+			{#if openPersonPanel}
+				<PersonModal
+					person={selectedPerson}
+					closeModal={() => {
+						openPersonPanel = false;
+					}}
+				/>
+			{/if}
+			{#if createPerson}
+				<CreatePerson
+					onOnlyPersonCreation={() => {
+						createPerson = false;
+					}}
+					{onCreation}
+					closeModal={() => {
+						createPerson = false;
+					}}
+					relationshipStartID={relationshipStart}
+				></CreatePerson>
+			{/if}
+			{#if openPersonMenu !== undefined}
+				<PersonMenu {...openPersonMenu!} />
+			{/if}
+		</SvelteFlow>
+	</SvelteFlowProvider>
 </div>
+
 <div class="absolute top-2 left-2 flex flex-row items-center gap-2">
-	<HamburgerIcon clicked={sideBarOpen} show={true} />
+	<HamburgerIcon />
 </div>
