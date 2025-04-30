@@ -63,7 +63,7 @@
 		"@inlang/paraglide-sveltekit": "^0.15.0",
 		"@pilcrowjs/object-parser": "^0.0.4",
 		"@types/pikaday": "^1.7.9",
-		"@xyflow/svelte": "^1.0.0-next.9",
+		"@xyflow/svelte": "^1.0.0-next.11",
 		"arctic": "^3.3.0",
 		"neo4j-driver": "^5.28.1",
 		"openapi-fetch": "^0.13.5",
