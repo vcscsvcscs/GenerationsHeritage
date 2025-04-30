@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { died } from './../paraglide/messages/en.js';
 	import { fade } from 'svelte/transition';
 
 	import ModalButtons from './ModalButtons.svelte';
@@ -11,7 +12,12 @@
 	let {
 		closeModal = () => {},
 		person = {}
-	}: { closeModal: () => void; person: components['schemas']['PersonProperties'] } = $props();
+	}: {
+		closeModal: () => void;
+		person: components['schemas']['PersonProperties'] & {
+			id?: string;
+		};
+	} = $props();
 
 	let editorMode = $state(false);
 	let draftPerson = $state({} as components['schemas']['PersonProperties']);
@@ -22,7 +28,9 @@
 		field: keyof components['schemas']['PersonProperties'],
 		value: any
 	) {
+		console.log('Draft person change:', field, value);
 		draftPerson[field] = value;
+		console.log('Draft person:', draftPerson);
 	}
 
 	function close() {
@@ -35,20 +43,48 @@
 		editorMode = !editorMode;
 	}
 
-	function save() {
-		// Save logic here
+	async function save() {
+		try {
+			const response = await fetch(`/api/person/${person.id}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(draftPerson)
+			});
+
+			if (!response.ok) {
+				alert('Error saving person data, status: ' + response.status);
+				return;
+			}
+
+			if (response.status === 200) {
+				person = { ...person, ...draftPerson };
+				const data = (await response.json()) as {
+					person?: components['schemas']['Person'];
+				};
+				console.log('Person data updated successfully:', draftPerson);
+				console.log('Person data saved successfully:', data);
+				return;
+			} else {
+				const errorDetails = await response.json();
+				alert('Error saving person data, status: ' + response.status + ' ' + JSON.stringify(errorDetails));
+			}
+		} catch (error) {
+			alert('An unexpected error occurred: ' + error);
+		}
 		editorMode = false;
 	}
 </script>
 
 <div class="modal modal-open" transition:fade>
 	<div class="modal-box max-h-screen w-full max-w-5xl overflow-y-auto">
-		<div class="bg-base-100 sticky top-0 z-10">
+		<div class="bg-base-100 sticky top-0 z-7">
 			<ModalButtons {editorMode} onClose={close} onSave={save} onToggleEdit={toggleEdit} />
 			<div class="divider"></div>
 		</div>
 		<ProfileHeader {person} {editorMode} onChange={handleDraftPersonChange} />
-		<MediaGallery {person} />
+		<MediaGallery {person} {editorMode} />
 		<LifeEventsTimeline
 			person_life_events={person.life_events}
 			{editorMode}

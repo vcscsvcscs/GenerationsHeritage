@@ -1,16 +1,13 @@
 <script lang="ts">
 	import type { components } from '$lib/api/api.gen';
 	import { video, photos, upload } from '$lib/paraglide/messages';
+	import UploadMediaModal from '$lib/profile/editors/UploadMediaModal.svelte';
 
 	export let person: components['schemas']['PersonProperties'];
 	export let editorMode = false;
+	let uploadModal = false;
+	let mediaType: 'audio' | 'video' | 'photo' | undefined = undefined;
 </script>
-
-{#if editorMode}
-	<button class="btn bg-neutral text-neutral-content btn-xs" on:click={() => {}}>
-		{upload()}
-	</button>
-{/if}
 
 {#if person.photos?.length || person.videos?.length}
 	<div class="divider">{photos()} & {video()}</div>
@@ -29,4 +26,44 @@
 			</video>
 		{/each}
 	</div>
+{/if}
+
+{#if editorMode}
+	<div class="divider">{upload()}</div>
+	<div class="grid grid-cols-2 gap-4">
+		<button
+			class="btn btn-soft btn-xs"
+			on:click={() => {
+				uploadModal = true;
+				mediaType = 'photo';
+			}}
+		>
+			{'+ '+photos()}
+		</button>
+		<button
+			class="btn btn-soft btn-xs"
+			on:click={() => {
+				uploadModal = true;
+				mediaType = 'video';
+			}}
+		>
+			{'+ '+video()}
+		</button>
+	</div>
+{/if}
+
+{#if uploadModal}
+	<UploadMediaModal
+		closeModal={() => {
+			uploadModal = false;
+		}}
+		{mediaType}
+		onCreation={(newMedia: { url: string; name: string; description: string; date: string }) => {
+			if (mediaType === 'photo') {
+				person.photos = [...(person.photos ?? []), newMedia];
+			} else if (mediaType === 'video') {
+				person.videos = [...(person.videos ?? []), newMedia];
+			}
+		}}
+	/>
 {/if}
