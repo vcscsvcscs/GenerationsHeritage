@@ -58,15 +58,11 @@ const (
 
 // Admin defines model for Admin.
 type Admin struct {
-	EndElementId *string `json:"EndElementId,omitempty"`
-	EndId        *int    `json:"EndId,omitempty"`
-	Props        *struct {
-		Added *int `json:"added,omitempty"`
-	} `json:"Props,omitempty"`
-	AdminSince *int    `json:"adminSince,omitempty"`
-	FirstName  *string `json:"first_name,omitempty"`
-	Id         *int    `json:"id,omitempty"`
-	LastName   *string `json:"last_name,omitempty"`
+	AdminSince *int      `json:"adminSince,omitempty"`
+	FirstName  *string   `json:"first_name,omitempty"`
+	Id         *int      `json:"id,omitempty"`
+	Label      *[]string `json:"label,omitempty"`
+	LastName   *string   `json:"last_name,omitempty"`
 }
 
 // AdminRelationship defines model for AdminRelationship.

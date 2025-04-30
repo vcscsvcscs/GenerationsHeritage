@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { child, date, description, edit, file, from_time, media_title, notes, parent, relation_type, sibling, spouse, title, until, upload } from '$lib/paraglide/messages';
+	import {
+		child,
+		from_time,
+		id,
+		notes,
+		parent,
+		relation,
+		relation_type,
+		sibling,
+		spouse,
+		until,
+	} from '$lib/paraglide/messages';
 	import type { Edge } from '@xyflow/svelte';
 	import ModalButtons from '$lib/relationship/ModalButtons.svelte';
 	import type { components, operations } from '$lib/api/api.gen';
@@ -29,9 +40,8 @@
 	});
 	let relationshiptype: 'sibling' | 'child' | 'parent' | 'spouse' | undefined = $state('sibling');
 
-	async function getRelationships(startId: string, endId :string) {
-		if (startId === undefined || endId === undefined) {
-			alert('');
+	async function getRelationships(startId: string, endId: string) {
+		if (startId === undefined || endId === undefined || startId === '' || endId === '' || startId === endId) {
 			return;
 		}
 
@@ -50,11 +60,21 @@
 		relationships.push((await response.json()) as components['schemas']['dbtypeRelationship']);
 	}
 
-	getRelationships(startNode,endNode);
-	getRelationships(startNode,endNode);
+	if (!createRelationship){
+		getRelationships(startNode, endNode);
+		getRelationships(endNode, startNode);
+	}
 
 	async function save() {
 		for (const r of relationships) {
+			if (!r.Props) {
+				console.log('No properties found for relationship', r);
+				continue;
+			}
+			if (r.Props.verified === undefined) {
+				r.Props.verified = false;
+			}
+			console.log('Saving relationship', r.StartId, r.EndId, r.Props);
 			const patchBody: components['schemas']['FamilyRelationship'] = r.Props ?? {};
 
 			const response = await fetch(`/api/relationship/${r.StartId}/${r.EndId}`, {
@@ -66,6 +86,13 @@
 			if (!response.ok) {
 				console.log(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
 			}
+
+			if (response.status === 200) {
+				console.log(`Relationship ${r.StartId} → ${r.EndId} saved successfully`);
+			} else {
+				console.log(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
+			}
+
 		}
 
 		closeModal();
@@ -85,12 +112,13 @@
 		}
 
 		let body: operations['createRelationship']['requestBody']['content']['application/json'] = {
-			id1: startNode,
-			id2: endNode,
+			id1: Number(startNode),
+			id2: Number(endNode),
 			type: relationshiptype,
 			relationship: newRelationship
 		};
 
+		console.log('Creating relationship', body);
 		const response = await fetch(`/api/relationship`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -98,11 +126,11 @@
 		});
 
 		if (!response.ok) {
-			console.log('Cannot create relationship');
+			console.log('Cannot create relationship'+', status: ' + response.status);
 			return;
 		}
 
-		const created = await response.json() as components['schemas']['dbtypeRelationship'][];
+		const created = (await response.json()) as components['schemas']['dbtypeRelationship'][];
 		relationships.push(...created);
 
 		let newEdges: Edge[] = [];
@@ -112,19 +140,19 @@
 				source: r.StartElementId!,
 				target: r.EndElementId!,
 				type: 'relationship',
-				data: {...r.Props, type: r.Type},
+				data: { ...r.Props, type: r.Type }
 			});
 		}
 		onCreation(newEdges);
 	}
 </script>
 
-
 <div class="modal modal-open z-8">
-	<div class="modal-box w-full max-w-xl">
+	<div class="modal-box w-full max-w-xl gap-4">
 		<div class="bg-base-100 sticky top-0 z-7">
 			<ModalButtons
 				{editorMode}
+				createMode={createRelationship}
 				onCreate={createNewRelationship}
 				onClose={closeModal}
 				onSave={save}
@@ -145,72 +173,69 @@
 					<option value="spouse">{spouse()}</option>
 				</select>
 			</div>
+			<div class="form-control mt-1">
+				<p><strong>{id().toLowerCase()}:</strong>{startNode}</p>
+			</div>
+			<div class="form-control mt-1">
+				<label for="endNode" class="label">{relation()+' '+id().toLowerCase()}:</label>
+				<input id="endNode" type="text" bind:value={endNode} class="input input-bordered w-full"/>
+			</div>
 		{/if}
 		{#if !createRelationship}
 			<!-- Editor mode: show all existing relationships -->
 			{#each relationships as r, index}
 				<div class="border-base-300 mt-4 rounded border p-4">
 					<div class="form-control">
-						{#if editorMode}
-							<label for={`relationshiptype-${index}`} class="label">{relation_type()}</label>
-							<select id={`relationshiptype-${index}`} bind:value={r.Type} class="select select-bordered">
-								<option value="sibling">{sibling()}</option>
-								<option value="child">{child()}</option>
-								<option value="parent">{parent()}</option>
-								<option value="spouse">{spouse()}</option>
-							</select>
-						{:else}
-							<p><strong>{relation_type()}:</strong> {r.Type}</p>
-						{/if}
+						<p><strong>{relation_type()}:</strong> {r.Type}</p>
 					</div>
 					<div class="form-control mt-2">
 						{#if editorMode}
-						<label for={`verified-${index}`} class="label">Verified</label>
-						<input
-							id={`verified-${index}`}
-							type="checkbox"
-							bind:value={r.Props!.verified}
-							class="checkbox"
-						/>
+							<label for={`verified-${index}`} class="label">Verified</label>
+							<input
+								id={`verified-${index}`}
+								type="checkbox"
+								bind:checked={r.Props!.verified}
+								class="checkbox"
+							/>
 						{:else}
 							<p><strong>Verified:</strong>{r.Props?.verified}</p>
 						{/if}
 					</div>
-					<div class="form-control mt-2">ú
+					<div class="form-control mt-2">
 						{#if editorMode}
-						<label for={`notes-${index}`} class="label">{notes()}</label>
-						<textarea
-							id={`notes-${index}`}
-							bind:value={r.Props!.notes}
-							class="textarea textarea-bordered w-full"
-						>
-						</textarea>
+							<label for={`notes-${index}`} class="label">{notes()}</label>
+							<textarea
+								id={`notes-${index}`}
+								bind:value={r.Props!.notes}
+								class="textarea textarea-bordered w-full"
+							>
+							</textarea>
 						{:else}
 							<p><strong>{notes()}:</strong> {r.Props?.notes}</p>
 						{/if}
 					</div>
 					<div class="form-control mt-2">
 						{#if editorMode}
-						<label for={`from-${index}`} class="label">{from_time()}</label>
-						<input
-							id={`from-${index}`}
-							type="date"
-							bind:value={r.Props!.from}
-							class="input input-bordered w-full"
-						/>
+							<label for={`from-${index}`} class="label">{from_time()}</label>
+							<input
+								id={`from-${index}`}
+								type="date"
+								bind:value={r.Props!.from}
+								class="input input-bordered w-full"
+							/>
 						{:else}
 							<p><strong>{from_time()}:</strong> {r.Props?.from}</p>
 						{/if}
 					</div>
 					<div class="form-control mt-2">
 						{#if editorMode}
-						<label for={`to-${index}`} class="label">{until()}</label>
-						<input
-							id={`to-${index}`}
-							type="date"
-							bind:value={r.Props!.to}
-							class="input input-bordered w-full"
-						/>
+							<label for={`to-${index}`} class="label">{until()}</label>
+							<input
+								id={`to-${index}`}
+								type="date"
+								bind:value={r.Props!.to}
+								class="input input-bordered w-full"
+							/>
 						{:else}
 							<p><strong>{until()}:</strong> {r.Props?.to}</p>
 						{/if}

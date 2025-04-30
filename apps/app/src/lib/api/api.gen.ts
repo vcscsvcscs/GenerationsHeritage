@@ -532,14 +532,10 @@ export interface components {
         };
         Admin: {
             id?: number;
+            label?: string[];
             first_name?: string;
             adminSince?: number;
             last_name?: string;
-            EndId?: number;
-            EndElementId?: string;
-            Props?: {
-                added?: number;
-            };
         };
         AdminRelationship: {
             Id?: number;

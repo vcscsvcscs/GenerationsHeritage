@@ -3213,6 +3213,12 @@
                     "id": {
                         "type": "integer"
                     },
+                    "label":{
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "first_name": {
                         "type": "string"
                     },
@@ -3221,20 +3227,6 @@
                     },
                     "last_name": {
                         "type": "string"
-                    },
-                    "EndId": {
-                        "type": "integer"
-                    },
-                    "EndElementId": {
-                        "type": "string"
-                    },
-                    "Props": {
-                        "type": "object",
-                        "properties": {
-                            "added": {
-                                "type": "integer"
-                            }
-                        }
                     }
                 }
             },

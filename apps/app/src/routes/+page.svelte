@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { edit } from './../lib/paraglide/messages/en.js';
 	import CreateRelationship from '$lib/relationship/Modal.svelte';
 	import { onMount } from 'svelte';
 	import { nodeTypes, edgeTypes } from '$lib/graph/model';
-	import { title, family_tree } from '$lib/paraglide/messages.js';
+	import { title, family_tree, select } from '$lib/paraglide/messages.js';
+	import type { RelationshipMenu } from '$lib/relationship/model.ts';
+	import AdminMenu from '$lib/admin/Modal.svelte';
 
 	import { SvelteFlowProvider, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
@@ -33,6 +36,7 @@
 	let openPersonMenu: NodeMenu | undefined = $state(undefined);
 	let with_out_spouse = $state(false);
 	let createRelationship = $state(false);
+	let adminMenu = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
 	let layout = familyTreeDAG.getLayoutedElements(
@@ -46,6 +50,7 @@
 	let edges = $state.raw<Edge[]>([] as Edge[]);
 
 	let relationshipStart: number | null = $state(null);
+	let relationshipMenu = $state(undefined as RelationshipMenu | undefined);
 	let createPerson = $state(false);
 
 	let clientWidth: number | undefined = $state();
@@ -104,6 +109,12 @@
 			},
 			addRelationship: () => {
 				relationshipStart = Number(node.data.id);
+				createRelationship = true;
+				selectedRelationship = {
+					id: 'relationship' + node.data.id,
+					source: String(relationshipStart),
+					target: String(node.data.id)
+				};
 				openPersonMenu = undefined;
 			},
 			addAdmin: () => {
@@ -181,7 +192,7 @@
 	};
 
 	const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-		
+		event.preventDefault();
 		const sourceNodeId = connectionState.fromNode?.data.id;
 		if (sourceNodeId === undefined) return;
 		relationshipStart = Number(sourceNodeId);
@@ -190,7 +201,7 @@
 			selectedRelationship = {
 				id: 'relationship' + connectionState.toNode?.data.id,
 				source: String(relationshipStart),
-				target: String(connectionState.toNode?.data.id),
+				target: String(connectionState.toNode?.data.id)
 			};
 			return;
 		}
@@ -212,20 +223,42 @@
 			bind:nodes
 			bind:edges
 			onconnectend={handleConnectEnd}
-			onedgeclick={({ edge, event }: {
-				edge: Edge;
-				event: MouseEvent;
-			})=> {
+			onedgeclick={({ edge, event }: { edge: Edge; event: MouseEvent }) => {
 				selectedRelationship = edge;
+				selectedRelationship.source = String(edge.source.replace('person', ''));
+				selectedRelationship.target = String(edge.target.replace('person', ''));
 			}}
 			onnodeclick={handleNodeClickFunc}
 			onnodecontextmenu={handleContextMenu}
+			onedgecontextmenu={({ edge, event }: { edge: Edge; event: MouseEvent }) => {
+				selectedRelationship = edge;
+				selectedRelationship.source = String(edge.source.replace('person', ''));
+				selectedRelationship.target = String(edge.target.replace('person', ''));
+				if (clientHeight === undefined || clientWidth === undefined) {
+					clientHeight = window.innerHeight;
+					clientWidth = window.innerWidth;
+				}
+				relationshipMenu = {
+					XUserId: data.id,
+					edge: selectedRelationship,
+					onClick: () => {
+						relationshipMenu = undefined;
+					},
+					deleteEdge: () => {
+						edges = edges.filter((e) => e.id !== edge.id);
+						relationshipMenu = undefined;
+					},
+					top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
+					left: event.clientX < clientWidth - 200 ? event.clientX : undefined,
+					right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
+					bottom: event.clientY >= clientHeight - 200 ? clientHeight - event.clientY : undefined
+				};
+			}}
 			onpaneclick={handlePaneClick}
 			class="!bg-base-200"
 			{nodeTypes}
 			{edgeTypes}
-			fitView
-			onlyRenderVisibleElements={false}
+			fitView={true}
 		>
 			<MiniMap class="!bg-base-300" />
 			<Controls class="!bg-base-300" />
@@ -260,18 +293,55 @@
 						createRelationship = false;
 						selectedRelationship = undefined;
 						relationshipStart = null;
+						layout = familyTreeDAG.getLayoutedElements(
+							nodes,
+							edges,
+							tailwindClassToPixels('w-40') || 160,
+							tailwindClassToPixels('h-40') || 160,
+							'TB'
+						);
+						edges = [...layout.Edges];
+						nodes = [...layout.Nodes];
 					}}
-					startNode={String(relationshipStart)}
+					startNode={String(selectedRelationship.source)}
 					endNode={String(selectedRelationship.target)}
 				/>
 			{/if}
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />
 			{/if}
+			{#if adminMenu}
+				<AdminMenu
+					createProfile={() => {
+						createPerson = true;
+						relationshipStart = null;
+					}}
+					createRelationshipAndProfile={(id: number) => {
+						createPerson = true;
+						relationshipStart = id;
+					}}
+					addRelationship={(id: number) => {
+						createRelationship = true;
+						selectedRelationship = {
+							id: 'relationship' + id,
+							source: String(id),
+							target: String(id)
+						};
+					}}
+					closeModal={() => {
+						adminMenu = false;
+					}}
+					editProfile={(id: number) => {
+						openPersonPanel = true;
+						selectedPerson = { id: String(id) };
+					}}
+					onChange={() => {}}
+				/>
+			{/if}
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
 
 <div class="absolute top-2 left-2 flex flex-row items-center gap-2">
-	<HamburgerIcon />
+	<HamburgerIcon open_admin_panel={()=>{adminMenu=!adminMenu}}/>
 </div>
