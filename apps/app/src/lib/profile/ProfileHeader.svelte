@@ -73,7 +73,7 @@
 			class="h-48 w-48 rounded-lg object-cover shadow-md"
 		/>
 		{#if editorMode}
-			<button class="btn bg-neutral text-neutral-content btn-xs" on:click={() => {}}>
+			<button class="btn btn-neutral btn-soft btn-xs" onclick={() => {}}>
 				{change_profile_picture()}
 			</button>
 		{/if}
@@ -84,6 +84,7 @@
 				<strong>{first_name()}: </strong>
 				{#if editorMode}<input
 						bind:value={person.first_name}
+						onchange={() => onChange('first_name', person.first_name)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.first_name ?? '-'}{/if}
 			</p>
@@ -91,6 +92,7 @@
 				<strong>{last_name()}: </strong>
 				{#if editorMode}<input
 						bind:value={person.last_name}
+						onchange={() => onChange('last_name', person.last_name)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.last_name ?? '-'}{/if}
 			</p>
@@ -98,6 +100,7 @@
 				<strong>{middle_name()}:</strong>
 				{#if editorMode}<input
 						bind:value={person.middle_name}
+						onchange={() => onChange('middle_name', person.middle_name)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.middle_name ?? '-'}{/if}
 			</p>
@@ -108,8 +111,9 @@
 						class="pika-single w-full"
 						id="birth_date"
 						bind:this={birth_date}
-						bind:value={person.born}
-					/>
+						placeholder={person.born}
+						onchange={() => onChange('born', birth_date.value)}
+				/>
 				{:else}{person.born ?? '-'}{/if}
 			</p>
 			<p>
@@ -118,9 +122,9 @@
 						type="text"
 						class="pika-single w-full"
 						id="death_date"
-						placeholder={died()}
+						placeholder={person.died??died()}
 						bind:this={death_date}
-						bind:value={person.died}
+						onchange={() => onChange('died', death_date.value)}
 					/>{:else}{person.died ?? '-'}{/if}
 			</p>
 			<p>
@@ -131,6 +135,7 @@
 						class="select select-bordered select-sm w-full"
 						id="biological_sex"
 						bind:value={person.biological_sex}
+						onchange={() => onChange('biological_sex', person.biological_sex)}
 						placeholder={biological_sex()}
 					>
 						<option value="male">{male()} </option>
@@ -146,6 +151,7 @@
 				<strong>{email()}:</strong>
 				{#if editorMode}<input
 						bind:value={person.email}
+						onchange={() => onChange('email', person.email)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.email ?? '-'}{/if}
 			</p>
@@ -153,6 +159,7 @@
 				<strong>{mothers_first_name()}:</strong>
 				{#if editorMode}<input
 						bind:value={person.mothers_first_name}
+						onchange={() => onChange('mothers_first_name', person.mothers_first_name)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.mothers_first_name ?? '-'}{/if}
 			</p>
@@ -160,6 +167,7 @@
 				<strong>{mothers_last_name()}:</strong>
 				{#if editorMode}<input
 						bind:value={person.mothers_last_name}
+						onchange={() => onChange('mothers_last_name', person.mothers_last_name)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.mothers_last_name ?? '-'}{/if}
 			</p>

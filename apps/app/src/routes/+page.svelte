@@ -1,14 +1,10 @@
 <script lang="ts">
+	import CreateRelationship from '$lib/relationship/Modal.svelte';
 	import { onMount } from 'svelte';
 	import { nodeTypes, edgeTypes } from '$lib/graph/model';
 	import { title, family_tree } from '$lib/paraglide/messages.js';
 
-	import {
-		SvelteFlowProvider,
-		SvelteFlow,
-		Controls,
-		MiniMap
-	} from '@xyflow/svelte';
+	import { SvelteFlowProvider, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
 	import type { OnConnectEnd, Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
 
@@ -28,12 +24,15 @@
 
 	let { data }: { data: Layout & { id: string } } = $props();
 
-	let selectedPerson: components['schemas']['PersonProperties'] & { id: number | null } = $state({
-		id: null
-	});
+	let selectedPerson: components['schemas']['PersonProperties'] & { id: string | undefined } =
+		$state({
+			id: undefined
+		});
+	let selectedRelationship: Edge | undefined = $state(undefined);
 	let openPersonPanel = $state(false);
 	let openPersonMenu: NodeMenu | undefined = $state(undefined);
 	let with_out_spouse = $state(false);
+	let createRelationship = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
 	let layout = familyTreeDAG.getLayoutedElements(
@@ -43,7 +42,6 @@
 		tailwindClassToPixels('h-40') || 160,
 		'TB'
 	);
-	console.log('layout', layout);
 	let nodes = $state.raw<Node[]>([] as Node[]);
 	let edges = $state.raw<Edge[]>([] as Edge[]);
 
@@ -52,12 +50,36 @@
 
 	let clientWidth: number | undefined = $state();
 	let clientHeight: number | undefined = $state();
+	let delete_profile = (id: any) => {
+		fetch('/api/person/' + id, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+			.then((response) => {
+				if (response.ok) {
+					nodes = nodes.filter((n) => n.data.id !== id);
+					edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
+				} else {
+					alert('Error deleting person');
+				}
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+	};
+
 	const handleContextMenu: NodeEventWithPointer<MouseEvent> = ({ event, node }) => {
 		event.preventDefault();
 
 		if (clientHeight === undefined || clientWidth === undefined) {
 			clientHeight = window.innerHeight;
 			clientWidth = window.innerWidth;
+		}
+
+		if (openPersonMenu !== undefined) {
+			openPersonMenu.onClick();
 		}
 
 		openPersonMenu = {
@@ -69,26 +91,10 @@
 				if (Number(data.id) === Number(node.data.id)) {
 					relationshipStart = null;
 					openPersonMenu = undefined;
-
 					return;
 				}
-				fetch('/api/person/' + node.data.id, {
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-					.then((response) => {
-						if (response.ok) {
-							nodes = nodes.filter((n) => n.data.id !== node.data.id);
-							edges = edges.filter((e) => e.source !== "help"+node.data.id && e.target !== "help"+node.data.id);
-						} else {
-							alert('Error deleting person');
-						}
-					})
-					.catch((error) => {
-						console.error('Error:', error);
-					});
+
+				delete_profile(node.data.id);
 				openPersonMenu = undefined;
 			},
 			createRelationshipAndNode: () => {
@@ -125,11 +131,6 @@
 			edges = [...edges, ...newEdges];
 		}
 
-		console.log('newnodes', newNodes![0].id);
-		console.log('newedges', newEdges![0].id);
-		console.log('newnodes', newNodes);
-		console.log('newedges', newEdges);
-
 		let newLayout = familyTreeDAG.getLayoutedElements(
 			nodes,
 			edges,
@@ -144,11 +145,11 @@
 	let handleNodeClickFunc = handleNodeClick(
 		(
 			person: components['schemas']['PersonProperties'] & {
-				id: number;
+				id: number | undefined;
 			}
 		) => {
 			openPersonPanel = true;
-			selectedPerson = person;
+			selectedPerson = { ...person, id: String(person.id) };
 			fetch('/api/person/' + person.id, {
 				method: 'GET',
 				headers: {
@@ -166,9 +167,9 @@
 				.then((data) => {
 					if (data) {
 						selectedPerson = data.Props as components['schemas']['PersonProperties'] & {
-							id: number | null;
+							id: string | undefined;
 						};
-						selectedPerson.id = person.id;
+						selectedPerson.id = String(person.id);
 					}
 				});
 		}
@@ -180,15 +181,25 @@
 	};
 
 	const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
-		if (connectionState.isValid) return;
+		
 		const sourceNodeId = connectionState.fromNode?.data.id;
 		if (sourceNodeId === undefined) return;
 		relationshipStart = Number(sourceNodeId);
+		if (connectionState.isValid) {
+			createRelationship = true;
+			selectedRelationship = {
+				id: 'relationship' + connectionState.toNode?.data.id,
+				source: String(relationshipStart),
+				target: String(connectionState.toNode?.data.id),
+			};
+			return;
+		}
+
 		createPerson = true;
 	};
 	onMount(() => {
 		nodes = [...layout.Nodes];
-		edges = [...layout.Edges]
+		edges = [...layout.Edges];
 	});
 </script>
 
@@ -198,9 +209,15 @@
 <div style="height:100vh;" class="!bg-base-200 flex flex-col">
 	<SvelteFlowProvider>
 		<SvelteFlow
-			bind:nodes={nodes}
-			bind:edges={edges}
+			bind:nodes
+			bind:edges
 			onconnectend={handleConnectEnd}
+			onedgeclick={({ edge, event }: {
+				edge: Edge;
+				event: MouseEvent;
+			})=> {
+				selectedRelationship = edge;
+			}}
 			onnodeclick={handleNodeClickFunc}
 			onnodecontextmenu={handleContextMenu}
 			onpaneclick={handlePaneClick}
@@ -231,6 +248,22 @@
 					}}
 					relationshipStartID={relationshipStart}
 				></CreatePerson>
+			{/if}
+			{#if selectedRelationship}
+				<CreateRelationship
+					{createRelationship}
+					onCreation={(newEdges: Array<Edge>) => {
+						onCreation(null, newEdges);
+						createRelationship = false;
+					}}
+					closeModal={() => {
+						createRelationship = false;
+						selectedRelationship = undefined;
+						relationshipStart = null;
+					}}
+					startNode={String(relationshipStart)}
+					endNode={String(selectedRelationship.target)}
+				/>
 			{/if}
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />

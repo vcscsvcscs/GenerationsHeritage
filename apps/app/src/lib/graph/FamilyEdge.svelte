@@ -2,7 +2,7 @@
 	import type { components } from '$lib/api/api.gen.ts';
 	import { child, spouse, parent, sibling } from '$lib/paraglide/messages';
 	import { getBezierPath, BaseEdge, type EdgeProps, Position } from '@xyflow/svelte';
-	
+
 	let {
 		sourceX,
 		sourceY,
@@ -21,7 +21,6 @@
 	let edgeType = (
 		data as components['schemas']['FamilyRelationship'] & { type: string }
 	).type.toLowerCase();
-	console.log('edgeType', edgeType);
 	let edgeLabel: string = $state(edgeType);
 	let edgeColor: string;
 	let srcPos;
