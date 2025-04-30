@@ -51,24 +51,24 @@
 	isConnectable={true}
 	type="target"
 	isConnectableStart={false}
-/>
-<Handle
-class="customHandle"
-{isValidConnection}
-position={Position.Left}
-isConnectable={true}
-type="source"
-isConnectableStart={true}
-/>
+	/>
+	<Handle
+	class="customHandle"
+	{isValidConnection}
+	position={Position.Left}
+	isConnectable={true}
+	type="source"
+	isConnectableStart={true}
+	/>
 
-<Handle
-class="customHandle"
-{isValidConnection}
-position={Position.Right}
-isConnectable={true}
-type="source"
-isConnectableStart={true}
-/>
+	<Handle
+	class="customHandle"
+	{isValidConnection}
+	position={Position.Right}
+	isConnectable={true}
+	type="source"
+	isConnectableStart={true}
+	/>
 	<Handle
 		class="customHandle"
 		id='parent'
