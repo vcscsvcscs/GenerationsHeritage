@@ -67,6 +67,7 @@
 		"arctic": "^3.3.0",
 		"neo4j-driver": "^5.28.1",
 		"openapi-fetch": "^0.13.5",
-		"pikaday": "^1.8.2"
+		"pikaday": "^1.8.2",
+		"uuid": "^11.1.0"
 	}
 }

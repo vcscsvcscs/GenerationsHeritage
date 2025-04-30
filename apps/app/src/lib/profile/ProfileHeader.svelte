@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { components } from '$lib/api/api.gen';
+	import { v4 as uuidv4 } from 'uuid';
 	import {
 		male,
 		female,
@@ -18,7 +19,10 @@
 		mothers_first_name,
 		mothers_last_name,
 		profile_picture,
-		create_invite_code
+		create_invite_code,
+
+		invite_code
+
 	} from '$lib/paraglide/messages';
 	import { callMessageFunction } from '$lib/i18n';
 	import type { MessageKeys } from '$lib/i18n';
@@ -28,6 +32,7 @@
 	};
 	export let editorMode = false;
 	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	let new_invite_code: string | undefined;
 
 	let birth_date: HTMLInputElement;
 	let death_date: HTMLInputElement;
@@ -174,7 +179,17 @@
 			<p><strong>{id()}: </strong>{' ' + (person.id ?? '-')}</p>
 			<p><strong>Limit: </strong>{' ' + (person.limit ?? '-')}</p>
 			{#if editorMode && (person.google_id === undefined || person.google_id === null || person.google_id === '')}
-				<button class="btn btn-soft btn-accent btn-m">{create_invite_code()}</button>
+				{#if new_invite_code===undefined}
+				<button class="btn btn-soft btn-accent btn-m" onclick={()=>{
+					new_invite_code = uuidv4();
+					person.invite_code = new_invite_code;
+					onChange('invite_code',new_invite_code);
+					}}>{create_invite_code()}</button>
+				{:else}
+				<p>
+					<strong>{invite_code()}:</strong>{person.invite_code}
+				</p>
+				{/if}
 			{/if}
 		</div>
 	</div>

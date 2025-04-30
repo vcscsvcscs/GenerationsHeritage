@@ -186,13 +186,15 @@ async function register(event: RequestEvent) {
 			})
 		});
 	}
-	const birth_date = data.get('birth_date');
+	let birth_date = data.get('birth_date');
 	if (birth_date === null || birth_date === '') {
 		return fail(400, {
 			message: missing_field({
 				field: born()
 			})
-		});
+		}); 
+	}else {
+		birth_date = birth_date.toString();
 	}
 
 	const bbiological_sex = data.get('biological_sex');
@@ -244,29 +246,69 @@ async function register(event: RequestEvent) {
 		limit: StorageLimit
 	};
 
-	let response = await client.POST('/person/google/{google_id}', {
-		params: {
-			data: parsedData,
-			path: { google_id: google_id.toString() }
-		},
-		body: personP
-	});
-
-	if (response.response.status !== 200) {
-		return fail(400, {
-			data: parsedData,
-			message: failed_to_create_user() + response.error?.msg
-		});
+	let invite_code = data.get('invite_code');
+	if (invite_code !== null) {
+		invite_code = invite_code.toString();
+	}else {
+		invite_code = '';
 	}
 
-	if (response.data === undefined) {
-		return fail(400, {
-			data: parsedData,
-			message: failed_to_create_user() + 'No user data returned'
+	let responseData :{
+		Id?: number;
+		ElementId?: string;
+		Labels?: string[];
+		Props?: components["schemas"]["PersonProperties"];
+	} | undefined = undefined;
+	if (!(invite_code.length > 0)){
+		let response = await client.POST('/person/google/{google_id}', {
+			params: {
+				data: parsedData,
+				path: { google_id: google_id.toString() }
+			},
+			body: personP
 		});
+
+		if (response.response.status !== 200) {
+			return fail(400, {
+				data: parsedData,
+				message: failed_to_create_user() + response.error?.msg
+			});
+		}
+
+		if (response.data === undefined) {
+			return fail(400, {
+				data: parsedData,
+				message: failed_to_create_user() + 'No user data returned'
+			});
+		}
+		responseData = response.data;
+	}else {
+		let response = await client.PATCH('/person/google/{google_id}', {
+			params: {
+				path: { google_id: google_id.toString() }
+			},
+			body: {
+				invite_code: invite_code,
+				person: personP
+			},
+		});
+		if (response.response.status !== 200) {
+			return fail(400, {
+				data: parsedData,
+				message: failed_to_create_user() + response.error?.msg
+			});
+		}
+
+		if (response.data === undefined) {
+			return fail(400, {
+				data: parsedData,
+				message: failed_to_create_user() + 'No user data returned'
+			});
+		}
+		responseData = response.data;
 	}
 
-	if (response.data.Id === undefined) {
+	if (responseData.Id === undefined) {
 		return fail(400, {
 			data: parsedData,
 			message: failed_to_create_user() + 'No user ID returned'
@@ -280,10 +322,10 @@ async function register(event: RequestEvent) {
 		});
 	}
 
-	const sessionToken = generateSessionToken(String(response.data.Id));
+	const sessionToken = generateSessionToken(String(responseData.Id));
 	const session = await createSession(
 		sessionToken,
-		response.data.Id,
+		responseData.Id,
 		event.platform.env.GH_SESSIONS
 	);
 	if (session === null) {

@@ -28,9 +28,11 @@
 		field: keyof components['schemas']['PersonProperties'],
 		value: any
 	) {
-		console.log('Draft person change:', field, value);
 		draftPerson[field] = value;
-		console.log('Draft person:', draftPerson);
+		if (field === 'invite_code') {
+			save();
+			return;
+		}
 	}
 
 	function close() {
@@ -63,8 +65,7 @@
 				const data = (await response.json()) as {
 					person?: components['schemas']['Person'];
 				};
-				console.log('Person data updated successfully:', draftPerson);
-				console.log('Person data saved successfully:', data);
+
 				return;
 			} else {
 				const errorDetails = await response.json();

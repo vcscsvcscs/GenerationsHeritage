@@ -16,7 +16,13 @@
 		male,
 		female,
 		other,
-		intersex
+		intersex,
+
+		invite_code,
+
+		have_invite_code
+
+
 	} from '$lib/paraglide/messages';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
@@ -45,7 +51,7 @@
 						birth_date_value.placeholder = '';
 					},
 					onSelect: function (date) {
-						birth_date_value.value = date.toISOString();
+						birth_date_value.value = date.toISOString().split('T')[0];
 					}
 				});
 				// Clean up when component unmounts
@@ -53,6 +59,11 @@
 			});
 		}
 	});
+
+	let showInviteInput = $state(false);
+	function toggleInviteInput() {
+		showInviteInput = !showInviteInput;
+	}
 </script>
 
 <svelte:head>
@@ -163,7 +174,23 @@
 							id="mothers_first_name"
 							placeholder={mothers_first_name()}
 						/>
-						<button class="btn btn-neutral mt-4">{register()}</button>
+						<button type="button" class="btn btn-soft mt-4 max-w-xs" onclick={toggleInviteInput}>
+							{have_invite_code()}
+						</button>
+						{#if showInviteInput}
+							<div class="mt-4">
+								<label class="fieldset-label" for="invite_code">Meghívókód</label>
+								<input
+									type="text"
+									class="input input-bordered w-full"
+									name="invite_code"
+									id="invite_code"
+									placeholder={invite_code()}
+								/>
+							</div>
+						{/if}
+
+						<button class="btn btn-neutral mt-4 max-w-xs">{register()}</button>
 					</fieldset>
 				</form>
 			</div>
