@@ -15,7 +15,6 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		nodeHeight: number,
 		direction = 'TB'
 	): Layout {
-		const isHorizontal = direction === 'LR';
 		this.setGraph({ rankdir: direction });
 		this.setDefaultEdgeLabel(() => ({}));
 		nodes.forEach((node) => {
@@ -23,7 +22,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		});
 
 		edges.forEach((edge) => {
-			if (edge.data!.type === 'child') {
+			if (String(edge.data!.type).toLowerCase() === 'child') {
 				this.setEdge(edge.source, edge.target);
 			}
 		});
@@ -33,7 +32,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		let newEdges: Edge[] = [];
 		edges.forEach((edge) => {
 			let newEdge = { ...edge };
-			if (edge.data?.type === 'child') {
+			if (String(edge.data?.type).toLowerCase() === 'child') {
 				newEdge.sourceHandle = 'child';
 				newEdge.targetHandle = 'parent';
 			}
@@ -44,7 +43,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
 				return;
 			}
 
-			if (edge.data?.type === 'spouse') {
+			if (String(edge.data?.type).toLowerCase() === 'spouse') {
 				const padding = 50; // distance between spouse and source
 				const spouseWidth = nodeWidth;
 

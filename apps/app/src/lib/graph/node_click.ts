@@ -6,7 +6,6 @@ export function handleNodeClick(
 ): NodeEventWithPointer<MouseEvent | TouchEvent> {
 	return ({ event, node }) => {
 		event.preventDefault();
-		node.data.id = Number(node.id);
 		set_panel_options(node.data as components['schemas']['PersonProperties'] & { id: number });
 	};
 }

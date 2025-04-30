@@ -15,9 +15,9 @@ export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layo
 	const nodes: Node[] = data.people.map((person) => {
 		let newNode = { data: { ...person } } as Node;
 		if (person.id !== null && person.id !== undefined) {
-			newNode.id = person.id.toString();
+			newNode.id = "help"+person.id.toString();
 		}
-
+		newNode.data.id = person.id;
 		return newNode;
 	});
 
@@ -27,10 +27,10 @@ export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layo
 			const newEdge = { data: { ...relationship.Props } } as Edge;
 			newEdge.data!.type = relationship.Type?.toLowerCase();
 			if (relationship.StartElementId !== null && relationship.StartElementId !== undefined) {
-				newEdge.source = relationship.StartElementId;
+				newEdge.source = "help"+relationship.StartId!.toString();
 			}
 			if (relationship.EndElementId !== null && relationship.EndElementId !== undefined) {
-				newEdge.target = relationship.EndElementId;
+				newEdge.target = "help"+relationship.EndId!.toString();
 			}
 
 			return newEdge;

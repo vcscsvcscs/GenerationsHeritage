@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { nodeTypes, edgeTypes } from '$lib/graph/model';
 	import { title, family_tree } from '$lib/paraglide/messages.js';
 
@@ -6,8 +7,7 @@
 		SvelteFlowProvider,
 		SvelteFlow,
 		Controls,
-		MiniMap,
-		ConnectionLineType
+		MiniMap
 	} from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
 	import type { OnConnectEnd, Node, Edge, NodeEventWithPointer } from '@xyflow/svelte';
@@ -44,8 +44,8 @@
 		'TB'
 	);
 	console.log('layout', layout);
-	let nodes = $state.raw<Node[]>(layout.Nodes);
-	let edges = $state.raw<Edge[]>(layout.Edges);
+	let nodes = $state.raw<Node[]>([] as Node[]);
+	let edges = $state.raw<Edge[]>([] as Edge[]);
 
 	let relationshipStart: number | null = $state(null);
 	let createPerson = $state(false);
@@ -66,13 +66,13 @@
 				openPersonMenu = undefined;
 			},
 			deleteNode: () => {
-				if (Number(data.id) === Number(node.id)) {
+				if (Number(data.id) === Number(node.data.id)) {
 					relationshipStart = null;
 					openPersonMenu = undefined;
 
 					return;
 				}
-				fetch('/api/person/' + node.id, {
+				fetch('/api/person/' + node.data.id, {
 					method: 'DELETE',
 					headers: {
 						'Content-Type': 'application/json'
@@ -80,8 +80,8 @@
 				})
 					.then((response) => {
 						if (response.ok) {
-							nodes = nodes.filter((n) => n.id !== node.id);
-							edges = edges.filter((e) => e.source !== node.id && e.target !== node.id);
+							nodes = nodes.filter((n) => n.data.id !== node.data.id);
+							edges = edges.filter((e) => e.source !== "help"+node.data.id && e.target !== "help"+node.data.id);
 						} else {
 							alert('Error deleting person');
 						}
@@ -92,23 +92,23 @@
 				openPersonMenu = undefined;
 			},
 			createRelationshipAndNode: () => {
-				relationshipStart = Number(node.id);
+				relationshipStart = Number(node.data.id);
 				createPerson = true;
 				openPersonMenu = undefined;
 			},
 			addRelationship: () => {
-				relationshipStart = Number(node.id);
+				relationshipStart = Number(node.data.id);
 				openPersonMenu = undefined;
 			},
 			addAdmin: () => {
-				relationshipStart = Number(node.id);
+				relationshipStart = Number(node.data.id);
 				openPersonMenu = undefined;
 			},
 			addRecipe: () => {
-				relationshipStart = Number(node.id);
+				relationshipStart = Number(node.data.id);
 				openPersonMenu = undefined;
 			},
-			id: node.id,
+			id: String(node.data.id),
 			top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
 			left: event.clientX < clientWidth - 200 ? event.clientX : undefined,
 			right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
@@ -125,6 +125,11 @@
 			edges = [...edges, ...newEdges];
 		}
 
+		console.log('newnodes', newNodes![0].id);
+		console.log('newedges', newEdges![0].id);
+		console.log('newnodes', newNodes);
+		console.log('newedges', newEdges);
+
 		let newLayout = familyTreeDAG.getLayoutedElements(
 			nodes,
 			edges,
@@ -132,8 +137,8 @@
 			tailwindClassToPixels('h-40') || 160,
 			'TB'
 		);
-		edges = newLayout.Edges;
-		nodes = newLayout.Nodes;
+		edges = [...newLayout.Edges];
+		nodes = [...newLayout.Nodes];
 	};
 
 	let handleNodeClickFunc = handleNodeClick(
@@ -176,17 +181,21 @@
 
 	const handleConnectEnd: OnConnectEnd = (event, connectionState) => {
 		if (connectionState.isValid) return;
-		const sourceNodeId = connectionState.fromNode?.id;
+		const sourceNodeId = connectionState.fromNode?.data.id;
 		if (sourceNodeId === undefined) return;
 		relationshipStart = Number(sourceNodeId);
 		createPerson = true;
 	};
+	onMount(() => {
+		nodes = [...layout.Nodes];
+		edges = [...layout.Edges]
+	});
 </script>
 
 <svelte:head>
 	<title>{title({ page: family_tree() })}</title>
 </svelte:head>
-<div style="height:100vh;" class="!bg-base-200 drawer-content flex flex-col">
+<div style="height:100vh;" class="!bg-base-200 flex flex-col">
 	<SvelteFlowProvider>
 		<SvelteFlow
 			bind:nodes={nodes}

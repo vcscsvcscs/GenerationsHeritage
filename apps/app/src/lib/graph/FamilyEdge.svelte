@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { components } from '$lib/api/api.gen.ts';
 	import { child, spouse, parent, sibling } from '$lib/paraglide/messages';
-	import { getSmoothStepPath, BaseEdge, type EdgeProps, Position } from '@xyflow/svelte';
-
+	import { getBezierPath, BaseEdge, type EdgeProps, Position } from '@xyflow/svelte';
+	
 	let {
 		sourceX,
 		sourceY,
@@ -72,7 +72,7 @@
 	}
 
 	let  [path, labelX, labelY] = $derived(
-		getSmoothStepPath({
+		getBezierPath({
 			sourceX,
 			sourceY,
 			sourcePosition: srcPos,
