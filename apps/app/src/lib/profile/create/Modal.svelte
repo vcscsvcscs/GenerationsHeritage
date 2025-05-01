@@ -239,7 +239,7 @@
 						<span>{error}</span>
 					</div>
 				{/if}
-				{#if relationshipStartID !== undefined}
+				{#if relationshipStartID !== null}
 					<input type="hidden" name="relationshipStartID" value={relationshipStartID} />
 					<div class="flex flex-col">
 						<label class="label" for="relationship_type">{relation_type()}</label>
