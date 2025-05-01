@@ -1983,7 +1983,7 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "admins": {
+                                        "managed": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/Admin"

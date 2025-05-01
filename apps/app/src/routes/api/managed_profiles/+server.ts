@@ -1,6 +1,7 @@
 import { client } from '$lib/api/client';
 import { redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
+import { json } from 'stream/consumers';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	if (event.locals.session === null) {
@@ -14,7 +15,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	});
 
 	if (response.response.ok) {
-		return new Response(null, {
+		return new Response(JSON.stringify(response.data), {
 			status: response.response.status
 		});
 	} else {

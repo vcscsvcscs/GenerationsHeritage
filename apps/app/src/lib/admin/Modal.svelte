@@ -29,29 +29,29 @@
 	}>();
 
 	let managed_profiles_list: components['schemas']['Admin'][] = $state([]);
-	function fetchManagedProfiles() {
-		fetch(`/api/managed_profiles`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-			.then((response) => {
-				if (!response.ok) {
-					console.log('Cannot get managed profiles, status: ' + response.status);
-					return;
+	async function fetchManagedProfiles() {
+		try {
+			const response = await fetch(`/api/managed_profiles`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
 				}
-
-				return response.json();
-			})
-			.then((data) => {
-				if (data) {
-					managed_profiles_list = [...(data as components['schemas']['Admin'][])];
-				}
-			})
-			.catch((error) => {
-				console.error('Error fetching managed profiles:', error);
 			});
+
+			if (!response.ok || response.status !== 200) {
+				console.log('Cannot get managed profiles, status: ' + response.status);
+				return;
+			}
+
+			const data = await response.json();
+			managed_profiles_list = [
+				...((
+					data as operations['getManagedProfiles']['responses']['200']['content']['application/json']
+				).managed ?? [])
+			];
+		} catch (error) {
+			console.error('Error fetching managed profiles:', error);
+		}
 	}
 
 	fetchManagedProfiles();
@@ -66,7 +66,11 @@
 			.then((response) => {
 				if (response.ok) {
 					onChange();
-					managed_profiles_list = managed_profiles_list.filter((profile) => profile.id !== id);
+					managed_profiles_list.forEach((profile) => {
+						if (profile.id === id) {
+							profile.label = ['DeletedPerson'];
+						}
+					});
 					return;
 				} else {
 					alert('Error deleting person');
@@ -110,33 +114,37 @@
 			{#each managed_profiles_list as profile}
 				<li class="list-row">
 					<div>
-						<div>{profile.first_name + ' ' + profile.last_name}</div>
 						<div class="text-xs font-semibold uppercase opacity-60">{profile.id}</div>
 					</div>
 					<div>
-						<div class="text-xs font-semibold uppercase opacity-60">
-							{admin() + ' ' + from_time().toLowerCase() + ': ' + profile.adminSince}
-						</div>
-						<div class="text-xs font-semibold uppercase opacity-60">{profile.label![0]}</div>
+						<div>{profile.first_name + ' ' + profile.last_name}</div>
 					</div>
+					{#if false}
+						<div>
+							<div class="text-xs font-semibold uppercase opacity-60">
+								{admin() + ' ' + from_time().toLowerCase() + ': ' + profile.adminSince}
+							</div>
+							<div class="text-xs font-semibold uppercase opacity-60">{profile.label![0]}</div>
+						</div>
+						<button
+							class="btn btn-success btn-soft"
+							onclick={() => {
+								addRelationship(profile.id!);
+							}}
+						>
+							{add_relationship()}
+						</button>
+						<button
+							class="btn btn-success btn-soft"
+							onclick={() => {
+								createRelationshipAndProfile(profile.id!);
+							}}
+						>
+							{create_relationship_and_person()}
+						</button>
+					{/if}
 					<button
-						class="btn btn-success btn-soft"
-						onclick={() => {
-							addRelationship(profile.id!);
-						}}
-					>
-						{add_relationship()}
-					</button>
-					<button
-						class="btn btn-success btn-soft"
-						onclick={() => {
-							createRelationshipAndProfile(profile.id!);
-						}}
-					>
-						{create_relationship_and_person()}
-					</button>
-					<button
-						class="btn btn-secondary"
+						class="btn btn-secondary btn-sm"
 						onclick={() => {
 							editProfile(profile.id!);
 						}}
@@ -145,7 +153,7 @@
 					</button>
 					{#if profile.label?.includes('DeletedPerson')}
 						<button
-							class="btn btn-error"
+							class="btn btn-error btn-sm"
 							onclick={() => {
 								hardDeleteProfile(profile.id!);
 							}}
@@ -154,7 +162,7 @@
 						</button>
 					{:else}
 						<button
-							class="btn btn-error"
+							class="btn btn-error btn-sm"
 							onclick={() => {
 								deleteProfile(profile.id!);
 							}}
