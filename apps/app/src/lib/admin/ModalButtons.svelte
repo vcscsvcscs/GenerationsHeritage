@@ -7,6 +7,7 @@
 		create,
 		create_person,
 		edit,
+		managed_profiles,
 		relation,
 		save
 	} from '$lib/paraglide/messages';
@@ -15,7 +16,7 @@
 </script>
 
 <div class="flex items-center justify-between p-2">
-	<h3 class="text-lg font-bold">{relation()}</h3>
+	<h3 class="text-lg font-bold">{managed_profiles()}</h3>
 	<div class="space-x-2">
 		<button class="btn btn-success btn-sm" on:click={createProfile}>
 			{'+ ' + create_person()}
