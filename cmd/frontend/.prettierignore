@@ -1,8 +1,0 @@
-.svelte-kit
-.type-coverage
-build
-/lib
-.npmrc
-.eslintignore
-/tests/fixtures/rules/indent/valid/
-.changeset

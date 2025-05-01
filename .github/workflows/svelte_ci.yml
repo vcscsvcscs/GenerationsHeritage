@@ -1,9 +1,14 @@
 name: Frontend Continuous Integration
 
 on:
+  workflow_call:
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "apps/app**"
+      - ".github/workflows/svelte_ci.yml"
+      - ".github/workflows/svelte_test.yml"
+      - ".github/workflows/svelte_lint.yml"
 
 jobs:
   lint:

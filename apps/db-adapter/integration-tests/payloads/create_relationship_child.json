@@ -1,0 +1,10 @@
+{
+    "id1": 7,
+    "id2": 6,
+    "type": "child",
+    "relationship": {
+        "verified": true,
+        "notes": "Test notes",
+        "from": "2022-01-01"
+    }
+}

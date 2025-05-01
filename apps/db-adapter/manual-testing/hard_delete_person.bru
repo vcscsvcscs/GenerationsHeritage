@@ -1,0 +1,19 @@
+meta {
+  name: hard_delete_person
+  type: http
+  seq: 9
+}
+
+delete {
+  url: http://localhost:8080/person/{{id}}/hard-delete
+  body: none
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 2
+}
+
+vars:pre-request {
+  id: 10
+}

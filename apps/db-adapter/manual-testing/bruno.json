@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Generations Heritage DB adapter",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

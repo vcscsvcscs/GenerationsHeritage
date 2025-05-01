@@ -1,0 +1,40 @@
+meta {
+  name: create_person_and_relationship_child
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8080/person_and_relationship/{{id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  X-User-Id: 2
+}
+
+body:json {
+  {
+      "person": {
+          "first_name": "Johannes",
+          "last_name": "Doe",
+          "born": "2000-07-01",
+          "limit": 1000,
+          "mothers_first_name": "Frances",
+          "mothers_last_name": "Soft",
+          "email": "dj@example.com"
+      },
+      "type": "child",
+      "relationship": {
+          "verified": true,
+          "notes": "Test notes",
+          "from": "2023-01-01"
+      }
+  }
+}
+
+vars:pre-request {
+  id: 2
+}

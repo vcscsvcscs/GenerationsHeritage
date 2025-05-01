@@ -1,0 +1,1 @@
+MATCH (n:Person) WHERE n.google_id = $google_id RETURN n as person

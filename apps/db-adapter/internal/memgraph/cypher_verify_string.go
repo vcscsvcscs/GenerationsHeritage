@@ -1,0 +1,132 @@
+package memgraph
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
+
+var cypherKeywords = []string{
+	"CREATE",
+	"DELETE",
+	"DETACH",
+	"DETACH DELETE",
+	"FOREACH",
+	"LOAD CSV",
+	"MERGE",
+	"MATCH",
+	"ON",
+	"OPTIONAL MATCH",
+	"REMOVE",
+	"SET",
+	"START",
+	"UNION",
+	"UNWIND",
+	"WITH",
+	"RETURN",
+	"ORDER BY",
+	"SKIP",
+	"LIMIT",
+	"ASC",
+	"DESC",
+	"EXISTS",
+	"CALL",
+	"USING",
+	"CONSTRAINT",
+	"DROP",
+	"INDEX",
+	"WHERE",
+}
+
+var cypherOperators = []string{ //nolint:unused // this could be used in the future
+	"+",
+	"-",
+	"*",
+	"/",
+	"%",
+	"^",
+	"=",
+	"<",
+	">",
+	"<=",
+	">=",
+	"<>",
+	"AND",
+	"OR",
+	"XOR",
+	"NOT",
+	"IN",
+	"STARTS WITH",
+	"ENDS WITH",
+	"CONTAINS",
+	"IS NULL",
+	"IS NOT NULL",
+	"IS UNIQUE",
+	"IS NODE",
+	"IS RELATIONSHIP",
+	"IS PROPERTY KEY",
+	"IS MAP",
+	"IS LIST",
+	"IS BOOLEAN",
+	"IS STRING",
+	"IS NUMBER",
+	"IS INTEGER",
+	"IS FLOAT",
+	"IS NODE",
+	"IS RELATIONSHIP",
+	"IS PATH",
+	"IS POINT",
+	"IS DATE",
+	"IS DURATION",
+}
+
+// cypherDelimiters is a map that defines escape sequences for various
+// delimiter characters used in Cypher queries. The keys represent
+// the original delimiter characters, and the values represent their
+// corresponding escaped versions. This ensures that special characters
+// are properly escaped to prevent syntax errors or injection issues
+// when constructing Cypher queries.
+//
+// Key-value pairs:
+// - "'"       -> `\'`
+// - `"`       -> `\"`
+// - `\u0027`  -> `\\u0027`
+// - `\u0022`  -> `\\\\u0022`
+// - "`"       -> ` “ `
+// - `\u0060`  -> `\\u0060\\u0060`
+var cypherDelimiters = map[string]string{
+	"'":       `\'`,
+	`"`:       `\"`,
+	`\u0027`:  `\\u0027`,
+	`\u0022`:  "\\\\u0022",
+	"`":       "``",
+	"\\u0060": "\\u0060\\u0060",
+}
+
+// VerifyString verifies if a string is valid and does not contain cypher injection
+func VerifyString(s string) error {
+	for _, keyword := range cypherKeywords {
+		keywordPattern := fmt.Sprintf(`\b%s\b`, strings.ToUpper(keyword))
+		if match, _ := regexp.MatchString(keywordPattern, strings.ToUpper(s)); match {
+			return fmt.Errorf("invalid string: %s contains cypher keyword: %s", s, keyword)
+		}
+	}
+
+	for key := range cypherDelimiters {
+		if strings.Contains(s, key) {
+			return fmt.Errorf("invalid string: %s contains cypher delimiter: %s", s, key)
+		}
+	}
+
+	return nil
+}
+
+// EscapeString escapes delimiters in a string to prevent cypher injection
+func EscapeString(s string) string {
+	result := s
+	for k, v := range cypherDelimiters {
+		result = strings.ReplaceAll(result, k, v)
+	}
+
+	return result
+}

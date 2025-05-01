@@ -1,0 +1,15 @@
+{
+    "person": {
+        "first_name": "Ferdinand",
+        "last_name": "Fritz",
+        "born": "1970-04-01",
+        "limit": 1000,
+        "mothers_first_name": "Seabruch",
+        "mothers_last_name": "Klein",
+        "email": "FF@example.com"
+    },
+    "type": "spouse",
+    "relationship": {
+        "verified": true
+    }
+}

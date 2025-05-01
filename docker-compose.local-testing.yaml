@@ -1,0 +1,31 @@
+---
+services:
+  memgrapht:
+    image: "memgraph/memgraph-mage:latest"
+    container_name: memgrapht
+    ports:
+      - "7687:7687"
+      - "7444:7444"
+    environment:
+      - MEMGRAPH_USER=memgraph
+      - MEMGRAPH_PASSWORD=memgraph
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'RETURN 0;' | mgconsole || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 0s
+  db-adapter:
+    build:
+      context: ./apps/db-adapter
+      dockerfile: ./integration-test.dockerfile
+    container_name: db-adapter
+    ports:
+      - "5237:5237"
+    depends_on:
+      - memgrapht
+    environment:
+      - HTTP_PORT=:5237
+      - MEMGRAPH_URI=bolt://memgrapht:7687
+      - MEMGRAPH_USER=memgraph
+      - MEMGRAPH_PASSWORD=memgraph

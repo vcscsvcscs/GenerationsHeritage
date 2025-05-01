@@ -1,0 +1,25 @@
+meta {
+  name: generate_invite_code
+  type: http
+  seq: 8
+}
+
+patch {
+  url: http://localhost:8080/person/{{id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 2
+}
+
+body:json {
+  {
+      "invite_code": "test-invite-code"
+  }
+}
+
+vars:pre-request {
+  id: 10
+}

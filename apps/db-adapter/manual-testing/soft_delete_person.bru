@@ -1,0 +1,19 @@
+meta {
+  name: soft_delete_person
+  type: http
+  seq: 6
+}
+
+delete {
+  url: http://localhost:8080/person/{{id}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 2
+}
+
+vars:pre-request {
+  id: 10
+}

@@ -1,0 +1,29 @@
+meta {
+  name: create_relationship_spouse
+  type: http
+  seq: 19
+}
+
+post {
+  url: http://localhost:8080/relationship
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  X-User-Id: 2
+}
+
+body:json {
+  {
+      "id1": 7,
+      "id2": 8,
+      "type": "sibling",
+      "relationship": {
+          "verified": true,
+          "notes": "OwO",
+          "from": "2024-01-01"
+      }
+  }
+}

@@ -1,9 +1,14 @@
 name: Database Adapter Continues Integration
 
 on:
+  workflow_call:
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "apps/db-adapter**"
+      - ".github/workflows/db_adapter_ci.yml"
+      - ".github/workflows/go_test.yml"
+      - ".github/workflows/docker_build.yml"
 
 jobs:
     golangci:
@@ -16,7 +21,7 @@ jobs:
               go-version: '1.24'
               cache: false
           - name: golangci-lint
-            uses: golangci/golangci-lint-action@v4
+            uses: golangci/golangci-lint-action@v7
             with:
               version: latest
               working-directory: 'apps/db-adapter'

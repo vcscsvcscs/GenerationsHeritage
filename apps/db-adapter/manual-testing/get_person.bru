@@ -1,0 +1,19 @@
+meta {
+  name: get_person
+  type: http
+  seq: 14
+}
+
+get {
+  url: http://localhost:8080/person/{{id}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  X-User-Id: 9
+}
+
+vars:pre-request {
+  id: 2
+}

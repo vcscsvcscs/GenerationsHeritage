@@ -1,0 +1,10 @@
+{
+    "id1": 7,
+    "id2": 8,
+    "type": "sibling",
+    "relationship": {
+        "verified": true,
+        "notes": "OwO",
+        "from": "2024-01-01"
+    }
+}

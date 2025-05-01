@@ -1,0 +1,29 @@
+meta {
+  name: create_relationship_parent
+  type: http
+  seq: 17
+}
+
+post {
+  url: http://localhost:8080/relationship
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  X-User-Id: 2
+}
+
+body:json {
+  {
+      "id1": 6,
+      "id2": 7,
+      "type": "parent",
+      "relationship": {
+          "verified": false,
+          "notes": "Test notes asdasdasda",
+          "from": "2021-01-01"
+      }
+  }
+}

@@ -1,0 +1,39 @@
+meta {
+  name: create_person_and_relationship_sibling
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://localhost:8080/person_and_relationship/{{id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  X-User-Id: 2
+}
+
+body:json {
+  {
+    "person": {
+      "first_name": "Sandra",
+      "last_name": "Doe",
+      "born": "1987-07-01",
+      "limit": 1000,
+      "mothers_first_name": "Mary",
+      "mothers_last_name": "Smith",
+      "email": "SD@example.com"
+    },
+    "type": "sibling",
+    "relationship": {
+      "verified": true,
+      "notes": "Good siblings"
+    }
+  }
+}
+
+vars:pre-request {
+  id: 2
+}
