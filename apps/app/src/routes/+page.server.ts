@@ -20,7 +20,7 @@ export async function load(event: RequestEvent) {
 	});
 
 	if (response.status !== 200) {
-		throw new Error(await response.text());
+		console.error(await response.text());
 	}
 
 	const data = (await response.json()) as components['schemas']['FamilyTree'];
