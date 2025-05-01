@@ -332,8 +332,32 @@
 						adminMenu = false;
 					}}
 					editProfile={(id: number) => {
-						openPersonPanel = true;
 						selectedPerson = { id: String(id) };
+						fetch('/api/person/' + id, {
+							method: 'GET',
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						})
+							.then((response) => {
+								if (response.ok) {
+									return response.json() as Promise<components['schemas']['Person']>;
+								} else {
+									alert('Error fetching person data');
+									return null;
+								}
+							})
+							.then((data) => {
+								if (data) {
+									selectedPerson = data.Props as components['schemas']['PersonProperties'] & {
+										id: string | undefined;
+									};
+									selectedPerson.id = String(id);
+									openPersonPanel = true;
+								}else {
+									alert('Error fetching person data');
+								}
+							});
 					}}
 					onChange={() => {}}
 				/>
