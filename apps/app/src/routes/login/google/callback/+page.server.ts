@@ -74,7 +74,7 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	});
 
 	if (response.response.status === 200) {
-		if (response.data?.Id) {
+		if (response.data?.Id !== undefined) {
 			if (!event.platform || !event.platform.env || !event.platform.env.GH_SESSIONS) {
 				return error(500, {
 					message: 'Server configuration error. GH_SESSIONS KeyValue store missing'
@@ -92,6 +92,14 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 					message: 'Failed to create session'
 				});
 			}
+
+			event.cookies.delete('already_loaded', {
+				path: '/login/google/callback',
+				sameSite: 'lax',
+				httpOnly: true,
+				maxAge: 0,
+				secure: import.meta.env.PROD
+			});
 
 			setSessionTokenCookie(event, sessionToken, session.expiresAt);
 

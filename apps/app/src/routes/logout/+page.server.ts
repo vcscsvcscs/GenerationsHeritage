@@ -3,7 +3,7 @@ import { invalidateSession, deleteSessionTokenCookie } from '$lib/server/session
 
 import type { RequestEvent } from './$types';
 
-export async function GET(event: RequestEvent): Promise<Response> {
+export async function load(event: RequestEvent): Promise<Response> {
 	if (event.locals.session === null) {
 		return redirect(302, '/login');
 	}

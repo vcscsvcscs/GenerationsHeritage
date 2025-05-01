@@ -203,10 +203,8 @@
 	});
 </script>
 
-<div class="modal modal-open" transition:fade>
-	<div
-		class="modal-box flex max-h-screen w-full max-w-5xl flex-col items-center justify-center overflow-y-auto"
-	>
+<div class="modal modal-open max-h-screen" transition:fade>
+	<div class="modal-box flex w-full max-w-5xl flex-col items-center justify-center overflow-y-auto">
 		<div class="flex w-full max-w-5xl items-center justify-between p-2">
 			<h3 class="text-left text-lg font-bold">{create_relationship_and_person()}</h3>
 			<div>

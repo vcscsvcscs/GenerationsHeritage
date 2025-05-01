@@ -84,7 +84,7 @@
 </script>
 
 <div class="modal modal-open" transition:fade>
-	<div class="modal-box max-h-screen w-full max-w-5xl overflow-y-auto">
+	<div class="modal-box max-h-screen w-full max-h-80 max-w-5xl overflow-y-auto">
 		<div class="bg-base-100 sticky top-0 z-7">
 			<ModalButtons {editorMode} onClose={close} onSave={save} onToggleEdit={toggleEdit} />
 			<div class="divider"></div>
