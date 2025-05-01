@@ -213,8 +213,7 @@
 								id={`notes-${index}`}
 								bind:value={r.Props!.notes}
 								class="textarea textarea-bordered w-full"
-							>
-							</textarea>
+							></textarea>
 						{:else}
 							<p><strong>{notes()}:</strong> {r.Props?.notes}</p>
 						{/if}
