@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { edit } from './../lib/paraglide/messages/en.js';
 	import CreateRelationship from '$lib/relationship/Modal.svelte';
 	import { onMount } from 'svelte';
 	import { nodeTypes, edgeTypes } from '$lib/graph/model';
@@ -133,7 +132,7 @@
 		};
 	};
 
-	let onCreation = (newNodes: Array<Node> | null, newEdges: Array<Edge> | null) => {
+	function onCreation(newNodes: Array<Node> | null, newEdges: Array<Edge> | null): void {
 		if (newNodes !== null) {
 			nodes = [...nodes, ...newNodes];
 		}
@@ -141,7 +140,6 @@
 		if (newEdges !== null) {
 			edges = [...edges, ...newEdges];
 		}
-
 		let newLayout = familyTreeDAG.getLayoutedElements(
 			nodes,
 			edges,
@@ -275,7 +273,10 @@
 					onOnlyPersonCreation={() => {
 						createPerson = false;
 					}}
-					{onCreation}
+					onCreation={(node,edges) => {
+						onCreation([node], edges);
+						createPerson = false;
+					}}
 					closeModal={() => {
 						createPerson = false;
 					}}

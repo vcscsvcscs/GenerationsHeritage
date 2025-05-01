@@ -33,12 +33,12 @@
 
 	let {
 		closeModal = () => {},
-		onCreation = (nodes: Array<Node> | null, edges: Array<Edge> | null) => {},
+		onCreation,
 		onOnlyPersonCreation = (person: components['schemas']['Person']) => {},
 		relationshipStartID
 	}: {
 		closeModal: () => void;
-		onCreation: (newNodes: Array<Node> | null, newEdges: Array<Edge> | null) => void;
+		onCreation: (newNode: Node,newEdges: Edge[]) => void;
 		onOnlyPersonCreation: (person: components['schemas']['Person']) => void | undefined;
 		relationshipStartID: number | null;
 	} = $props();
@@ -102,9 +102,9 @@
 				let edges: Array<Edge> = [];
 				data.relationships?.map((relationship) =>
 					edges.push({
-						id: String(relationship.Id),
-						source: String(relationship.StartElementId),
-						target: String(relationship.EndElementId),
+						id: "person"+String(relationship.Id),
+						source: "person"+String(relationship.StartElementId),
+						target: "person"+String(relationship.EndElementId),
 						data: {
 							...relationship.Props,
 							type: relationship.Type
@@ -113,15 +113,14 @@
 				);
 
 				let newNode = {
-					id: String(data.person?.Id),
+					id: "person"+String(data.person?.Id),
 					data: {
 						...data.person?.Props
 					},
 					position: { x: 0, y: 0 },
 					type: 'personNode'
 				} as Node;
-				onCreation([newNode], edges);
-				closeModal();
+				onCreation(newNode, edges);
 			}
 		} else {
 			let requestBody = draftPerson as components['schemas']['PersonRegistration'];
