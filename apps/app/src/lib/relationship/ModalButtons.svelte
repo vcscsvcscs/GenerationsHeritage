@@ -2,9 +2,7 @@
 	import {
 		add_relationship,
 		back,
-		biography,
 		close,
-		create,
 		edit,
 		relation,
 		save

@@ -37,7 +37,7 @@ export async function PATCH(event: RequestEvent): Promise<Response> {
 			header: { 'X-User-ID': event.locals.session.userId }
 		},
 		body: {
-			relationship: event.request.json() as components['schemas']['FamilyRelationship']
+			relationship: (await event.request.json()) as components['schemas']['FamilyRelationship']
 		}
 	});
 

@@ -7,6 +7,7 @@
 		parent,
 		relation,
 		relation_type,
+		relationship,
 		sibling,
 		spouse,
 		until
@@ -80,8 +81,8 @@
 			if (r.Props.verified === undefined) {
 				r.Props.verified = false;
 			}
-			console.log('Saving relationship', r.StartId, r.EndId, r.Props);
-			const patchBody: components['schemas']['FamilyRelationship'] = r.Props ?? {};
+			console.debug('Saving relationship', r.StartId, r.EndId, r.Props);
+			const patchBody: components['schemas']['FamilyRelationship'] = r.Props!;
 
 			const response = await fetch(`/api/relationship/${r.StartId}/${r.EndId}`, {
 				method: 'PATCH',
@@ -90,17 +91,16 @@
 			});
 
 			if (!response.ok) {
-				console.log(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
+				console.error(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
 			}
 
 			if (response.status === 200) {
-				console.log(`Relationship ${r.StartId} → ${r.EndId} saved successfully`);
+				console.debug(`Relationship ${r.StartId} → ${r.EndId} saved successfully`);
 			} else {
-				console.log(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
+				console.error(`Failed to save relationship ${r.StartId} → ${r.EndId}`);
 			}
 		}
-
-		closeModal();
+		editorMode = !editorMode;
 	}
 
 	async function createNewRelationship() {
@@ -199,7 +199,7 @@
 							<input
 								id={`verified-${index}`}
 								type="checkbox"
-								bind:checked={r.Props!.verified}
+								bind:checked={relationships[index].Props!.verified}
 								class="checkbox"
 							/>
 						{:else}
@@ -211,11 +211,11 @@
 							<label for={`notes-${index}`} class="label">{notes()}</label>
 							<textarea
 								id={`notes-${index}`}
-								bind:value={r.Props!.notes}
+								bind:value={relationships[index].Props!.notes}
 								class="textarea textarea-bordered w-full"
 							></textarea>
 						{:else}
-							<p><strong>{notes()}:</strong> {r.Props?.notes}</p>
+							<p><strong>{notes()}:</strong> {relationships[index].Props?.notes}</p>
 						{/if}
 					</div>
 					<div class="form-control mt-2">
@@ -224,7 +224,7 @@
 							<input
 								id={`from-${index}`}
 								type="date"
-								bind:value={r.Props!.from}
+								bind:value={relationships[index].Props!.from}
 								class="input input-bordered w-full"
 							/>
 						{:else}
@@ -237,7 +237,7 @@
 							<input
 								id={`to-${index}`}
 								type="date"
-								bind:value={r.Props!.to}
+								bind:value={relationships[index].Props!.to}
 								class="input input-bordered w-full"
 							/>
 						{:else}

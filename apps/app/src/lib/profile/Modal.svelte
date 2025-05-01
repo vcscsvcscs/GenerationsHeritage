@@ -65,8 +65,6 @@
 				const data = (await response.json()) as {
 					person?: components['schemas']['Person'];
 				};
-
-				return;
 			} else {
 				const errorDetails = await response.json();
 				alert(
@@ -79,7 +77,7 @@
 		} catch (error) {
 			alert('An unexpected error occurred: ' + error);
 		}
-		editorMode = false;
+		editorMode = !editorMode;
 	}
 </script>
 
