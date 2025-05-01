@@ -9,9 +9,14 @@ export type MessageKeys = keyof typeof messages;
 
 export function callMessageFunction(name: MessageKeys): string {
 	const fn = messages[name];
-	if (typeof fn === 'function') {
-		return fn({ thing: '', field: '', page: '', name: '' });
-	} else {
-		throw new Error(`Function ${name} is not callable`);
+	try {
+		if (typeof fn === 'function') {
+			return fn({ thing: '', field: '', page: '', name: '' });
+		} else {
+			throw new Error(`Function ${name} is not callable`);
+		}
+	} catch (error) {
+		console.error(`Error calling message function ${name}:`, error);
+		return '';
 	}
 }
