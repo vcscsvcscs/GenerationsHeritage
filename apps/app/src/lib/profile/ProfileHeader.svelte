@@ -20,7 +20,8 @@
 		mothers_last_name,
 		profile_picture,
 		create_invite_code,
-		invite_code
+		invite_code,
+		phone
 	} from '$lib/paraglide/messages';
 	import { callMessageFunction } from '$lib/i18n';
 	import type { MessageKeys } from '$lib/i18n';
@@ -158,6 +159,13 @@
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.email ?? '-'}{/if}
 			</p>
+			<p>
+				<strong>{phone()}:</strong>
+				{#if editorMode}<input
+						bind:value={person.phone}
+						onchange={() => onChange('phone', person.phone)}
+						class="input input-sm input-bordered w-full"
+					/>{:else}{person.phone ?? '-'}{/if}
 			<p>
 				<strong>{mothers_first_name()}:</strong>
 				{#if editorMode}<input

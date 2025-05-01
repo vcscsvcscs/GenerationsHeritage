@@ -42,8 +42,8 @@
 	"dark": "Sötét",
 	"date": "Dátum",
 	"death": "Halál",
-	"deceased": "Elhunyt",
 	"delete_profile": "Delete profile",
+	"deceased": "Elhunyt",
 	"deny": "Elutasítás",
 	"description": "Leírás",
 	"details": "Részletek",
@@ -165,5 +165,6 @@
 	"zip_code": "Irányítószám",
 	"add_life_event": "Életesemény hozzadása",
 	"deleted_profiles": "Törölt profilok",
-	"managed_profiles": "Adminisztrált profilok"
+	"managed_profiles": "Adminisztrált profilok",
+	"phone": "Telefon"
 }

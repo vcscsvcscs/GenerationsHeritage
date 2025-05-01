@@ -27,12 +27,25 @@
 		'medical_conditions',
 		'languages',
 		'notes',
+		'phone',
 		'audios',
 		'google_id'
 	];
+	let newNote = {
+		title: " ",
+		note: ""
+	};
 </script>
 
 <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+	{#each person.notes??[] as note}
+		<div class="card bg-base-100 shadow-sm">
+			<div class="card-body">
+				<h2 class="card-title">{note.title}</h2>
+				<p>{note.note}</p>
+			</div>
+		</div>
+	{/each}
 	{#each Object.entries(person) as [key, value]}
 		{#if !skipFields.includes(key) && ((value !== undefined && value !== null) || editorMode)}
 			<div>
