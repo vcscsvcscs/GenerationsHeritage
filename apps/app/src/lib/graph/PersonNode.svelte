@@ -81,7 +81,7 @@
 	/>
 
 	<div class="avatar mb-2" style="z-index: 2; cursor: pointer;">
-		<div class="bg-accent w-24 rounded-full border-0 ring-offset-1">
+		<div class={"w-24 rounded-full border-0 ring-offset-1"+nodeColor}>
 			<img
 				src={data.profile_picture || 'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
 				alt="Picture of {data.last_name} {data.first_name}"
