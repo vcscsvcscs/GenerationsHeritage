@@ -28,7 +28,7 @@
 	</div>
 {/if}
 
-{#if editorMode}
+{#if false}
 	<div class="divider">{upload()}</div>
 	<div class="grid grid-cols-2 gap-4">
 		<button

@@ -64,7 +64,7 @@
 		{create_relationship_and_person()}
 	</button>
 	<button onclick={addRelationship} class="btn">{add_relationship()}</button>
-	<button onclick={addAdmin} class="btn">{add_administrator()}</button>
+	<!-- <button onclick={addAdmin} class="btn">{add_administrator()}</button> -->
 	{#if Number(XUserId) !== Number(id) && isAdmin}
 		<button onclick={deleteNode} class="btn">{remove()}</button>
 	{/if}

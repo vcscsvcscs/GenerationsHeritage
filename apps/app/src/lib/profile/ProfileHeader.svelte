@@ -75,7 +75,7 @@
 			alt={profile_picture()}
 			class="h-48 w-48 rounded-lg object-cover shadow-md"
 		/>
-		{#if editorMode}
+		{#if false}
 			<button class="btn btn-neutral btn-soft btn-xs" onclick={() => {}}>
 				{change_profile_picture()}
 			</button>
