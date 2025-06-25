@@ -28,29 +28,27 @@
 	</div>
 {/if}
 
-{#if false}
-	<div class="divider">{upload()}</div>
-	<div class="grid grid-cols-2 gap-4">
-		<button
-			class="btn btn-soft btn-xs"
-			on:click={() => {
-				uploadModal = true;
-				mediaType = 'photo';
-			}}
-		>
-			{'+ ' + photos()}
-		</button>
-		<button
-			class="btn btn-soft btn-xs"
-			on:click={() => {
-				uploadModal = true;
-				mediaType = 'video';
-			}}
-		>
-			{'+ ' + video()}
-		</button>
-	</div>
-{/if}
+<div class="divider">{upload()}</div>
+<div class="grid grid-cols-2 gap-4">
+	<button
+		class="btn btn-soft btn-xs"
+		on:click={() => {
+			uploadModal = true;
+			mediaType = 'photo';
+		}}
+	>
+		{'+ ' + photos()}
+	</button>
+	<button
+		class="btn btn-soft btn-xs"
+		on:click={() => {
+			uploadModal = true;
+			mediaType = 'video';
+		}}
+	>
+		{'+ ' + video()}
+	</button>
+</div>
 
 {#if uploadModal}
 	<UploadMediaModal
