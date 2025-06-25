@@ -29,7 +29,8 @@
 		'notes',
 		'phone',
 		'audios',
-		'google_id'
+		'google_id',
+		'invite_code'
 	];
 	let newNote = {
 		title: " ",
