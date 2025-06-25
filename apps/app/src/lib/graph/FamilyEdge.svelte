@@ -21,7 +21,7 @@
 		data as components['schemas']['FamilyRelationship'] & { type: string }
 	).type.toLowerCase();
 	let edgeLabel: string = $state(edgeType);
-	let edgeColor: string;
+	let edgeColor: string = $state('stroke: gray;');
 	let srcPos;
 	let tgtPos;
 	if (edgeType === 'spouse') {

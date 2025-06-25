@@ -157,6 +157,7 @@
 				id: number | undefined;
 			}
 		) => {
+			console.log('handleNodeClickFunc', person);
 			openPersonPanel = true;
 			selectedPerson = { ...person, id: String(person.id) };
 			fetch('/api/person/' + person.id, {

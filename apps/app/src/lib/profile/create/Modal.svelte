@@ -115,7 +115,8 @@
 				let newNode = {
 					id: "person"+String(data.person?.Id),
 					data: {
-						...data.person?.Props
+						...data.person?.Props,
+						id: data.person?.Id,
 					},
 					position: { x: 0, y: 0 },
 					type: 'personNode'

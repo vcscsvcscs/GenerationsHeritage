@@ -105,7 +105,7 @@
 
 <div class="modal modal-open z-8">
 	<div class="modal-box w-full max-w-xl gap-4">
-		<div class="bg-base-100 sticky top-0 z-5">
+		<div class="bg-base-100 z-5 sticky top-0">
 			<ModalButtons onClose={closeModal} {createProfile} />
 			<div class="divider"></div>
 		</div>
@@ -143,14 +143,6 @@
 							{create_relationship_and_person()}
 						</button>
 					{/if}
-					<button
-						class="btn btn-secondary btn-sm"
-						onclick={() => {
-							editProfile(profile.id!);
-						}}
-					>
-						{edit()}
-					</button>
 					{#if profile.label?.includes('DeletedPerson')}
 						<button
 							class="btn btn-error btn-sm"
@@ -162,11 +154,17 @@
 						</button>
 					{:else}
 						<button
+							class="btn btn-secondary btn-sm"
+							onclick={() => {
+								editProfile(profile.id!);
+							}}>
+							{edit()}
+						</button>
+						<button
 							class="btn btn-error btn-sm"
 							onclick={() => {
 								deleteProfile(profile.id!);
-							}}
-						>
+							}}>
 							{delete_profile()}
 						</button>
 					{/if}
