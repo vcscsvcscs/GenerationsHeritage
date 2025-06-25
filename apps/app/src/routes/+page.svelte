@@ -149,7 +149,7 @@
 		);
 		edges = [...newLayout.Edges];
 		nodes = [...newLayout.Nodes];
-	};
+	}
 
 	let handleNodeClickFunc = handleNodeClick(
 		(
@@ -157,9 +157,8 @@
 				id: number | undefined;
 			}
 		) => {
-			console.log('handleNodeClickFunc', person);
-			openPersonPanel = true;
 			selectedPerson = { ...person, id: String(person.id) };
+			openPersonPanel = true;
 			fetch('/api/person/' + person.id, {
 				method: 'GET',
 				headers: {
@@ -181,6 +180,7 @@
 						};
 						selectedPerson.id = String(person.id);
 					}
+					console.debug('Fetched person data:', data);
 				});
 		}
 	);
@@ -274,7 +274,7 @@
 					onOnlyPersonCreation={() => {
 						createPerson = false;
 					}}
-					onCreation={(node,edges) => {
+					onCreation={(node, edges) => {
 						onCreation([node], edges);
 						createPerson = false;
 					}}
@@ -356,7 +356,7 @@
 									};
 									selectedPerson.id = String(id);
 									openPersonPanel = true;
-								}else {
+								} else {
 									alert('Error fetching person data');
 								}
 							});
@@ -368,7 +368,7 @@
 	</SvelteFlowProvider>
 </div>
 
-<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
+<div class="absolute left-2 top-2 flex flex-row items-center gap-2">
 	<HamburgerIcon
 		open_admin_panel={() => {
 			adminMenu = !adminMenu;

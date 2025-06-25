@@ -49,6 +49,7 @@
 
 	async function save() {
 		try {
+			console.debug('Saving person data:', draftPerson);
 			const response = await fetch(`/api/person/${person.id}`, {
 				method: 'PATCH',
 				headers: {
@@ -58,6 +59,7 @@
 			});
 
 			if (!response.ok) {
+				console.error('Error saving person data, status: ', response.status, (await response.json()));
 				alert('Error saving person data, status: ' + response.status + (await response.json()));
 				return;
 			}
@@ -69,12 +71,8 @@
 				};
 			} else {
 				const errorDetails = await response.json();
-				alert(
-					'Error saving person data, status: ' +
-						response.status +
-						' ' +
-						JSON.stringify(errorDetails)
-				);
+				console.error('Error details:', errorDetails);
+				alert(`Error saving person data, status: ${response.status} ${JSON.stringify(errorDetails)}`);
 			}
 		} catch (error) {
 			alert('An unexpected error occurred: ' + error);
