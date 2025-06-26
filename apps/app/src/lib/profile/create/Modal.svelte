@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import {
 		create,
+		create_person,
 		close,
 		born,
 		mothers_first_name,
@@ -206,7 +207,7 @@
 <div class="modal modal-open max-h-screen" transition:fade>
 	<div class="modal-box flex w-full max-w-5xl flex-col items-center justify-center overflow-y-auto">
 		<div class="flex w-full max-w-5xl items-center justify-between p-2">
-			<h3 class="text-left text-lg font-bold">{create_relationship_and_person()}</h3>
+			<h3 class="text-left text-lg font-bold">{relationshipStartID !== null?create_relationship_and_person():create_person()}</h3>
 			<div>
 				<button class="btn btn-error btn-sm" onclick={onClose}>
 					{close()}
