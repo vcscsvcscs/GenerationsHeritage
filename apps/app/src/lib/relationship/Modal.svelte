@@ -7,7 +7,7 @@
 		parent,
 		relation,
 		relation_type,
-		relationship,
+		verified,
 		sibling,
 		spouse,
 		until
@@ -131,11 +131,12 @@
 		});
 
 		if (!response.ok) {
-			console.log('Cannot create relationship' + ', status: ' + response.status);
+			console.error('Cannot create relationship' + ', status: ' + response.status + (await response.json()));
 			return;
 		}
 
 		const created = (await response.json()) as components['schemas']['dbtypeRelationship'][];
+		console.debug('Relationship created successfully',created);
 		relationships.push(...created);
 
 		let newEdges: Edge[] = [];
@@ -149,6 +150,7 @@
 			});
 		}
 		onCreation(newEdges);
+		closeModal();
 	}
 </script>
 
@@ -203,7 +205,7 @@
 								class="checkbox"
 							/>
 						{:else}
-							<p><strong>Verified:</strong>{r.Props?.verified}</p>
+							<p><strong>{verified()}:</strong>{r.Props?.verified}</p>
 						{/if}
 					</div>
 					<div class="form-control mt-2">
