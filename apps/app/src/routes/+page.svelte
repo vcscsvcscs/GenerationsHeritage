@@ -54,6 +54,12 @@
 
 	let clientWidth: number | undefined = $state();
 	let clientHeight: number | undefined = $state();
+
+	let removePersonFromGraph = (id: any) => {
+		nodes = nodes.filter((n) => n.data.id !== id);
+		edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
+	};
+
 	let delete_profile = (id: any) => {
 		fetch('/api/person/' + id, {
 			method: 'DELETE',
@@ -63,8 +69,7 @@
 		})
 			.then((response) => {
 				if (response.ok) {
-					nodes = nodes.filter((n) => n.data.id !== id);
-					edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
+					removePersonFromGraph(id);
 				} else {
 					alert('Error deleting person');
 				}
@@ -361,7 +366,7 @@
 								}
 							});
 					}}
-					onChange={() => {}}
+					removePersonFromGraph={removePersonFromGraph}
 				/>
 			{/if}
 		</SvelteFlow>

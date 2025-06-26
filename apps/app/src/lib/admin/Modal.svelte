@@ -15,13 +15,13 @@
 	let {
 		closeModal,
 		editProfile = () => {},
-		onChange = () => {},
+		removePersonFromGraph = () => {},
 		addRelationship = () => {},
 		createProfile = () => {},
 		createRelationshipAndProfile = () => {}
 	} = $props<{
 		closeModal: () => void;
-		onChange?: () => void;
+		removePersonFromGraph?: (id: any) => void;
 		addRelationship?: (id: number) => void;
 		createRelationshipAndProfile?: (id: number) => void;
 		editProfile?: (id: number) => void;
@@ -65,7 +65,7 @@
 		})
 			.then((response) => {
 				if (response.ok) {
-					onChange();
+					removePersonFromGraph(id);
 					managed_profiles_list.forEach((profile) => {
 						if (profile.id === id) {
 							profile.label = ['DeletedPerson'];
@@ -90,7 +90,6 @@
 		})
 			.then((response) => {
 				if (response.ok) {
-					onChange();
 					managed_profiles_list = managed_profiles_list.filter((profile) => profile.id !== id);
 					return;
 				} else {
