@@ -105,7 +105,7 @@
 <div class="modal modal-open z-8">
 	<div class="modal-box w-full max-w-xl gap-4">
 		<div class="bg-base-100 z-5 sticky top-0">
-			<ModalButtons onClose={closeModal} {createProfile} />
+			<ModalButtons onClose={closeModal} createProfile={()=>{createProfile();closeModal()}} />
 			<div class="divider"></div>
 		</div>
 		<ul class="list bg-base-100 rounded-box shadow-md">
