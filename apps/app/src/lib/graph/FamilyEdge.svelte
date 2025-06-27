@@ -8,10 +8,12 @@
         sourceY,
         source,
         sourcePosition,
+        sourceHandleId,
         target,
         targetX,
         targetY,
         targetPosition,
+        targetHandleId,
         markerEnd,
         style,
         data
@@ -30,7 +32,7 @@
     if (edgeType === 'spouse') {
         edgeColor = 'stroke: red;';
         edgeLabel = spouse();
-        // Horizontal connection for spouses
+        // For spouse connections, use horizontal positioning
         if (sourceX < targetX) {
             srcPos = Position.Right;
             tgtPos = Position.Left;
@@ -41,41 +43,25 @@
     } else if (edgeType === 'child') {
         edgeColor = 'stroke: blue;';
         edgeLabel = child();
-        // Child relationship: from parent (top) to child (bottom)
+        // Use the handles set by the layout: child handle (bottom) to parent handle (top)
         srcPos = Position.Bottom;
         tgtPos = Position.Top;
     } else if (edgeType === 'parent') {
         edgeColor = 'stroke: blue;';
         edgeLabel = parent();
         // Parent relationship: from child (top) to parent (bottom)
-        // Note: This might be the inverse of child depending on your data structure
         srcPos = Position.Top;
         tgtPos = Position.Bottom;
     } else if (edgeType === 'sibling') {
         edgeColor = 'stroke: orange;';
         edgeLabel = sibling();
-        // Horizontal connection for siblings, but slightly different approach
-        const yDiff = Math.abs(sourceY - targetY);
-        const xDiff = Math.abs(sourceX - targetX);
-        
-        if (xDiff > yDiff) {
-            // More horizontal separation - use left/right
-            if (sourceX < targetX) {
-                srcPos = Position.Right;
-                tgtPos = Position.Left;
-            } else {
-                srcPos = Position.Left;
-                tgtPos = Position.Right;
-            }
+        // For siblings, use horizontal positioning
+        if (sourceX < targetX) {
+            srcPos = Position.Right;
+            tgtPos = Position.Left;
         } else {
-            // More vertical separation - use top/bottom
-            if (sourceY < targetY) {
-                srcPos = Position.Bottom;
-                tgtPos = Position.Top;
-            } else {
-                srcPos = Position.Top;
-                tgtPos = Position.Bottom;
-            }
+            srcPos = Position.Left;
+            tgtPos = Position.Right;
         }
     } else {
         edgeColor = 'stroke: gray;';
@@ -83,6 +69,14 @@
         // Keep original positions for unknown types
         srcPos = sourcePosition || Position.Bottom;
         tgtPos = targetPosition || Position.Top;
+    }
+    
+    // Override with handle-specific positioning if handles are specified
+    if (sourceHandleId === 'child') {
+        srcPos = Position.Bottom;
+    }
+    if (targetHandleId === 'parent') {
+        tgtPos = Position.Top;
     }
     
     let [path, labelX, labelY] = $derived(
