@@ -168,6 +168,8 @@ export class FamilyTree extends dagre.graphlib.Graph {
 
         // Create new edges
         let newEdges: Edge[] = [];
+        const processedSpouseEdges = new Set<string>();
+        
         edges.forEach((edge) => {
             let newEdge = { ...edge };
             
@@ -176,6 +178,13 @@ export class FamilyTree extends dagre.graphlib.Graph {
                 newEdge.targetHandle = 'parent';
             } else if (String(edge.data?.type).toLowerCase() === 'parent') {
                 return;
+            } else if (String(edge.data?.type).toLowerCase() === 'spouse') {
+                // Avoid duplicate spouse edges by creating a unique key
+                const spouseKey = [edge.source, edge.target].sort().join('-');
+                if (processedSpouseEdges.has(spouseKey)) {
+                    return; // Skip this duplicate spouse edge
+                }
+                processedSpouseEdges.add(spouseKey);
             }
 
             newEdge.hidden = false;
