@@ -189,6 +189,14 @@
 			</div>
 		{/if}
 		{#if !createRelationship}
+			<div class="form-control mt-2">
+				<p>
+					<strong>{id()} 1:</strong> {startNode}
+				</p>
+				<p>
+					<strong>{id()} 2:</strong> {endNode}
+				</p>
+			</div>
 			<!-- Editor mode: show all existing relationships -->
 			{#each relationships as r, index}
 				<div class="border-base-300 mt-4 rounded border p-4">
