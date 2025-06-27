@@ -15,8 +15,15 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		nodeHeight: number,
 		direction = 'TB'
 	): Layout {
-		this.setGraph({ rankdir: direction });
+		this.setGraph({
+			rankdir: direction,
+			nodesep: 80, // Increased horizontal spacing between nodes
+			ranksep: 120, // Increased vertical spacing between ranks
+			marginx: 50,
+			marginy: 50
+		});
 		this.setDefaultEdgeLabel(() => ({}));
+
 		nodes.forEach((node) => {
 			this.setNode(node.id, { width: nodeWidth, height: nodeHeight });
 		});
@@ -38,93 +45,74 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			} else if (String(edge.data?.type).toLowerCase() === 'parent') {
 				return;
 			}
-
 			const sourceNode = this.node(edge.source);
 			const targetNode = this.node(edge.target);
 			if (!sourceNode || !targetNode) {
 				return;
 			}
-
 			if (String(edge.data?.type).toLowerCase() === 'sibling') {
-				const padding = 50; // distance between sibling and source
+				const padding = 80; // Increased distance between sibling and source
 				const spouseWidth = nodeWidth;
-
 				const existingNodesAtLevel = nodes
 					.map((n) => ({ id: n.id, pos: this.node(n.id) }))
 					.filter(({ pos }) => Math.abs(pos.y - sourceNode.y) < nodeHeight / 2); // same horizontal band
-
 				// Collect taken x ranges
 				const takenXRanges = existingNodesAtLevel.map(({ pos }) => ({
 					from: pos.x - spouseWidth / 2,
 					to: pos.x + spouseWidth / 2
 				}));
-
-				// Try placing spouse to the right
+				// Try placing sibling to the right
 				let desiredX = sourceNode.x + nodeWidth + padding;
-
 				// Check for collision
 				const collides = (x: number) => {
 					return takenXRanges.some(({ from, to }) => x > from && x < to);
 				};
-
 				// If right side collides, try left
 				if (collides(desiredX)) {
 					desiredX = sourceNode.x - (nodeWidth + padding);
 				}
-
 				// If both sides collide, push right until free
 				while (collides(desiredX)) {
 					desiredX += nodeWidth + padding;
 				}
-
 				targetNode.x = desiredX;
 				targetNode.y = sourceNode.y;
 			}
-
 			if (String(edge.data?.type).toLowerCase() === 'spouse') {
-				const padding = 50; // distance between spouse and source
+				const padding = 30; // Closer distance between spouse and source
 				const spouseWidth = nodeWidth;
-
 				const existingNodesAtLevel = nodes
 					.map((n) => ({ id: n.id, pos: this.node(n.id) }))
 					.filter(({ pos }) => Math.abs(pos.y - sourceNode.y) < nodeHeight / 2); // same horizontal band
-
 				// Collect taken x ranges
 				const takenXRanges = existingNodesAtLevel.map(({ pos }) => ({
 					from: pos.x - spouseWidth / 2,
 					to: pos.x + spouseWidth / 2
 				}));
-
 				// Try placing spouse to the right
 				let desiredX = sourceNode.x + nodeWidth + padding;
-
 				// Check for collision
 				const collides = (x: number) => {
 					return takenXRanges.some(({ from, to }) => x > from && x < to);
 				};
-
 				// If right side collides, try left
 				if (collides(desiredX)) {
 					desiredX = sourceNode.x - (nodeWidth + padding);
 				}
-
 				// If both sides collide, push right until free
 				while (collides(desiredX)) {
 					desiredX += nodeWidth + padding;
 				}
-
 				targetNode.x = desiredX;
 				targetNode.y = sourceNode.y;
 			}
 			newEdge.hidden = false;
 			newEdge.type = 'familyEdge';
-
 			newEdges.push(newEdge);
 		});
 
 		const layoutedNodes = nodes.map((node) => {
 			const nodeWithPosition = this.node(node.id);
-
 			return {
 				...node,
 				type: 'personNode',
