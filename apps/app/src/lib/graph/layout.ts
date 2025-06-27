@@ -174,6 +174,7 @@ export class FamilyTree extends dagre.graphlib.Graph {
             let newEdge = { ...edge };
             
             if (String(edge.data?.type).toLowerCase() === 'child') {
+                // Parent to child: source (parent) uses 'child' handle (bottom), target (child) uses 'parent' handle (top)
                 newEdge.sourceHandle = 'child';
                 newEdge.targetHandle = 'parent';
             } else if (String(edge.data?.type).toLowerCase() === 'parent') {
@@ -185,6 +186,28 @@ export class FamilyTree extends dagre.graphlib.Graph {
                     return; // Skip this duplicate spouse edge
                 }
                 processedSpouseEdges.add(spouseKey);
+                
+                // Set spouse handles based on position
+                const sourceNode = this.node(edge.source);
+                const targetNode = this.node(edge.target);
+                if (sourceNode.x < targetNode.x) {
+                    newEdge.sourceHandle = 'spouse-right';
+                    newEdge.targetHandle = 'spouse-left';
+                } else {
+                    newEdge.sourceHandle = 'spouse-left';
+                    newEdge.targetHandle = 'spouse-right';
+                }
+            } else if (String(edge.data?.type).toLowerCase() === 'sibling') {
+                // Set sibling handles based on position
+                const sourceNode = this.node(edge.source);
+                const targetNode = this.node(edge.target);
+                if (sourceNode.x < targetNode.x) {
+                    newEdge.sourceHandle = 'spouse-right';
+                    newEdge.targetHandle = 'spouse-left';
+                } else {
+                    newEdge.sourceHandle = 'spouse-left';
+                    newEdge.targetHandle = 'spouse-right';
+                }
             }
 
             newEdge.hidden = false;

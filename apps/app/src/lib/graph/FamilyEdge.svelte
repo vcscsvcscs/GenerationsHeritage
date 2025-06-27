@@ -28,22 +28,31 @@
     let srcPos: Position = $state(sourcePosition || Position.Bottom);
     let tgtPos: Position = $state(targetPosition || Position.Top);
     
-    // Determine edge styling and positioning based on relationship type
+    // Determine edge styling and positioning based on relationship type and handles
     if (edgeType === 'spouse') {
         edgeColor = 'stroke: red;';
         edgeLabel = spouse();
-        // For spouse connections, use horizontal positioning
-        if (sourceX < targetX) {
+        // Use handle-based positioning for spouses
+        if (sourceHandleId === 'spouse-right') {
             srcPos = Position.Right;
             tgtPos = Position.Left;
-        } else {
+        } else if (sourceHandleId === 'spouse-left') {
             srcPos = Position.Left;
             tgtPos = Position.Right;
+        } else {
+            // Fallback to position-based logic
+            if (sourceX < targetX) {
+                srcPos = Position.Right;
+                tgtPos = Position.Left;
+            } else {
+                srcPos = Position.Left;
+                tgtPos = Position.Right;
+            }
         }
     } else if (edgeType === 'child') {
         edgeColor = 'stroke: blue;';
         edgeLabel = child();
-        // Use the handles set by the layout: child handle (bottom) to parent handle (top)
+        // Parent-child: from parent's bottom (child handle) to child's top (parent handle)
         srcPos = Position.Bottom;
         tgtPos = Position.Top;
     } else if (edgeType === 'parent') {
@@ -55,13 +64,22 @@
     } else if (edgeType === 'sibling') {
         edgeColor = 'stroke: orange;';
         edgeLabel = sibling();
-        // For siblings, use horizontal positioning
-        if (sourceX < targetX) {
+        // Use handle-based positioning for siblings
+        if (sourceHandleId === 'spouse-right') {
             srcPos = Position.Right;
             tgtPos = Position.Left;
-        } else {
+        } else if (sourceHandleId === 'spouse-left') {
             srcPos = Position.Left;
             tgtPos = Position.Right;
+        } else {
+            // Fallback to position-based logic
+            if (sourceX < targetX) {
+                srcPos = Position.Right;
+                tgtPos = Position.Left;
+            } else {
+                srcPos = Position.Left;
+                tgtPos = Position.Right;
+            }
         }
     } else {
         edgeColor = 'stroke: gray;';
@@ -71,12 +89,24 @@
         tgtPos = targetPosition || Position.Top;
     }
     
-    // Override with handle-specific positioning if handles are specified
+    // Explicit handle overrides (these should take precedence)
     if (sourceHandleId === 'child') {
         srcPos = Position.Bottom;
     }
     if (targetHandleId === 'parent') {
         tgtPos = Position.Top;
+    }
+    if (sourceHandleId === 'spouse-left') {
+        srcPos = Position.Left;
+    }
+    if (sourceHandleId === 'spouse-right') {
+        srcPos = Position.Right;
+    }
+    if (targetHandleId === 'spouse-left') {
+        tgtPos = Position.Left;
+    }
+    if (targetHandleId === 'spouse-right') {
+        tgtPos = Position.Right;
     }
     
     let [path, labelX, labelY] = $derived(
