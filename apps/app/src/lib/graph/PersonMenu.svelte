@@ -17,7 +17,7 @@
 	export let deleteNode: () => void;
 	export let createRelationshipAndNode: () => void;
 	export let addRelationship: () => void;
-	export let addAdmin: (() => void) | undefined;
+	// export let addAdmin: (() => void) | undefined;
 
 	let contextMenu: HTMLDivElement;
 	let isAdmin: boolean = false;

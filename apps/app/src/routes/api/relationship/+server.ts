@@ -12,7 +12,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
 		params: {
 			header: { 'X-User-ID': event.locals.session.userId }
 		},
-		body: event.request.json() as {
+		body: (await event.request.json()) as {
 			id1?: number;
 			id2?: number;
 			type?: 'child' | 'parent' | 'spouse' | 'sibling';

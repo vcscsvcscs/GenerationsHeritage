@@ -4,7 +4,8 @@
 		description,
 		life_events,
 		unknown,
-		until
+		until,
+		remove
 	} from '$lib/paraglide/messages';
 	import type { components } from '$lib/api/api.gen';
 
@@ -23,8 +24,14 @@
 	}
 
 	function addEvent() {
-		const newEvent = { from: '', to: '', description: '' };
+		const newEvent = { from: '', to: undefined, description: '' };
 		person_life_events = [...(person_life_events ?? []), newEvent];
+		onChange('life_events', person_life_events);
+	}
+
+	function removeEvent(index: number) {
+		if (!person_life_events) return;
+		person_life_events = person_life_events.filter((_, i) => i !== index);
 		onChange('life_events', person_life_events);
 	}
 </script>
@@ -34,15 +41,25 @@
 	<ul class="timeline timeline-snap-start timeline-vertical">
 		{#each person_life_events as event, index}
 			<li>
-				<div class="timeline-start">
+				<div class="timeline-start flex items-center">
 					{#if editorMode}
 						<input
-							type="text"
+							type="date"
 							class="input input-xs input-bordered"
 							value={event.from ?? ''}
 							on:input={(e) => updateEvent(index, 'from', e.currentTarget.value)}
 							placeholder={unknown().toLowerCase()}
 						/>
+						<!-- Remove button -->
+						<button
+							type="button"
+							class="btn btn-xs btn-ghost text-error ml-2"
+							title={remove()}
+							on:click={() => removeEvent(index)}
+							aria-label={remove() + ' ' + life_events()}
+						>
+							&#10005;
+						</button>
 					{:else}
 						{event.from ?? unknown().toLowerCase()}
 					{/if}
@@ -69,7 +86,7 @@
 							{until()}
 							{#if editorMode}
 								<input
-									type="text"
+									type="date"
 									class="input input-xs input-bordered ml-1"
 									value={event.to ?? ''}
 									on:input={(e) => updateEvent(index, 'to', e.currentTarget.value)}
