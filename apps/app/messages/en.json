@@ -169,6 +169,16 @@
 	"yes": "Yes",
 	"zip_code": "Zip Code",
 	"add_life_event": "Add life-event",
+	"add_recipe": "Add Recipe",
+	"category": "Category",
+	"cookbook": "Family Cookbook",
 	"deleted_profiles": "Deleted profiles",
-	"managed_profiles": "Managed profiles"
+	"ingredients": "Ingredients",
+	"instructions": "Instructions",
+	"managed_profiles": "Managed profiles",
+	"new_recipe": "New Recipe",
+	"no_recipes": "No recipes yet",
+	"origin": "Origin",
+	"rating": "Rating",
+	"view_recipes": "Recipes"
 }

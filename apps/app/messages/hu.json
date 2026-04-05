@@ -166,7 +166,17 @@
 	"yes": "Igen",
 	"zip_code": "Irányítószám",
 	"add_life_event": "Életesemény hozzadása",
+	"add_recipe": "Recept hozzáadása",
+	"category": "Kategória",
+	"cookbook": "Családi szakácskönyv",
 	"deleted_profiles": "Törölt profilok",
+	"ingredients": "Hozzávalók",
+	"instructions": "Elkészítés",
 	"managed_profiles": "Adminisztrált profilok",
-	"phone": "Telefon"
+	"new_recipe": "Új recept",
+	"no_recipes": "Még nincsenek receptek",
+	"origin": "Eredet",
+	"phone": "Telefon",
+	"rating": "Értékelés",
+	"view_recipes": "Receptek"
 }

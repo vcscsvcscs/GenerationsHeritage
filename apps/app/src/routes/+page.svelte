@@ -16,6 +16,9 @@
 
 	import type { components } from '$lib/api/api.gen';
 	import type { NodeMenu } from '$lib/graph/model';
+	import RecipeListModal from '$lib/recipe/RecipeListModal.svelte';
+	import CookbookModal from '$lib/recipe/CookbookModal.svelte';
+	import { cookbook } from '$lib/paraglide/messages.js';
 
 	import { handleNodeClick } from '$lib/graph/node_click';
 
@@ -36,6 +39,9 @@
 	let with_out_spouse = $state(false);
 	let createRelationship = $state(false);
 	let adminMenu = $state(false);
+	let recipePersonId: number | null = $state(null);
+	let recipePersonName = $state('');
+	let showCookbook = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
 	let layout = familyTreeDAG.getLayoutedElements(
@@ -126,7 +132,8 @@
 				openPersonMenu = undefined;
 			},
 			addRecipe: () => {
-				relationshipStart = Number(node.data.id);
+				recipePersonId = Number(node.data.id);
+				recipePersonName = [node.data.first_name, node.data.last_name].filter(Boolean).join(' ');
 				openPersonMenu = undefined;
 			},
 			id: String(node.data.id),
@@ -317,6 +324,23 @@
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />
 			{/if}
+			{#if recipePersonId !== null}
+				<RecipeListModal
+					personId={recipePersonId}
+					personName={recipePersonName}
+					closeModal={() => {
+						recipePersonId = null;
+						recipePersonName = '';
+					}}
+				/>
+			{/if}
+			{#if showCookbook}
+				<CookbookModal
+					closeModal={() => {
+						showCookbook = false;
+					}}
+				/>
+			{/if}
 			{#if adminMenu}
 				<AdminMenu
 					createProfile={() => {
@@ -379,4 +403,12 @@
 			adminMenu = !adminMenu;
 		}}
 	/>
+	<button
+		class="btn btn-sm btn-primary"
+		onclick={() => {
+			showCookbook = !showCookbook;
+		}}
+	>
+		{cookbook()}
+	</button>
 </div>
