@@ -1,0 +1,17 @@
+{
+    "recipe": {
+        "name": "Grandma's Apple Pie",
+        "origin": "Hungarian",
+        "category": "Dessert",
+        "description": "Traditional family apple pie recipe",
+        "ingredients": ["apples", "flour", "sugar", "butter", "cinnamon"],
+        "instructions": ["Preheat oven to 180C", "Mix ingredients", "Bake for 45 minutes"],
+        "notes": "Best served warm"
+    },
+    "relationship": {
+        "favourite": true,
+        "like_it": true,
+        "could_make_it": true,
+        "rating": 5
+    }
+}

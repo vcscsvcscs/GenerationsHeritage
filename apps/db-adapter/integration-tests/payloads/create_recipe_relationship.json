@@ -1,0 +1,11 @@
+{
+    "id": 6,
+    "relationship": {
+        "schema": {
+            "favourite": false,
+            "like_it": true,
+            "could_make_it": false,
+            "rating": 4
+        }
+    }
+}

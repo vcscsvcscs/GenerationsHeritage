@@ -124,5 +124,13 @@ func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
 		t.Run("GetCommentsOnPerson", integration_tests.GetCommentsOnPersonTest(dbAdapterURI, client))
 		t.Run("PatchCommentOnPerson", integration_tests.PatchCommentOnPersonTest(dbAdapterURI, client))
 		t.Run("DeleteCommentOnPerson", integration_tests.DeleteCommentOnPersonTest(dbAdapterURI, client))
+		t.Run("CreateRecipeForPerson", integration_tests.CreateRecipeForPersonTest(dbAdapterURI, client))
+		t.Run("GetRecipesByPersonId", integration_tests.GetRecipesByPersonIdTest(dbAdapterURI, client))
+		t.Run("UpdateRecipe", integration_tests.UpdateRecipeTest(dbAdapterURI, client))
+		t.Run("CreateRecipeRelationship", integration_tests.CreateRecipeRelationshipTest(dbAdapterURI, client))
+		t.Run("GetFamilyCookbook", integration_tests.GetFamilyCookbookTest(dbAdapterURI, client))
+		t.Run("SoftDeleteRecipe", integration_tests.SoftDeleteRecipeTest(dbAdapterURI, client))
+		t.Run("HardDeleteRecipe", integration_tests.HardDeleteRecipeTest(dbAdapterURI, client))
+		t.Run("DeleteRecipeRelationship", integration_tests.DeleteRecipeRelationshipTest(dbAdapterURI, client))
 	}
 }
