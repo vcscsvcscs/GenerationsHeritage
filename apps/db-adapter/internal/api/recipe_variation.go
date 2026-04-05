@@ -11,36 +11,8 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) DeleteRecipeRelationship(
-	c *gin.Context, id int, params api.DeleteRecipeRelationshipParams,
-) {
-	session := srv.createSessionWithTimeout(c.Request.Context())
-	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
-
-	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer acancel()
-	if err := auth.CouldSeePersonsProfile(actx, session, params.PersonId, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access", err.Error())})
-
-		return
-	}
-
-	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
-	defer qCancel()
-	_, err := session.ExecuteWrite(qctx, memgraph.DeleteRecipeRelationship(qctx, params.PersonId, id))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"description": "Recipe relationship deleted"})
-}
-
-func (srv *server) CreateRecipeRelationship(
-	c *gin.Context, id int, params api.CreateRecipeRelationshipParams,
-) {
-	var body api.CreateRecipeRelationshipJSONRequestBody
+func (srv *server) CreateRecipeVariation(c *gin.Context, id int, params api.CreateRecipeVariationParams) {
+	var body api.CreateRecipeVariationJSONRequestBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
 
@@ -52,17 +24,46 @@ func (srv *server) CreateRecipeRelationship(
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
-	if err := auth.CouldSeePersonsProfile(actx, session, body.Id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access", err.Error())})
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+
+		return
+	}
+
+	var variationNotes string
+	if body.VariationNotes != nil {
+		variationNotes = *body.VariationNotes
+	}
+
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer qCancel()
+	res, err := session.ExecuteWrite(qctx, memgraph.CreateRecipeVariation(
+		qctx, id, params.XUserID, &body.Recipe, variationNotes, body.Relationship,
+	))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (srv *server) GetRecipeVariations(c *gin.Context, id int, params api.GetRecipeVariationsParams) {
+	session := srv.createSessionWithTimeout(c.Request.Context())
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
+
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer acancel()
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
 
 		return
 	}
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
-	res, err := session.ExecuteWrite(qctx, memgraph.CreateRecipeRelationship(
-		qctx, body.Id, id, body.Relationship.Schema,
-	))
+	res, err := session.ExecuteRead(qctx, memgraph.GetRecipeVariations(qctx, id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 

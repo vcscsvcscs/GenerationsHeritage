@@ -51,3 +51,19 @@ func CouldManagePersonUnknownAdmin(ctx context.Context, session neo4j.SessionWit
 	_, err := session.ExecuteRead(ctx, memgraph.GetAdminRelationship(ctx, userId, xUserID))
 	return err
 }
+
+// CouldManageRecipe checks whether a user has permission to manage (update/delete) a recipe.
+// A user can manage a recipe if they have a Created relationship to it, or if they are
+// an admin of a person who has a Created relationship to it.
+func CouldManageRecipe(ctx context.Context, session neo4j.SessionWithContext, recipeId, xUserID int) error {
+	_, err := session.ExecuteRead(ctx, memgraph.CouldManageRecipe(ctx, recipeId, xUserID))
+	return err
+}
+
+// CouldSeeRecipe checks whether a user has permission to view a recipe.
+// A user can see a recipe if they created it, are an admin of the creator,
+// or are a family member of the creator.
+func CouldSeeRecipe(ctx context.Context, session neo4j.SessionWithContext, recipeId, xUserID int) error {
+	_, err := session.ExecuteRead(ctx, memgraph.CouldSeeRecipe(ctx, recipeId, xUserID))
+	return err
+}
