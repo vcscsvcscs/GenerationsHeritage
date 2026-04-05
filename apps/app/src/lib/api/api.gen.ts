@@ -174,6 +174,24 @@ export interface paths {
         /** Get recipes by person ID */
         get: operations["getRecipesByPersonId"];
         put?: never;
+        /** Create a recipe and link it to a person */
+        post: operations["createRecipeForPerson"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cookbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get family cookbook by family distance */
+        get: operations["getFamilyCookbook"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -529,6 +547,15 @@ export interface components {
             favourite?: boolean | null;
             like_it?: boolean | null;
             could_make_it?: boolean | null;
+            rating?: number | null;
+        };
+        CookbookEntry: {
+            recipe?: components["schemas"]["Recipe"];
+            added_by?: components["schemas"]["OptimizedPersonNode"];
+            relationship?: components["schemas"]["Likes"];
+        };
+        Cookbook: {
+            entries?: components["schemas"]["CookbookEntry"][];
         };
         Admin: {
             id?: number;
@@ -1406,6 +1433,119 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    createRecipeForPerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    recipe: components["schemas"]["RecipeProperties"];
+                    relationship?: components["schemas"]["LikesProperties"];
+                };
+            };
+        };
+        responses: {
+            /** @description Recipe created and linked to person */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        recipe?: components["schemas"]["Recipe"];
+                        relationship?: components["schemas"]["Likes"];
+                    };
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    getFamilyCookbook: {
+        parameters: {
+            query: {
+                distance: number;
+            };
+            header: {
+                "X-User-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Family cookbook retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cookbook"];
+                };
+            };
+            /** @description Bad request */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
