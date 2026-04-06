@@ -9,9 +9,9 @@ import (
 )
 
 type RecipeComment struct {
-	Message string     `json:"message"`
 	SentAt  time.Time  `json:"sent_at"`
 	Edited  *time.Time `json:"edited,omitempty"`
+	Message string     `json:"message"`
 }
 
 func CommentOnRecipe(
