@@ -15,11 +15,13 @@
 		added_by: { id: number; first_name?: string; last_name?: string; profile_picture?: string };
 		relationship: any;
 	}> = $state([]);
+	let likedRecipeIds: Set<number> = $state(new Set());
 	let isLoading = $state(true);
 	let selectedEntry: { id: number; props: any } | undefined = $state(undefined);
 
 	onMount(() => {
 		fetchCookbook();
+		fetchMyLikedRecipes();
 	});
 
 	async function fetchCookbook() {
@@ -37,8 +39,29 @@
 		}
 	}
 
+	async function fetchMyLikedRecipes() {
+		try {
+			const response = await fetch('/api/recipe/person/me');
+			if (response.ok) {
+				const data = (await response.json()) as { recipes?: Array<{ Id: number }> };
+				likedRecipeIds = new Set((data?.recipes ?? []).map((r) => r.Id));
+			}
+		} catch (e) {
+			console.error('Error fetching liked recipes:', e);
+		}
+	}
+
 	function getPersonName(person: { first_name?: string; last_name?: string }): string {
 		return [person.first_name, person.last_name].filter(Boolean).join(' ') || '?';
+	}
+
+	function handleLikeToggle(recipeId: number, liked: boolean) {
+		if (liked) {
+			likedRecipeIds.add(recipeId);
+		} else {
+			likedRecipeIds.delete(recipeId);
+		}
+		likedRecipeIds = new Set(likedRecipeIds);
 	}
 </script>
 
@@ -47,9 +70,11 @@
 		recipeData={selectedEntry.props}
 		recipeId={selectedEntry.id}
 		editable={false}
+		liked={likedRecipeIds.has(selectedEntry.id)}
 		closeModal={() => {
 			selectedEntry = undefined;
 		}}
+		onLikeToggle={(liked) => handleLikeToggle(selectedEntry!.id, liked)}
 	/>
 {:else}
 	<div class="modal modal-open" transition:fade>
@@ -81,9 +106,16 @@
 						>
 							<div class="card-body p-4">
 								<div class="flex items-center justify-between">
-									<h4 class="card-title text-base">
-										{entry.recipe.Props?.name ?? recipe()}
-									</h4>
+									<div class="flex items-center gap-2">
+										<h4 class="card-title text-base">
+											{entry.recipe.Props?.name ?? recipe()}
+										</h4>
+										{#if likedRecipeIds.has(entry.recipe.Id)}
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-error">
+												<path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+											</svg>
+										{/if}
+									</div>
 									<div class="flex items-center gap-2 text-sm text-base-content/60">
 										{#if entry.added_by?.profile_picture}
 											<img

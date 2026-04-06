@@ -4,6 +4,7 @@
 	import {
 		close,
 		recipes,
+		liked_recipes,
 		new_recipe,
 		no_recipes,
 		save,
@@ -23,10 +24,12 @@
 	let {
 		personId,
 		personName = '',
+		useMyRecipes = false,
 		closeModal
 	}: {
 		personId: number;
 		personName?: string;
+		useMyRecipes?: boolean;
 		closeModal: () => void;
 	} = $props();
 
@@ -52,7 +55,8 @@
 	async function fetchRecipes() {
 		isLoading = true;
 		try {
-			const response = await fetch(`/api/recipe/person/${personId}`);
+			const endpoint = useMyRecipes ? '/api/recipe/person/me' : `/api/recipe/person/${personId}`;
+			const response = await fetch(endpoint);
 			if (response.ok) {
 				const data = (await response.json()) as { recipes?: Array<{ Id: number; Props: any }> };
 				recipeList = data?.recipes ?? [];
@@ -125,10 +129,10 @@
 			<div class="bg-base-100 z-7 sticky top-0">
 				<div class="flex items-center justify-between p-2">
 					<h3 class="text-lg font-bold">
-						{personName ? `${personName} - ${recipes()}` : recipes()}
+						{useMyRecipes ? liked_recipes() : personName ? `${personName} - ${recipes()}` : recipes()}
 					</h3>
 					<div class="space-x-2">
-						{#if !showCreateForm}
+						{#if !showCreateForm && !useMyRecipes}
 							<button class="btn btn-accent btn-sm" onclick={() => (showCreateForm = true)}>
 								{new_recipe()}
 							</button>

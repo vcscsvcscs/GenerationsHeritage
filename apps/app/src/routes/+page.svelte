@@ -18,7 +18,7 @@
 	import type { NodeMenu } from '$lib/graph/model';
 	import RecipeListModal from '$lib/recipe/RecipeListModal.svelte';
 	import CookbookModal from '$lib/recipe/CookbookModal.svelte';
-	import { cookbook } from '$lib/paraglide/messages.js';
+	import { cookbook, liked_recipes } from '$lib/paraglide/messages.js';
 
 	import { handleNodeClick } from '$lib/graph/node_click';
 
@@ -42,6 +42,7 @@
 	let recipePersonId: number | null = $state(null);
 	let recipePersonName = $state('');
 	let showCookbook = $state(false);
+	let showLikedRecipes = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
 	let layout = familyTreeDAG.getLayoutedElements(
@@ -341,6 +342,15 @@
 					}}
 				/>
 			{/if}
+			{#if showLikedRecipes}
+				<RecipeListModal
+					personId={-1}
+					useMyRecipes={true}
+					closeModal={() => {
+						showLikedRecipes = false;
+					}}
+				/>
+			{/if}
 			{#if adminMenu}
 				<AdminMenu
 					createProfile={() => {
@@ -410,5 +420,13 @@
 		}}
 	>
 		{cookbook()}
+	</button>
+	<button
+		class="btn btn-sm btn-primary"
+		onclick={() => {
+			showLikedRecipes = !showLikedRecipes;
+		}}
+	>
+		{liked_recipes()}
 	</button>
 </div>
