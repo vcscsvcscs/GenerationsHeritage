@@ -131,12 +131,14 @@
 		});
 
 		if (!response.ok) {
-			console.error('Cannot create relationship' + ', status: ' + response.status + (await response.json()));
+			console.error(
+				'Cannot create relationship' + ', status: ' + response.status + (await response.json())
+			);
 			return;
 		}
 
 		const created = (await response.json()) as components['schemas']['dbtypeRelationship'][];
-		console.debug('Relationship created successfully',created);
+		console.debug('Relationship created successfully', created);
 		relationships.push(...created);
 
 		let newEdges: Edge[] = [];
@@ -191,10 +193,12 @@
 		{#if !createRelationship}
 			<div class="form-control mt-2">
 				<p>
-					<strong>{id()} 1:</strong> {startNode}
+					<strong>{id()} 1:</strong>
+					{startNode}
 				</p>
 				<p>
-					<strong>{id()} 2:</strong> {endNode}
+					<strong>{id()} 2:</strong>
+					{endNode}
 				</p>
 			</div>
 			<!-- Editor mode: show all existing relationships -->

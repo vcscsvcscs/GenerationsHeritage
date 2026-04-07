@@ -400,14 +400,14 @@
 								}
 							});
 					}}
-					removePersonFromGraph={removePersonFromGraph}
+					{removePersonFromGraph}
 				/>
 			{/if}
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
 
-<div class="absolute left-2 top-2 flex flex-row items-center gap-2">
+<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
 	<HamburgerIcon
 		open_admin_panel={() => {
 			adminMenu = !adminMenu;

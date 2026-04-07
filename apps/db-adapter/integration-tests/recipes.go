@@ -39,7 +39,7 @@ func UpdateRecipeTest(dbAdapterUri string, client *http.Client) func(t *testing.
 	}
 }
 
-func SoftDeleteRecipeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+func SoftDeleteRecipeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl // test boilerplate
 	return func(t *testing.T) {
 		url := fmt.Sprintf("%s/recipe/%d", dbAdapterUri, recipeId)
 
@@ -62,7 +62,7 @@ func SoftDeleteRecipeTest(dbAdapterUri string, client *http.Client) func(t *test
 	}
 }
 
-func HardDeleteRecipeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+func HardDeleteRecipeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl // test boilerplate
 	return func(t *testing.T) {
 		url := fmt.Sprintf("%s/recipe/%d/hard-delete", dbAdapterUri, recipeId)
 

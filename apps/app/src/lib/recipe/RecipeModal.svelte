@@ -13,7 +13,6 @@
 		instructions,
 		notes,
 		add,
-		remove,
 		favourite
 	} from '$lib/paraglide/messages';
 	import type { components } from '$lib/api/api.gen';
@@ -128,7 +127,7 @@
 
 <div class="modal modal-open" transition:fade>
 	<div class="modal-box max-h-screen w-full max-w-3xl overflow-y-auto">
-		<div class="bg-base-100 z-7 sticky top-0">
+		<div class="bg-base-100 sticky top-0 z-7">
 			<div class="flex items-center justify-between p-2">
 				<div class="flex items-center gap-2">
 					<h3 class="text-lg font-bold">{recipeData.name ?? recipe()}</h3>
@@ -141,12 +140,30 @@
 							title={favourite()}
 						>
 							{#if isLiked}
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-									<path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="currentColor"
+									class="h-5 w-5"
+								>
+									<path
+										d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"
+									/>
 								</svg>
 							{:else}
-								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="h-5 w-5"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+									/>
 								</svg>
 							{/if}
 						</button>
@@ -174,7 +191,7 @@
 		<div class="flex flex-col gap-4 p-2">
 			<!-- Name -->
 			<div>
-				<label class="label font-semibold">{recipe()}</label>
+				<span class="label font-semibold">{recipe()}</span>
 				{#if editorMode}
 					<input type="text" class="input input-bordered w-full" bind:value={draft.name} />
 				{:else}
@@ -185,7 +202,7 @@
 			<!-- Origin & Category -->
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<div>
-					<label class="label font-semibold">{origin()}</label>
+					<span class="label font-semibold">{origin()}</span>
 					{#if editorMode}
 						<input type="text" class="input input-bordered w-full" bind:value={draft.origin} />
 					{:else}
@@ -193,7 +210,7 @@
 					{/if}
 				</div>
 				<div>
-					<label class="label font-semibold">{category()}</label>
+					<span class="label font-semibold">{category()}</span>
 					{#if editorMode}
 						<input type="text" class="input input-bordered w-full" bind:value={draft.category} />
 					{:else}
@@ -204,9 +221,13 @@
 
 			<!-- Description -->
 			<div>
-				<label class="label font-semibold">{description()}</label>
+				<span class="label font-semibold">{description()}</span>
 				{#if editorMode}
-					<textarea class="textarea textarea-bordered w-full" rows="3" bind:value={draft.description}></textarea>
+					<textarea
+						class="textarea textarea-bordered w-full"
+						rows="3"
+						bind:value={draft.description}
+					></textarea>
 				{:else}
 					<p>{recipeData.description ?? '-'}</p>
 				{/if}
@@ -214,10 +235,10 @@
 
 			<!-- Ingredients -->
 			<div>
-				<label class="label font-semibold">{ingredients()}</label>
+				<span class="label font-semibold">{ingredients()}</span>
 				{#if editorMode}
-					{#each draft.ingredients ?? [] as item, i}
-						<div class="flex items-center gap-2 mb-1">
+					{#each draft.ingredients ?? [] as _, i}
+						<div class="mb-1 flex items-center gap-2">
 							<input
 								type="text"
 								class="input input-bordered input-sm flex-1"
@@ -231,26 +252,24 @@
 					<button class="btn btn-accent btn-xs mt-1" onclick={addIngredient}>
 						{add()}
 					</button>
+				{:else if recipeData.ingredients && recipeData.ingredients.length > 0}
+					<ul class="list-disc pl-5">
+						{#each recipeData.ingredients as item}
+							<li>{item}</li>
+						{/each}
+					</ul>
 				{:else}
-					{#if recipeData.ingredients && recipeData.ingredients.length > 0}
-						<ul class="list-disc pl-5">
-							{#each recipeData.ingredients as item}
-								<li>{item}</li>
-							{/each}
-						</ul>
-					{:else}
-						<p>-</p>
-					{/if}
+					<p>-</p>
 				{/if}
 			</div>
 
 			<!-- Instructions -->
 			<div>
-				<label class="label font-semibold">{instructions()}</label>
+				<span class="label font-semibold">{instructions()}</span>
 				{#if editorMode}
-					{#each draft.instructions ?? [] as step, i}
-						<div class="flex items-center gap-2 mb-1">
-							<span class="text-sm font-mono w-6">{i + 1}.</span>
+					{#each draft.instructions ?? [] as __, i}
+						<div class="mb-1 flex items-center gap-2">
+							<span class="w-6 font-mono text-sm">{i + 1}.</span>
 							<textarea
 								class="textarea textarea-bordered textarea-sm flex-1"
 								bind:value={draft.instructions[i]}
@@ -263,24 +282,23 @@
 					<button class="btn btn-accent btn-xs mt-1" onclick={addInstruction}>
 						{add()}
 					</button>
+				{:else if recipeData.instructions && recipeData.instructions.length > 0}
+					<ol class="list-decimal pl-5">
+						{#each recipeData.instructions as step}
+							<li class="mb-1">{step}</li>
+						{/each}
+					</ol>
 				{:else}
-					{#if recipeData.instructions && recipeData.instructions.length > 0}
-						<ol class="list-decimal pl-5">
-							{#each recipeData.instructions as step}
-								<li class="mb-1">{step}</li>
-							{/each}
-						</ol>
-					{:else}
-						<p>-</p>
-					{/if}
+					<p>-</p>
 				{/if}
 			</div>
 
 			<!-- Notes -->
 			<div>
-				<label class="label font-semibold">{notes()}</label>
+				<span class="label font-semibold">{notes()}</span>
 				{#if editorMode}
-					<textarea class="textarea textarea-bordered w-full" rows="2" bind:value={draft.notes}></textarea>
+					<textarea class="textarea textarea-bordered w-full" rows="2" bind:value={draft.notes}
+					></textarea>
 				{:else}
 					<p>{recipeData.notes ?? '-'}</p>
 				{/if}

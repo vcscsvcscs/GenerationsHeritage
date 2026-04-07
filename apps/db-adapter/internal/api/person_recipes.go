@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) GetRecipesByPersonId(
+func (srv *server) GetRecipesByPersonId( //nolint:dupl // handler boilerplate, not worth abstracting
 	c *gin.Context, id int, params api.GetRecipesByPersonIdParams,
 ) {
 	session := srv.createSessionWithTimeout(c.Request.Context())

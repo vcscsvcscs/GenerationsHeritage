@@ -77,7 +77,7 @@ func (srv *server) EditComment(c *gin.Context, id int, params api.EditCommentPar
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) DeleteCommentOnPerson(c *gin.Context, id int, params api.DeleteCommentOnPersonParams) {
+func (srv *server) DeleteCommentOnPerson(c *gin.Context, id int, params api.DeleteCommentOnPersonParams) { //nolint:dupl,lll // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

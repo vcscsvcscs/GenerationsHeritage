@@ -16,8 +16,7 @@
 		ingredients,
 		instructions,
 		notes,
-		add,
-		loading
+		add
 	} from '$lib/paraglide/messages';
 	import RecipeModal from './RecipeModal.svelte';
 
@@ -33,10 +32,11 @@
 		closeModal: () => void;
 	} = $props();
 
-	let recipeList: Array<{ Id: number; Props: any }> = $state([]);
+	let recipeList: Array<{ Id: number; Props: Record<string, unknown> }> = $state([]);
 	let isLoading = $state(true);
 	let showCreateForm = $state(false);
-	let selectedRecipe: { id: number; props: any } | undefined = $state(undefined);
+	let selectedRecipe: { id: number; props: Record<string, unknown> } | undefined =
+		$state(undefined);
 
 	let newRecipe = $state({
 		name: '',
@@ -58,7 +58,9 @@
 			const endpoint = useMyRecipes ? '/api/recipe/person/me' : `/api/recipe/person/${personId}`;
 			const response = await fetch(endpoint);
 			if (response.ok) {
-				const data = (await response.json()) as { recipes?: Array<{ Id: number; Props: any }> };
+				const data = (await response.json()) as {
+					recipes?: Array<{ Id: number; Props: Record<string, unknown> }>;
+				};
 				recipeList = data?.recipes ?? [];
 			}
 		} catch (e) {
@@ -126,10 +128,14 @@
 {:else}
 	<div class="modal modal-open" transition:fade>
 		<div class="modal-box max-h-screen w-full max-w-3xl overflow-y-auto">
-			<div class="bg-base-100 z-7 sticky top-0">
+			<div class="bg-base-100 sticky top-0 z-7">
 				<div class="flex items-center justify-between p-2">
 					<h3 class="text-lg font-bold">
-						{useMyRecipes ? liked_recipes() : personName ? `${personName} - ${recipes()}` : recipes()}
+						{useMyRecipes
+							? liked_recipes()
+							: personName
+								? `${personName} - ${recipes()}`
+								: recipes()}
 					</h3>
 					<div class="space-x-2">
 						{#if !showCreateForm && !useMyRecipes}
@@ -149,16 +155,20 @@
 				<!-- Create Recipe Form -->
 				<div class="flex flex-col gap-3 p-2">
 					<div>
-						<label class="label font-semibold">{recipe()}</label>
+						<span class="label font-semibold">{recipe()}</span>
 						<input type="text" class="input input-bordered w-full" bind:value={newRecipe.name} />
 					</div>
 					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
 						<div>
-							<label class="label font-semibold">{origin()}</label>
-							<input type="text" class="input input-bordered w-full" bind:value={newRecipe.origin} />
+							<span class="label font-semibold">{origin()}</span>
+							<input
+								type="text"
+								class="input input-bordered w-full"
+								bind:value={newRecipe.origin}
+							/>
 						</div>
 						<div>
-							<label class="label font-semibold">{category()}</label>
+							<span class="label font-semibold">{category()}</span>
 							<input
 								type="text"
 								class="input input-bordered w-full"
@@ -167,7 +177,7 @@
 						</div>
 					</div>
 					<div>
-						<label class="label font-semibold">{description()}</label>
+						<span class="label font-semibold">{description()}</span>
 						<textarea
 							class="textarea textarea-bordered w-full"
 							rows="2"
@@ -175,9 +185,9 @@
 						></textarea>
 					</div>
 					<div>
-						<label class="label font-semibold">{ingredients()}</label>
-						{#each newRecipe.ingredients as item, i}
-							<div class="flex items-center gap-2 mb-1">
+						<span class="label font-semibold">{ingredients()}</span>
+						{#each newRecipe.ingredients as _, i}
+							<div class="mb-1 flex items-center gap-2">
 								<input
 									type="text"
 									class="input input-bordered input-sm flex-1"
@@ -198,10 +208,10 @@
 						</button>
 					</div>
 					<div>
-						<label class="label font-semibold">{instructions()}</label>
-						{#each newRecipe.instructions as step, i}
-							<div class="flex items-center gap-2 mb-1">
-								<span class="text-sm font-mono w-6">{i + 1}.</span>
+						<span class="label font-semibold">{instructions()}</span>
+						{#each newRecipe.instructions as __, i}
+							<div class="mb-1 flex items-center gap-2">
+								<span class="w-6 font-mono text-sm">{i + 1}.</span>
 								<textarea
 									class="textarea textarea-bordered textarea-sm flex-1"
 									bind:value={newRecipe.instructions[i]}
@@ -209,9 +219,7 @@
 								<button
 									class="btn btn-xs btn-ghost text-error"
 									onclick={() => {
-										newRecipe.instructions = newRecipe.instructions.filter(
-											(_, idx) => idx !== i
-										);
+										newRecipe.instructions = newRecipe.instructions.filter((_, idx) => idx !== i);
 									}}
 								>
 									&#10005;
@@ -223,18 +231,22 @@
 						</button>
 					</div>
 					<div>
-						<label class="label font-semibold">{notes()}</label>
+						<span class="label font-semibold">{notes()}</span>
 						<textarea
 							class="textarea textarea-bordered w-full"
 							rows="2"
 							bind:value={newRecipe.notes}
 						></textarea>
 					</div>
-					<div class="flex gap-2 justify-end mt-2">
+					<div class="mt-2 flex justify-end gap-2">
 						<button class="btn btn-ghost btn-sm" onclick={() => (showCreateForm = false)}>
 							{cancel()}
 						</button>
-						<button class="btn btn-primary btn-sm" onclick={createRecipe} disabled={!newRecipe.name}>
+						<button
+							class="btn btn-primary btn-sm"
+							onclick={createRecipe}
+							disabled={!newRecipe.name}
+						>
 							{save()}
 						</button>
 					</div>
@@ -244,20 +256,20 @@
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else if recipeList.length === 0}
-				<p class="text-center p-8 text-base-content/60">{no_recipes()}</p>
+				<p class="text-base-content/60 p-8 text-center">{no_recipes()}</p>
 			{:else}
 				<!-- Recipe List -->
 				<div class="flex flex-col gap-2 p-2">
 					{#each recipeList as r}
 						<button
-							class="card bg-base-200 shadow-sm hover:bg-base-300 transition-colors cursor-pointer w-full text-left"
+							class="card bg-base-200 hover:bg-base-300 w-full cursor-pointer text-left shadow-sm transition-colors"
 							onclick={() => {
 								selectedRecipe = { id: r.Id, props: r.Props };
 							}}
 						>
 							<div class="card-body p-4">
 								<h4 class="card-title text-base">{r.Props?.name ?? recipe()}</h4>
-								<div class="flex gap-3 text-sm text-base-content/60">
+								<div class="text-base-content/60 flex gap-3 text-sm">
 									{#if r.Props?.category}
 										<span class="badge badge-outline badge-sm">{r.Props.category}</span>
 									{/if}
@@ -266,7 +278,7 @@
 									{/if}
 								</div>
 								{#if r.Props?.description}
-									<p class="text-sm mt-1 line-clamp-2">{r.Props.description}</p>
+									<p class="mt-1 line-clamp-2 text-sm">{r.Props.description}</p>
 								{/if}
 							</div>
 						</button>

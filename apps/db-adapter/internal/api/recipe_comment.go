@@ -42,7 +42,7 @@ func (srv *server) CommentOnRecipe(c *gin.Context, id int, params api.CommentOnR
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) GetRecipeComments(c *gin.Context, id int, params api.GetRecipeCommentsParams) {
+func (srv *server) GetRecipeComments(c *gin.Context, id int, params api.GetRecipeCommentsParams) { //nolint:dupl // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -89,7 +89,7 @@ func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.Update
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) DeleteRecipeComment(c *gin.Context, id int, params api.DeleteRecipeCommentParams) {
+func (srv *server) DeleteRecipeComment(c *gin.Context, id int, params api.DeleteRecipeCommentParams) { //nolint:dupl,lll // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

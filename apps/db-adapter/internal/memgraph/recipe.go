@@ -53,7 +53,7 @@ func GetRecipesByPersonId(ctx context.Context, personId int) neo4j.ManagedTransa
 	}
 }
 
-func UpdateRecipe(ctx context.Context, id int, recipe *api.RecipeProperties) neo4j.ManagedTransactionWork {
+func UpdateRecipe(ctx context.Context, id int, recipe *api.RecipeProperties) neo4j.ManagedTransactionWork { //nolint:dupl,lll // mirrors UpdatePerson
 	convertedRecipe := StructToMap(recipe)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdateRecipeCypherQuery, map[string]any{

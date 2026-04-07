@@ -38,7 +38,7 @@ func CreateRecipeRelationshipTest(dbAdapterUri string, client *http.Client) func
 	}
 }
 
-func DeleteRecipeRelationshipTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+func DeleteRecipeRelationshipTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl // test boilerplate
 	return func(t *testing.T) {
 		url := fmt.Sprintf("%s/recipe/%d/relationship?personId=6", dbAdapterUri, recipeId)
 

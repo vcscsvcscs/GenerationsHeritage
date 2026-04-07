@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) SoftDeleteRecipe(c *gin.Context, id int, params api.SoftDeleteRecipeParams) {
+func (srv *server) SoftDeleteRecipe(c *gin.Context, id int, params api.SoftDeleteRecipeParams) { //nolint:dupl // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -66,7 +66,7 @@ func (srv *server) UpdateRecipe(c *gin.Context, id int, params api.UpdateRecipeP
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) HardDeleteRecipe(c *gin.Context, id int, params api.HardDeleteRecipeParams) {
+func (srv *server) HardDeleteRecipe(c *gin.Context, id int, params api.HardDeleteRecipeParams) { //nolint:dupl // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

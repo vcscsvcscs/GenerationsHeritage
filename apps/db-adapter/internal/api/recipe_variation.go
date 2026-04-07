@@ -49,7 +49,7 @@ func (srv *server) CreateRecipeVariation(c *gin.Context, id int, params api.Crea
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) GetRecipeVariations(c *gin.Context, id int, params api.GetRecipeVariationsParams) {
+func (srv *server) GetRecipeVariations(c *gin.Context, id int, params api.GetRecipeVariationsParams) { //nolint:dupl,lll // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
