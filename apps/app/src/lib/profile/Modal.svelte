@@ -59,7 +59,7 @@
 			});
 
 			if (!response.ok) {
-				console.error('Error saving person data, status: ', response.status, (await response.json()));
+				console.error('Error saving person data, status: ', response.status, await response.json());
 				alert('Error saving person data, status: ' + response.status + (await response.json()));
 				return;
 			}
@@ -72,7 +72,9 @@
 			} else {
 				const errorDetails = await response.json();
 				console.error('Error details:', errorDetails);
-				alert(`Error saving person data, status: ${response.status} ${JSON.stringify(errorDetails)}`);
+				alert(
+					`Error saving person data, status: ${response.status} ${JSON.stringify(errorDetails)}`
+				);
 			}
 		} catch (error) {
 			alert('An unexpected error occurred: ' + error);
@@ -83,7 +85,7 @@
 
 <div class="modal modal-open" transition:fade>
 	<div class="modal-box max-h-80 max-h-screen w-full max-w-5xl overflow-y-auto">
-		<div class="bg-base-100 z-7 sticky top-0">
+		<div class="bg-base-100 sticky top-0 z-7">
 			<ModalButtons {editorMode} onClose={close} onSave={save} onToggleEdit={toggleEdit} />
 			<div class="divider"></div>
 		</div>

@@ -1,6 +1,5 @@
-MATCH (b:Person)
+MATCH (a:Person)-[r:Comment]->(b:Person)
 WHERE id(b) = $id
-MERGE (a)-[r:Comment]->(b)
 RETURN collect(r) as comments, collect({
   id: id(a), 
   first_name: a.first_name, 

@@ -166,6 +166,7 @@
 						onchange={() => onChange('phone', person.phone)}
 						class="input input-sm input-bordered w-full"
 					/>{:else}{person.phone ?? '-'}{/if}
+			</p>
 			<p>
 				<strong>{mothers_first_name()}:</strong>
 				{#if editorMode}<input

@@ -88,6 +88,18 @@ type Comment struct {
 	Type  *string  `json:"type"`
 }
 
+// Cookbook defines model for Cookbook.
+type Cookbook struct {
+	Entries *[]CookbookEntry `json:"entries,omitempty"`
+}
+
+// CookbookEntry defines model for CookbookEntry.
+type CookbookEntry struct {
+	AddedBy      *OptimizedPersonNode `json:"added_by,omitempty"`
+	Recipe       *Recipe              `json:"recipe,omitempty"`
+	Relationship *Likes               `json:"relationship,omitempty"`
+}
+
 // FamilyRelationship defines model for FamilyRelationship.
 type FamilyRelationship struct {
 	From     *openapi_types.Date `json:"from"`
@@ -118,6 +130,7 @@ type LikesProperties struct {
 	CouldMakeIt *bool `json:"could_make_it"`
 	Favourite   *bool `json:"favourite"`
 	LikeIt      *bool `json:"like_it"`
+	Rating      *int  `json:"rating"`
 }
 
 // Message defines model for Message.
@@ -273,6 +286,26 @@ type Recipe struct {
 	Props     *RecipeProperties `json:"Props,omitempty"`
 }
 
+// RecipeComment defines model for RecipeComment.
+type RecipeComment struct {
+	Comment *struct {
+		Edited  *int    `json:"edited"`
+		Message *string `json:"message,omitempty"`
+		SentAt  *int    `json:"sent_at,omitempty"`
+	} `json:"comment,omitempty"`
+	Commenter *OptimizedPersonNode `json:"commenter,omitempty"`
+}
+
+// RecipeCommentInput defines model for RecipeCommentInput.
+type RecipeCommentInput struct {
+	Message string `json:"message"`
+}
+
+// RecipeComments defines model for RecipeComments.
+type RecipeComments struct {
+	Comments *[]RecipeComment `json:"comments,omitempty"`
+}
+
 // RecipeProperties defines model for RecipeProperties.
 type RecipeProperties struct {
 	AllowAdminAccess *[]struct {
@@ -293,6 +326,16 @@ type RecipeProperties struct {
 		Said *string `json:"said,omitempty"`
 	} `json:"others_said"`
 	Photo *string `json:"photo"`
+}
+
+// RecipeVariation defines model for RecipeVariation.
+type RecipeVariation struct {
+	Creator *OptimizedPersonNode `json:"creator,omitempty"`
+	V       *struct {
+		CreatedAt *int    `json:"created_at,omitempty"`
+		Notes     *string `json:"notes"`
+	} `json:"v,omitempty"`
+	Variation *Recipe `json:"variation,omitempty"`
 }
 
 // Relationship defines model for Relationship.
@@ -357,6 +400,12 @@ type CommentOnPersonParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// GetFamilyCookbookParams defines parameters for GetFamilyCookbook.
+type GetFamilyCookbookParams struct {
+	Distance int `form:"distance" json:"distance"`
+	XUserID  int `json:"X-User-ID"`
+}
+
 // GetFamilyTreeByIdParams defines parameters for GetFamilyTreeById.
 type GetFamilyTreeByIdParams struct {
 	XUserID int `json:"X-User-ID"`
@@ -408,6 +457,17 @@ type GetRecipesByPersonIdParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// CreateRecipeForPersonJSONBody defines parameters for CreateRecipeForPerson.
+type CreateRecipeForPersonJSONBody struct {
+	Recipe       RecipeProperties `json:"recipe"`
+	Relationship *LikesProperties `json:"relationship,omitempty"`
+}
+
+// CreateRecipeForPersonParams defines parameters for CreateRecipeForPerson.
+type CreateRecipeForPersonParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
 // CreatePersonAndRelationshipJSONBody defines parameters for CreatePersonAndRelationship.
 type CreatePersonAndRelationshipJSONBody struct {
 	Person       PersonRegistration                       `json:"person"`
@@ -433,6 +493,26 @@ type UpdateRecipeParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// DeleteRecipeCommentParams defines parameters for DeleteRecipeComment.
+type DeleteRecipeCommentParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// GetRecipeCommentsParams defines parameters for GetRecipeComments.
+type GetRecipeCommentsParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// UpdateRecipeCommentParams defines parameters for UpdateRecipeComment.
+type UpdateRecipeCommentParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// CommentOnRecipeParams defines parameters for CommentOnRecipe.
+type CommentOnRecipeParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
 // HardDeleteRecipeParams defines parameters for HardDeleteRecipe.
 type HardDeleteRecipeParams struct {
 	XUserID int `json:"X-User-ID"`
@@ -454,6 +534,23 @@ type CreateRecipeRelationshipJSONBody struct {
 
 // CreateRecipeRelationshipParams defines parameters for CreateRecipeRelationship.
 type CreateRecipeRelationshipParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// CreateRecipeVariationJSONBody defines parameters for CreateRecipeVariation.
+type CreateRecipeVariationJSONBody struct {
+	Recipe         RecipeProperties `json:"recipe"`
+	Relationship   *LikesProperties `json:"relationship,omitempty"`
+	VariationNotes *string          `json:"variation_notes"`
+}
+
+// CreateRecipeVariationParams defines parameters for CreateRecipeVariation.
+type CreateRecipeVariationParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
+// GetRecipeVariationsParams defines parameters for GetRecipeVariations.
+type GetRecipeVariationsParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
@@ -511,14 +608,26 @@ type CreatePersonByGoogleIdJSONRequestBody = PersonRegistration
 // UpdatePersonJSONRequestBody defines body for UpdatePerson for application/json ContentType.
 type UpdatePersonJSONRequestBody = PersonProperties
 
+// CreateRecipeForPersonJSONRequestBody defines body for CreateRecipeForPerson for application/json ContentType.
+type CreateRecipeForPersonJSONRequestBody CreateRecipeForPersonJSONBody
+
 // CreatePersonAndRelationshipJSONRequestBody defines body for CreatePersonAndRelationship for application/json ContentType.
 type CreatePersonAndRelationshipJSONRequestBody CreatePersonAndRelationshipJSONBody
 
 // UpdateRecipeJSONRequestBody defines body for UpdateRecipe for application/json ContentType.
 type UpdateRecipeJSONRequestBody = RecipeProperties
 
+// UpdateRecipeCommentJSONRequestBody defines body for UpdateRecipeComment for application/json ContentType.
+type UpdateRecipeCommentJSONRequestBody = RecipeCommentInput
+
+// CommentOnRecipeJSONRequestBody defines body for CommentOnRecipe for application/json ContentType.
+type CommentOnRecipeJSONRequestBody = RecipeCommentInput
+
 // CreateRecipeRelationshipJSONRequestBody defines body for CreateRecipeRelationship for application/json ContentType.
 type CreateRecipeRelationshipJSONRequestBody CreateRecipeRelationshipJSONBody
+
+// CreateRecipeVariationJSONRequestBody defines body for CreateRecipeVariation for application/json ContentType.
+type CreateRecipeVariationJSONRequestBody CreateRecipeVariationJSONBody
 
 // CreateRelationshipJSONRequestBody defines body for CreateRelationship for application/json ContentType.
 type CreateRelationshipJSONRequestBody CreateRelationshipJSONBody
@@ -552,6 +661,9 @@ type ServerInterface interface {
 	// Comment on person's profile by ID
 	// (POST /comment/{id})
 	CommentOnPerson(c *gin.Context, id int, params CommentOnPersonParams)
+	// Get family cookbook by family distance
+	// (GET /cookbook)
+	GetFamilyCookbook(c *gin.Context, params GetFamilyCookbookParams)
 	// Get family tree by person ID
 	// (GET /family-tree)
 	GetFamilyTreeById(c *gin.Context, params GetFamilyTreeByIdParams)
@@ -591,6 +703,9 @@ type ServerInterface interface {
 	// Get recipes by person ID
 	// (GET /person/{id}/recipes)
 	GetRecipesByPersonId(c *gin.Context, id int, params GetRecipesByPersonIdParams)
+	// Create a recipe and link it to a person
+	// (POST /person/{id}/recipes)
+	CreateRecipeForPerson(c *gin.Context, id int, params CreateRecipeForPersonParams)
 	// Create a person and relationship
 	// (POST /person_and_relationship/{id})
 	CreatePersonAndRelationship(c *gin.Context, id int, params CreatePersonAndRelationshipParams)
@@ -600,6 +715,18 @@ type ServerInterface interface {
 	// Update a recipe by ID
 	// (PATCH /recipe/{id})
 	UpdateRecipe(c *gin.Context, id int, params UpdateRecipeParams)
+	// Delete a comment on a recipe
+	// (DELETE /recipe/{id}/comment)
+	DeleteRecipeComment(c *gin.Context, id int, params DeleteRecipeCommentParams)
+	// Get all comments on a recipe
+	// (GET /recipe/{id}/comment)
+	GetRecipeComments(c *gin.Context, id int, params GetRecipeCommentsParams)
+	// Update a comment on a recipe
+	// (PATCH /recipe/{id}/comment)
+	UpdateRecipeComment(c *gin.Context, id int, params UpdateRecipeCommentParams)
+	// Add a comment to a recipe
+	// (POST /recipe/{id}/comment)
+	CommentOnRecipe(c *gin.Context, id int, params CommentOnRecipeParams)
 	// Hard delete a recipe by ID
 	// (DELETE /recipe/{id}/hard-delete)
 	HardDeleteRecipe(c *gin.Context, id int, params HardDeleteRecipeParams)
@@ -609,6 +736,12 @@ type ServerInterface interface {
 	// Create a relationship with an existing recipe
 	// (POST /recipe/{id}/relationship)
 	CreateRecipeRelationship(c *gin.Context, id int, params CreateRecipeRelationshipParams)
+	// Create a variation of a recipe
+	// (POST /recipe/{id}/variation)
+	CreateRecipeVariation(c *gin.Context, id int, params CreateRecipeVariationParams)
+	// Get all variations of a recipe
+	// (GET /recipe/{id}/variations)
+	GetRecipeVariations(c *gin.Context, id int, params GetRecipeVariationsParams)
 	// Create a relationship between two persons
 	// (POST /relationship)
 	CreateRelationship(c *gin.Context, params CreateRelationshipParams)
@@ -1065,6 +1198,63 @@ func (siw *ServerInterfaceWrapper) CommentOnPerson(c *gin.Context) {
 	}
 
 	siw.Handler.CommentOnPerson(c, id, params)
+}
+
+// GetFamilyCookbook operation middleware
+func (siw *ServerInterfaceWrapper) GetFamilyCookbook(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetFamilyCookbookParams
+
+	// ------------- Required query parameter "distance" -------------
+
+	if paramValue := c.Query("distance"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument distance is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "distance", c.Request.URL.Query(), &params.Distance)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter distance: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetFamilyCookbook(c, params)
 }
 
 // GetFamilyTreeById operation middleware
@@ -1575,6 +1765,57 @@ func (siw *ServerInterfaceWrapper) GetRecipesByPersonId(c *gin.Context) {
 	siw.Handler.GetRecipesByPersonId(c, id, params)
 }
 
+// CreateRecipeForPerson operation middleware
+func (siw *ServerInterfaceWrapper) CreateRecipeForPerson(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateRecipeForPersonParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateRecipeForPerson(c, id, params)
+}
+
 // CreatePersonAndRelationship operation middleware
 func (siw *ServerInterfaceWrapper) CreatePersonAndRelationship(c *gin.Context) {
 
@@ -1726,6 +1967,210 @@ func (siw *ServerInterfaceWrapper) UpdateRecipe(c *gin.Context) {
 	}
 
 	siw.Handler.UpdateRecipe(c, id, params)
+}
+
+// DeleteRecipeComment operation middleware
+func (siw *ServerInterfaceWrapper) DeleteRecipeComment(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteRecipeCommentParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteRecipeComment(c, id, params)
+}
+
+// GetRecipeComments operation middleware
+func (siw *ServerInterfaceWrapper) GetRecipeComments(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetRecipeCommentsParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetRecipeComments(c, id, params)
+}
+
+// UpdateRecipeComment operation middleware
+func (siw *ServerInterfaceWrapper) UpdateRecipeComment(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateRecipeCommentParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateRecipeComment(c, id, params)
+}
+
+// CommentOnRecipe operation middleware
+func (siw *ServerInterfaceWrapper) CommentOnRecipe(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CommentOnRecipeParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CommentOnRecipe(c, id, params)
 }
 
 // HardDeleteRecipe operation middleware
@@ -1894,6 +2339,108 @@ func (siw *ServerInterfaceWrapper) CreateRecipeRelationship(c *gin.Context) {
 	}
 
 	siw.Handler.CreateRecipeRelationship(c, id, params)
+}
+
+// CreateRecipeVariation operation middleware
+func (siw *ServerInterfaceWrapper) CreateRecipeVariation(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateRecipeVariationParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateRecipeVariation(c, id, params)
+}
+
+// GetRecipeVariations operation middleware
+func (siw *ServerInterfaceWrapper) GetRecipeVariations(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetRecipeVariationsParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetRecipeVariations(c, id, params)
 }
 
 // CreateRelationship operation middleware
@@ -2153,6 +2700,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/comment/:id", wrapper.GetCommentsOnPerson)
 	router.PATCH(options.BaseURL+"/comment/:id", wrapper.EditComment)
 	router.POST(options.BaseURL+"/comment/:id", wrapper.CommentOnPerson)
+	router.GET(options.BaseURL+"/cookbook", wrapper.GetFamilyCookbook)
 	router.GET(options.BaseURL+"/family-tree", wrapper.GetFamilyTreeById)
 	router.GET(options.BaseURL+"/family-tree-with-spouses", wrapper.GetFamilyTreeWithSpousesById)
 	router.GET(options.BaseURL+"/health", wrapper.HealthCheck)
@@ -2166,12 +2714,19 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.PATCH(options.BaseURL+"/person/:id", wrapper.UpdatePerson)
 	router.DELETE(options.BaseURL+"/person/:id/hard-delete", wrapper.HardDeletePerson)
 	router.GET(options.BaseURL+"/person/:id/recipes", wrapper.GetRecipesByPersonId)
+	router.POST(options.BaseURL+"/person/:id/recipes", wrapper.CreateRecipeForPerson)
 	router.POST(options.BaseURL+"/person_and_relationship/:id", wrapper.CreatePersonAndRelationship)
 	router.DELETE(options.BaseURL+"/recipe/:id", wrapper.SoftDeleteRecipe)
 	router.PATCH(options.BaseURL+"/recipe/:id", wrapper.UpdateRecipe)
+	router.DELETE(options.BaseURL+"/recipe/:id/comment", wrapper.DeleteRecipeComment)
+	router.GET(options.BaseURL+"/recipe/:id/comment", wrapper.GetRecipeComments)
+	router.PATCH(options.BaseURL+"/recipe/:id/comment", wrapper.UpdateRecipeComment)
+	router.POST(options.BaseURL+"/recipe/:id/comment", wrapper.CommentOnRecipe)
 	router.DELETE(options.BaseURL+"/recipe/:id/hard-delete", wrapper.HardDeleteRecipe)
 	router.DELETE(options.BaseURL+"/recipe/:id/relationship", wrapper.DeleteRecipeRelationship)
 	router.POST(options.BaseURL+"/recipe/:id/relationship", wrapper.CreateRecipeRelationship)
+	router.POST(options.BaseURL+"/recipe/:id/variation", wrapper.CreateRecipeVariation)
+	router.GET(options.BaseURL+"/recipe/:id/variations", wrapper.GetRecipeVariations)
 	router.POST(options.BaseURL+"/relationship", wrapper.CreateRelationship)
 	router.DELETE(options.BaseURL+"/relationship/:id1/:id2", wrapper.DeleteRelationship)
 	router.GET(options.BaseURL+"/relationship/:id1/:id2", wrapper.GetRelationship)

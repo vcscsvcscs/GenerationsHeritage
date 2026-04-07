@@ -1,0 +1,38 @@
+---
+services:
+  memgraph:
+    image: "memgraph/memgraph-mage:latest"
+    container_name: memgraph-local
+    ports:
+      - "7687:7687"
+      - "7444:7444"
+    command:
+      - "--log-level=TRACE"
+      - "--storage-mode=ON_DISK_TRANSACTIONAL"
+      - "--storage-snapshot-interval-sec=86400"
+      - "--storage-snapshot-retention-count=60"
+      - "--storage-property-store-compression-enabled=true"
+      - "--storage-property-store-compression-level=mid"
+      - "--storage-snapshot-on-exit=true"
+    environment:
+      - MEMGRAPH_USER=memgraph
+      - MEMGRAPH_PASSWORD=memgraph
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'RETURN 0;' | mgconsole --username memgraph --password memgraph || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 15s
+  db-adapter:
+    build:
+      context: ./apps/db-adapter
+      dockerfile: integration-test.dockerfile
+    container_name: db-adapter-local
+    ports:
+      - "5237:5237"
+    depends_on:
+      memgraph:
+        condition: service_healthy
+    environment:
+      - HTTP_PORT=:5237
+      - MEMGRAPH_URI=bolt://memgraph:7687

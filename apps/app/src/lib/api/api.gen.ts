@@ -174,6 +174,24 @@ export interface paths {
         /** Get recipes by person ID */
         get: operations["getRecipesByPersonId"];
         put?: never;
+        /** Create a recipe and link it to a person */
+        post: operations["createRecipeForPerson"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cookbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get family cookbook by family distance */
+        get: operations["getFamilyCookbook"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -318,6 +336,60 @@ export interface paths {
         post: operations["createRecipeRelationship"];
         /** Delete a relationship with a recipe */
         delete: operations["deleteRecipeRelationship"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recipe/{id}/comment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all comments on a recipe */
+        get: operations["getRecipeComments"];
+        put?: never;
+        /** Add a comment to a recipe */
+        post: operations["commentOnRecipe"];
+        /** Delete a comment on a recipe */
+        delete: operations["deleteRecipeComment"];
+        options?: never;
+        head?: never;
+        /** Update a comment on a recipe */
+        patch: operations["updateRecipeComment"];
+        trace?: never;
+    };
+    "/recipe/{id}/variation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a variation of a recipe */
+        post: operations["createRecipeVariation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/recipe/{id}/variations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all variations of a recipe */
+        get: operations["getRecipeVariations"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -529,6 +601,37 @@ export interface components {
             favourite?: boolean | null;
             like_it?: boolean | null;
             could_make_it?: boolean | null;
+            rating?: number | null;
+        };
+        CookbookEntry: {
+            recipe?: components["schemas"]["Recipe"];
+            added_by?: components["schemas"]["OptimizedPersonNode"];
+            relationship?: components["schemas"]["Likes"];
+        };
+        Cookbook: {
+            entries?: components["schemas"]["CookbookEntry"][];
+        };
+        RecipeCommentInput: {
+            message: string;
+        };
+        RecipeComment: {
+            comment?: {
+                message?: string;
+                sent_at?: number;
+                edited?: number | null;
+            };
+            commenter?: components["schemas"]["OptimizedPersonNode"];
+        };
+        RecipeComments: {
+            comments?: components["schemas"]["RecipeComment"][];
+        };
+        RecipeVariation: {
+            variation?: components["schemas"]["Recipe"];
+            v?: {
+                notes?: string | null;
+                created_at?: number;
+            };
+            creator?: components["schemas"]["OptimizedPersonNode"];
         };
         Admin: {
             id?: number;
@@ -1428,6 +1531,119 @@ export interface operations {
             };
         };
     };
+    createRecipeForPerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    recipe: components["schemas"]["RecipeProperties"];
+                    relationship?: components["schemas"]["LikesProperties"];
+                };
+            };
+        };
+        responses: {
+            /** @description Recipe created and linked to person */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        recipe?: components["schemas"]["Recipe"];
+                        relationship?: components["schemas"]["Likes"];
+                    };
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    getFamilyCookbook: {
+        parameters: {
+            query: {
+                distance: number;
+            };
+            header: {
+                "X-User-ID": number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Family cookbook retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cookbook"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
     createRelationship: {
         parameters: {
             query?: never;
@@ -2212,6 +2428,341 @@ export interface operations {
                 content: {
                     "application/json": {
                         msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    getRecipeComments: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Comments retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeComments"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    commentOnRecipe: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecipeCommentInput"];
+            };
+        };
+        responses: {
+            /** @description Comment added */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeComment"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    deleteRecipeComment: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Comment deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        description?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    updateRecipeComment: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecipeCommentInput"];
+            };
+        };
+        responses: {
+            /** @description Comment updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeComment"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    createRecipeVariation: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    recipe: components["schemas"]["RecipeProperties"];
+                    variation_notes?: string | null;
+                    relationship?: components["schemas"]["LikesProperties"];
+                };
+            };
+        };
+        responses: {
+            /** @description Recipe variation created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        recipe?: components["schemas"]["Recipe"];
+                        variation_relationship?: {
+                            notes?: string;
+                            created_at?: number;
+                        };
+                    };
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
+    getRecipeVariations: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Variations retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        variations?: components["schemas"]["RecipeVariation"][];
                     };
                 };
             };

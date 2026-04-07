@@ -4,7 +4,8 @@
 		add_relationship,
 		remove,
 		create_relationship_and_person,
-		add_administrator
+		add_administrator,
+		view_recipes
 	} from '$lib/paraglide/messages';
 
 	export let id: string;
@@ -17,6 +18,7 @@
 	export let deleteNode: () => void;
 	export let createRelationshipAndNode: () => void;
 	export let addRelationship: () => void;
+	export let addRecipe: (() => void) | undefined;
 	// export let addAdmin: (() => void) | undefined;
 
 	let contextMenu: HTMLDivElement;
@@ -64,6 +66,9 @@
 		{create_relationship_and_person()}
 	</button>
 	<button onclick={addRelationship} class="btn">{add_relationship()}</button>
+	{#if addRecipe}
+		<button onclick={addRecipe} class="btn">{view_recipes()}</button>
+	{/if}
 	<!-- <button onclick={addAdmin} class="btn">{add_administrator()}</button> -->
 	{#if Number(XUserId) !== Number(id) && isAdmin}
 		<button onclick={deleteNode} class="btn">{remove()}</button>

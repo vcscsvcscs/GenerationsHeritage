@@ -79,7 +79,6 @@
 	"ideology": "Ideológia",
 	"illness": "Betegség",
 	"image": "Kép",
-	"ingridients": "Hozzávalók",
 	"interest": "Érdeklődés",
 	"intersex": "Interszex",
 	"invite_code": "Meghívó kód",
@@ -166,7 +165,18 @@
 	"yes": "Igen",
 	"zip_code": "Irányítószám",
 	"add_life_event": "Életesemény hozzadása",
+	"add_recipe": "Recept hozzáadása",
+	"category": "Kategória",
+	"cookbook": "Családi szakácskönyv",
 	"deleted_profiles": "Törölt profilok",
+	"ingredients": "Hozzávalók",
+	"instructions": "Elkészítés",
+	"liked_recipes": "Kedvelt receptjeim",
 	"managed_profiles": "Adminisztrált profilok",
-	"phone": "Telefon"
+	"new_recipe": "Új recept",
+	"no_recipes": "Még nincsenek receptek",
+	"origin": "Eredet",
+	"phone": "Telefon",
+	"rating": "Értékelés",
+	"view_recipes": "Receptek"
 }

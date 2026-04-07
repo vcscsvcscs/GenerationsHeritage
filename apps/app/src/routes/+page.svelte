@@ -16,6 +16,9 @@
 
 	import type { components } from '$lib/api/api.gen';
 	import type { NodeMenu } from '$lib/graph/model';
+	import RecipeListModal from '$lib/recipe/RecipeListModal.svelte';
+	import CookbookModal from '$lib/recipe/CookbookModal.svelte';
+	import { cookbook, liked_recipes } from '$lib/paraglide/messages.js';
 
 	import { handleNodeClick } from '$lib/graph/node_click';
 
@@ -36,6 +39,10 @@
 	let with_out_spouse = $state(false);
 	let createRelationship = $state(false);
 	let adminMenu = $state(false);
+	let recipePersonId: number | null = $state(null);
+	let recipePersonName = $state('');
+	let showCookbook = $state(false);
+	let showLikedRecipes = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
 	let layout = familyTreeDAG.getLayoutedElements(
@@ -126,7 +133,8 @@
 				openPersonMenu = undefined;
 			},
 			addRecipe: () => {
-				relationshipStart = Number(node.data.id);
+				recipePersonId = Number(node.data.id);
+				recipePersonName = [node.data.first_name, node.data.last_name].filter(Boolean).join(' ');
 				openPersonMenu = undefined;
 			},
 			id: String(node.data.id),
@@ -317,6 +325,32 @@
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />
 			{/if}
+			{#if recipePersonId !== null}
+				<RecipeListModal
+					personId={recipePersonId}
+					personName={recipePersonName}
+					closeModal={() => {
+						recipePersonId = null;
+						recipePersonName = '';
+					}}
+				/>
+			{/if}
+			{#if showCookbook}
+				<CookbookModal
+					closeModal={() => {
+						showCookbook = false;
+					}}
+				/>
+			{/if}
+			{#if showLikedRecipes}
+				<RecipeListModal
+					personId={-1}
+					useMyRecipes={true}
+					closeModal={() => {
+						showLikedRecipes = false;
+					}}
+				/>
+			{/if}
 			{#if adminMenu}
 				<AdminMenu
 					createProfile={() => {
@@ -366,17 +400,33 @@
 								}
 							});
 					}}
-					removePersonFromGraph={removePersonFromGraph}
+					{removePersonFromGraph}
 				/>
 			{/if}
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
 
-<div class="absolute left-2 top-2 flex flex-row items-center gap-2">
+<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
 	<HamburgerIcon
 		open_admin_panel={() => {
 			adminMenu = !adminMenu;
 		}}
 	/>
+	<button
+		class="btn btn-sm btn-primary"
+		onclick={() => {
+			showCookbook = !showCookbook;
+		}}
+	>
+		{cookbook()}
+	</button>
+	<button
+		class="btn btn-sm btn-primary"
+		onclick={() => {
+			showLikedRecipes = !showLikedRecipes;
+		}}
+	>
+		{liked_recipes()}
+	</button>
 </div>

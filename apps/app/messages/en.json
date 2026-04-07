@@ -79,7 +79,6 @@
 	"ideology": "Ideology",
 	"illness": "Illness",
 	"image": "Image",
-	"ingridients": "Ingridients",
 	"interest": "Interest",
 	"intersex": "Intersex",
 	"invite_code": "Invite Code",
@@ -169,6 +168,17 @@
 	"yes": "Yes",
 	"zip_code": "Zip Code",
 	"add_life_event": "Add life-event",
+	"add_recipe": "Add Recipe",
+	"category": "Category",
+	"cookbook": "Family Cookbook",
 	"deleted_profiles": "Deleted profiles",
-	"managed_profiles": "Managed profiles"
+	"ingredients": "Ingredients",
+	"instructions": "Instructions",
+	"liked_recipes": "My Liked Recipes",
+	"managed_profiles": "Managed profiles",
+	"new_recipe": "New Recipe",
+	"no_recipes": "No recipes yet",
+	"origin": "Origin",
+	"rating": "Rating",
+	"view_recipes": "Recipes"
 }

@@ -92,8 +92,8 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		c, _ := gin.CreateTestContext(w)
 
 		body := `{"invite_code": "test-code", "person": {"first_name": "test-person"}}`
-		c.Request = httptest.NewRequest(
-			http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
+		c.Request = httptest.NewRequestWithContext(
+			t.Context(), http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
 		)
 
 		srv.CreatePersonByGoogleIdAndInviteCode(c, "test-google-id")
@@ -109,8 +109,8 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		c, _ := gin.CreateTestContext(w)
 
 		body := `{"invalid_json":`
-		c.Request = httptest.NewRequest(
-			http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
+		c.Request = httptest.NewRequestWithContext(
+			t.Context(), http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
 		)
 
 		srv.CreatePersonByGoogleIdAndInviteCode(c, "test-google-id")
