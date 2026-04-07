@@ -18,7 +18,7 @@ func (srv *server) SoftDeleteRecipe(c *gin.Context, id int, params api.SoftDelet
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldManageRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}
@@ -49,7 +49,7 @@ func (srv *server) UpdateRecipe(c *gin.Context, id int, params api.UpdateRecipeP
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldManageRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}
@@ -73,7 +73,7 @@ func (srv *server) HardDeleteRecipe(c *gin.Context, id int, params api.HardDelet
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldManageRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}

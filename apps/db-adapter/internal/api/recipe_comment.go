@@ -25,7 +25,7 @@ func (srv *server) CommentOnRecipe(c *gin.Context, id int, params api.CommentOnR
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}
@@ -49,7 +49,7 @@ func (srv *server) GetRecipeComments(c *gin.Context, id int, params api.GetRecip
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}
@@ -77,6 +77,14 @@ func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.Update
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer acancel()
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
+
+		return
+	}
+
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.UpdateRecipeComment(qctx, params.XUserID, id, body.Message))
@@ -92,6 +100,14 @@ func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.Update
 func (srv *server) DeleteRecipeComment(c *gin.Context, id int, params api.DeleteRecipeCommentParams) { //nolint:dupl,lll // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
+
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer acancel()
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
+
+		return
+	}
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()

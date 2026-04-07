@@ -1,6 +1,6 @@
 MATCH (n:Person)
 WHERE id(n) = $id
-OPTIONAL MATCH (n)-[:Parent|Child|Sibling|Spouse*1..%d]->(relative:Person)
+OPTIONAL MATCH (n)-[:Parent|Child|Sibling|Spouse*1..%d]-(relative:Person)
 WITH collect(DISTINCT relative) + [n] AS family
 UNWIND family AS member
 OPTIONAL MATCH (member)-[l:Likes]->(r:Recipe)

@@ -20,7 +20,7 @@ func (srv *server) DeleteRecipeRelationship(
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeePersonsProfile(actx, session, params.PersonId, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access: %v", err)})
 
 		return
 	}
@@ -53,7 +53,7 @@ func (srv *server) CreateRecipeRelationship(
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeePersonsProfile(actx, session, body.Id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access: %v", err)})
 
 		return
 	}

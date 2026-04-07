@@ -22,7 +22,7 @@ func CreateRecipeVariation(
 		"created_at": time.Now().UnixMilli(),
 	}
 
-	var convertedLikes map[string]any
+	convertedLikes := map[string]any{}
 	if likesProps != nil {
 		convertedLikes = StructToMap(likesProps)
 	}

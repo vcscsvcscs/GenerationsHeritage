@@ -8,12 +8,6 @@ import (
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
-type RecipeComment struct {
-	SentAt  time.Time  `json:"sent_at"`
-	Edited  *time.Time `json:"edited,omitempty"`
-	Message string     `json:"message"`
-}
-
 func CommentOnRecipe(
 	ctx context.Context,
 	personId, recipeId int,

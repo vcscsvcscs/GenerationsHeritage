@@ -25,7 +25,7 @@ func (srv *server) CreateRecipeVariation(c *gin.Context, id int, params api.Crea
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}
@@ -56,7 +56,7 @@ func (srv *server) GetRecipeVariations(c *gin.Context, id int, params api.GetRec
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this recipe", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
 
 		return
 	}

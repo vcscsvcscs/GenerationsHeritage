@@ -20,7 +20,7 @@ func (srv *server) GetRecipesByPersonId( //nolint:dupl // handler boilerplate, n
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeePersonsProfile(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this person: %v", err)})
 
 		return
 	}
@@ -53,7 +53,7 @@ func (srv *server) CreateRecipeForPerson(
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
 	if err := auth.CouldSeePersonsProfile(actx, session, id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprint("User does not have access to this person", err.Error())})
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this person: %v", err)})
 
 		return
 	}
