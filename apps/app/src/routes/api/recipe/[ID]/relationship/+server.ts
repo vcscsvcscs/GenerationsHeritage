@@ -1,60 +1,28 @@
-import { redirect } from '@sveltejs/kit';
 import { client } from '$lib/api/client';
+import { badRequest, readJson, toResponse, userHeader, withSessionAndId } from '$lib/server/proxy';
 import type { RequestEvent } from './$types';
+import type { components } from '$lib/api/api.gen';
 
-export async function POST(event: RequestEvent): Promise<Response> {
-	if (event.locals.session === null) {
-		return redirect(302, '/login');
-	}
+export const POST = withSessionAndId(async (event: RequestEvent, userId, id) => {
+	const body = await readJson<components['schemas']['RecipeRelationshipInput']>(event.request);
+	if (body === null) return badRequest('Invalid JSON body');
 
-	const body = await event.request.json();
-	// Auto-fill person id from session if not provided or 0
-	if (!body.id) {
-		body.id = event.locals.session.userId;
-	}
+	return toResponse(
+		await client.POST('/recipe/{id}/relationship', {
+			params: { path: { id }, header: userHeader(userId) },
+			body
+		})
+	);
+});
 
-	const response = await client.POST('/recipe/{id}/relationship', {
-		params: {
-			path: { id: Number(event.params.ID) },
-			header: { 'X-User-ID': event.locals.session.userId }
-		},
-		body
-	});
-
-	if (response.response.ok) {
-		return new Response(JSON.stringify(response.data), {
-			status: response.response.status
-		});
-	} else {
-		return new Response(JSON.stringify(response.error), {
-			status: response.response.status
-		});
-	}
-}
-
-export async function DELETE(event: RequestEvent): Promise<Response> {
-	if (event.locals.session === null) {
-		return redirect(302, '/login');
-	}
-
+export const DELETE = withSessionAndId(async (event: RequestEvent, userId, id) => {
 	const personIdParam = event.url.searchParams.get('personId');
-	const personId = personIdParam === 'me' ? event.locals.session.userId : Number(personIdParam);
+	const personId = personIdParam === 'me' ? userId : Number(personIdParam);
+	if (personIdParam === null || !Number.isInteger(personId)) return badRequest('Invalid personId');
 
-	const response = await client.DELETE('/recipe/{id}/relationship', {
-		params: {
-			path: { id: Number(event.params.ID) },
-			query: { personId },
-			header: { 'X-User-ID': event.locals.session.userId }
-		}
-	});
-
-	if (response.response.ok) {
-		return new Response(JSON.stringify(response.data), {
-			status: response.response.status
-		});
-	} else {
-		return new Response(JSON.stringify(response.error), {
-			status: response.response.status
-		});
-	}
-}
+	return toResponse(
+		await client.DELETE('/recipe/{id}/relationship', {
+			params: { path: { id }, query: { personId }, header: userHeader(userId) }
+		})
+	);
+});

@@ -1,51 +1,32 @@
-import { redirect } from '@sveltejs/kit';
 import { client } from '$lib/api/client';
+import { badRequest, readJson, toResponse, userHeader, withSessionAndId } from '$lib/server/proxy';
 import type { RequestEvent } from './$types';
 import type { components } from '$lib/api/api.gen';
 
-export async function PATCH(event: RequestEvent): Promise<Response> {
-	if (event.locals.session === null) {
-		return redirect(302, '/login');
-	}
+export const GET = withSessionAndId(async (_event: RequestEvent, userId, id) =>
+	toResponse(
+		await client.GET('/recipe/{id}', {
+			params: { path: { id }, header: userHeader(userId) }
+		})
+	)
+);
 
-	const response = await client.PATCH('/recipe/{id}', {
-		params: {
-			path: { id: Number(event.params.ID) },
-			header: { 'X-User-ID': event.locals.session.userId }
-		},
-		body: (await event.request.json()) as components['schemas']['RecipeProperties']
-	});
+export const PATCH = withSessionAndId(async (event: RequestEvent, userId, id) => {
+	const body = await readJson<components['schemas']['RecipeProperties']>(event.request);
+	if (body === null) return badRequest('Invalid JSON body');
 
-	if (response.response.ok) {
-		return new Response(JSON.stringify(response.data), {
-			status: response.response.status
-		});
-	} else {
-		return new Response(JSON.stringify(response.error), {
-			status: response.response.status
-		});
-	}
-}
+	return toResponse(
+		await client.PATCH('/recipe/{id}', {
+			params: { path: { id }, header: userHeader(userId) },
+			body
+		})
+	);
+});
 
-export async function DELETE(event: RequestEvent): Promise<Response> {
-	if (event.locals.session === null) {
-		return redirect(302, '/login');
-	}
-
-	const response = await client.DELETE('/recipe/{id}', {
-		params: {
-			path: { id: Number(event.params.ID) },
-			header: { 'X-User-ID': event.locals.session.userId }
-		}
-	});
-
-	if (response.response.ok) {
-		return new Response(JSON.stringify(response.data), {
-			status: response.response.status
-		});
-	} else {
-		return new Response(JSON.stringify(response.error), {
-			status: response.response.status
-		});
-	}
-}
+export const DELETE = withSessionAndId(async (_event: RequestEvent, userId, id) =>
+	toResponse(
+		await client.DELETE('/recipe/{id}', {
+			params: { path: { id }, header: userHeader(userId) }
+		})
+	)
+);
