@@ -5,16 +5,15 @@
 		date,
 		description,
 		file,
-		file_too_large,
 		loading,
 		media_title,
 		missing_field,
 		photos,
-		unsupported_file_type,
 		upload,
 		upload_failed,
 		video
 	} from '$lib/paraglide/messages';
+	import { uploadMedia } from '$lib/profile/uploadMedia';
 
 	export let closeModal: () => void;
 	export let onCreation: (newMedia: {
@@ -45,7 +44,7 @@
 		selectedFile = input.files?.[0] ?? null;
 	}
 
-	async function uploadMedia() {
+	async function submit() {
 		const name = newMedia.name.trim();
 		if (!selectedFile) {
 			error = missing_field({ field: file() });
@@ -59,20 +58,7 @@
 		uploading = true;
 		error = '';
 		try {
-			const body = new FormData();
-			body.append('file', selectedFile);
-			const response = await fetch(`/api/person/${personId}/media`, { method: 'POST', body });
-			if (!response.ok) {
-				error =
-					response.status === 413
-						? file_too_large()
-						: response.status === 415
-							? unsupported_file_type()
-							: upload_failed();
-				return;
-			}
-
-			const { url } = (await response.json()) as { url: string };
+			const url = await uploadMedia(personId, selectedFile);
 			onCreation({
 				url,
 				name,
@@ -81,8 +67,7 @@
 			});
 			closeModal();
 		} catch (e) {
-			console.error('Error uploading media', e);
-			error = upload_failed();
+			error = e instanceof Error ? e.message : upload_failed();
 		} finally {
 			uploading = false;
 		}
@@ -143,7 +128,7 @@
 
 		<div class="modal-action">
 			<button class="btn btn-outline" disabled={uploading} on:click={closeModal}>{cancel()}</button>
-			<button class="btn btn-primary" disabled={uploading} on:click={uploadMedia}>
+			<button class="btn btn-primary" disabled={uploading} on:click={submit}>
 				{#if uploading}
 					<span class="loading loading-spinner loading-xs"></span>
 					{loading()}
