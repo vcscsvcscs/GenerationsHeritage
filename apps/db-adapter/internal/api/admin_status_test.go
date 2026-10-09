@@ -54,7 +54,7 @@ func TestCreateAdminRelationshipMissingPerson(t *testing.T) {
 	srv := recipeServer(nil, nil, memgraph.ErrNotFound)
 	c, w := jsonRequest(t, http.MethodPost, "")
 
-	srv.CreateAdminRelationship(c, 1, 2, api.CreateAdminRelationshipParams{XUserID: 2})
+	srv.CreateAdminRelationship(c, 1, 2, api.CreateAdminRelationshipParams{XUserID: 1})
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
 }

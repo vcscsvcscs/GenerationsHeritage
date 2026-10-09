@@ -67,6 +67,30 @@ func TestCreateAdminRelationship(t *testing.T) {
 		assert.Contains(t, w.Body.String(), "unauthorized")
 	})
 
+	t.Run("Caller cannot make themselves admin of someone they do not manage", func(t *testing.T) {
+		mockSession := new(memgraphMock.SessionWithContext)
+		mockDriver := new(memgraphMock.DriverWithContext)
+		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
+		mockSession.On("ExecuteRead", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("not an admin"))
+		mockSession.On("Close", mock.Anything).Return(nil)
+
+		srv := &server{
+			db:          mockDriver,
+			dbOpTimeout: 5 * time.Second,
+		}
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/admin", http.NoBody)
+		params := api.CreateAdminRelationshipParams{XUserID: 2}
+
+		srv.CreateAdminRelationship(c, 1, 2, params)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		mockSession.AssertNotCalled(t, "ExecuteWrite", mock.Anything, mock.Anything, mock.Anything)
+	})
+
 	t.Run("Internal server error case", func(t *testing.T) {
 		mockSession := new(memgraphMock.SessionWithContext)
 		mockDriver := new(memgraphMock.DriverWithContext)
