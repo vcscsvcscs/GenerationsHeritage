@@ -122,7 +122,7 @@
 	</div>
 
 	<div class="px-2 text-center" style="z-index: 2; cursor: pointer;">
-		<h2 class="text-sm font-semibold leading-tight">
+		<h2 class="text-sm leading-tight font-semibold">
 			{data.first_name}
 			{data.middle_name ? data.middle_name : ''}
 			{data.last_name}

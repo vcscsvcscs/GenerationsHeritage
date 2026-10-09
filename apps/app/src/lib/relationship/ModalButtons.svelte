@@ -1,12 +1,5 @@
 <script lang="ts">
-	import {
-		add_relationship,
-		back,
-		close,
-		edit,
-		relation,
-		save
-	} from '$lib/paraglide/messages';
+	import { add_relationship, back, close, edit, relation, save } from '$lib/paraglide/messages';
 
 	export let editorMode = false;
 	export let createMode = false;
