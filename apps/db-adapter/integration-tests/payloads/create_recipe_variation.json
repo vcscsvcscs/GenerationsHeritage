@@ -1,0 +1,12 @@
+{
+    "recipe": {
+        "name": "Grandma's Apple Pie, less sugar",
+        "category": "Dessert",
+        "ingredients": ["apples", "flour", "butter", "cinnamon"],
+        "instructions": ["Preheat oven to 180C", "Mix ingredients", "Bake for 40 minutes"]
+    },
+    "variation_notes": "Half the sugar",
+    "relationship": {
+        "like_it": true
+    }
+}

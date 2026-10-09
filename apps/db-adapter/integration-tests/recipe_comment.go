@@ -90,9 +90,13 @@ func UpdateRecipeCommentTest(dbAdapterUri string, client *http.Client) func(t *t
 		comment, ok := responseBody["comment"].(map[string]any)
 		require.True(t, ok, "response should contain 'comment' object")
 
-		props, ok := comment["Props"].(map[string]any)
-		require.True(t, ok, "comment should have 'Props'")
-		require.Equal(t, "This recipe is amazing! Updated with a secret tip.", props["message"])
+		require.Equal(t, "This recipe is amazing! Updated with a secret tip.", comment["message"])
+		requireUnixSeconds(t, comment["sent_at"])
+		requireUnixSeconds(t, comment["edited"])
+
+		commenter, ok := responseBody["commenter"].(map[string]any)
+		require.True(t, ok, "response should contain 'commenter' object")
+		require.InDelta(t, 1, commenter["id"], 0)
 	}
 }
 

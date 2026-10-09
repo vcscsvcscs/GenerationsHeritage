@@ -1,9 +1,7 @@
 package integration_tests
 
 import (
-	"bytes"
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"testing"
@@ -14,49 +12,90 @@ import (
 //go:embed payloads/create_recipe_relationship.json
 var create_recipe_relationship []byte
 
+//go:embed payloads/create_recipe_relationship_for_person.json
+var create_recipe_relationship_for_person []byte
+
+// CreateRecipeRelationshipTest has a family member like the recipe; the person defaults to the caller.
 func CreateRecipeRelationshipTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
 	return func(t *testing.T) {
 		url := fmt.Sprintf("%s/recipe/%d/relationship", dbAdapterUri, recipeId)
 
-		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, url, bytes.NewBuffer(create_recipe_relationship))
-		require.NoError(t, err)
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-User-ID", "6")
-
-		resp, err := client.Do(req)
-		require.NoError(t, err)
-		defer resp.Body.Close()
-
-		var responseBody map[string]any
-		err = json.NewDecoder(resp.Body).Decode(&responseBody)
-		require.NoError(t, err)
-
-		require.Equal(t, http.StatusOK, resp.StatusCode)
+		status, responseBody := doJSON(t, client, http.MethodPost, url, familyMemberId, create_recipe_relationship)
+		require.Equal(t, http.StatusOK, status)
 
 		_, ok := responseBody["Id"]
 		require.True(t, ok, "response should contain relationship 'Id'")
+		require.InDelta(t, familyMemberId, responseBody["StartId"], 0, "the caller is the one liking")
 	}
 }
 
-func DeleteRecipeRelationshipTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl // test boilerplate
+func CreateRecipeRelationshipForbiddenTest(dbAdapterUri string, client *http.Client) func(t *testing.T) { //nolint:dupl // test boilerplate
 	return func(t *testing.T) {
-		url := fmt.Sprintf("%s/recipe/%d/relationship?personId=6", dbAdapterUri, recipeId)
+		url := fmt.Sprintf("%s/recipe/%d/relationship", dbAdapterUri, recipeId)
 
-		req, err := http.NewRequestWithContext(t.Context(), http.MethodDelete, url, http.NoBody)
-		require.NoError(t, err)
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("X-User-ID", "6")
+		t.Run("cannot like on behalf of a person one does not manage", func(t *testing.T) {
+			status, _ := doJSON(t, client, http.MethodPost, url, familyMemberId, create_recipe_relationship_for_person)
+			require.Equal(t, http.StatusUnauthorized, status)
+		})
 
-		resp, err := client.Do(req)
-		require.NoError(t, err)
-		defer resp.Body.Close()
+		t.Run("cannot like a recipe one cannot see", func(t *testing.T) {
+			status, _ := doJSON(t, client, http.MethodPost, url, outsiderId, create_recipe_relationship)
+			require.Equal(t, http.StatusUnauthorized, status)
+		})
+	}
+}
 
-		var responseBody map[string]any
-		err = json.NewDecoder(resp.Body).Decode(&responseBody)
-		require.NoError(t, err)
+func DeleteRecipeRelationshipForbiddenTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+	return func(t *testing.T) {
+		t.Run("cannot remove another person's like", func(t *testing.T) {
+			url := fmt.Sprintf("%s/recipe/%d/relationship?personId=%d", dbAdapterUri, recipeId, familyMemberId)
 
-		require.Equal(t, http.StatusOK, resp.StatusCode)
+			status, _ := doJSON(t, client, http.MethodDelete, url, 1, nil)
+			require.Equal(t, http.StatusUnauthorized, status)
+		})
 
+		t.Run("cannot remove a like from a recipe one cannot see", func(t *testing.T) {
+			url := fmt.Sprintf("%s/recipe/%d/relationship?personId=%d", dbAdapterUri, recipeId, outsiderId)
+
+			status, _ := doJSON(t, client, http.MethodDelete, url, outsiderId, nil)
+			require.Equal(t, http.StatusUnauthorized, status)
+		})
+	}
+}
+
+func DeleteRecipeRelationshipTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+	return func(t *testing.T) {
+		url := fmt.Sprintf("%s/recipe/%d/relationship?personId=%d", dbAdapterUri, recipeId, familyMemberId)
+
+		status, responseBody := doJSON(t, client, http.MethodDelete, url, familyMemberId, nil)
+		require.Equal(t, http.StatusOK, status)
 		require.Equal(t, "Recipe relationship deleted", responseBody["description"])
+	}
+}
+
+// CreatorUnlikingKeepsRecipeTest checks that unliking a self created recipe neither orphans nor hides it.
+func CreatorUnlikingKeepsRecipeTest(dbAdapterUri string, client *http.Client) func(t *testing.T) {
+	return func(t *testing.T) {
+		url := fmt.Sprintf("%s/recipe/%d/relationship?personId=1", dbAdapterUri, recipeId)
+		status, _ := doJSON(t, client, http.MethodDelete, url, 1, nil)
+		require.Equal(t, http.StatusOK, status)
+
+		status, responseBody := doJSON(t, client, http.MethodGet, dbAdapterUri+"/person/1/recipes", 1, nil)
+		require.Equal(t, http.StatusOK, status)
+
+		entries, ok := responseBody["entries"].([]any)
+		require.True(t, ok)
+		entry := entryForRecipe(entries, recipeId)
+		require.NotNil(t, entry, "the creator should still see the recipe they created")
+		require.Nil(t, entry["relationship"], "the creator no longer likes it")
+		require.Equal(t, true, entry["created"])
+		require.Equal(t, true, entry["can_edit"], "the creator can still edit it")
+
+		status, responseBody = doJSON(t, client, http.MethodGet, dbAdapterUri+"/cookbook?distance=3", 1, nil)
+		require.Equal(t, http.StatusOK, status)
+
+		entries, ok = responseBody["entries"].([]any)
+		require.True(t, ok)
+		require.NotNil(t, entryForRecipe(entries, recipeId), "the recipe stays in the cookbook")
 	}
 }
