@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) CommentOnRecipe(c *gin.Context, id int, params api.CommentOnRecipeParams) {
+func (srv *server) CommentOnRecipe(c *gin.Context, id int, params api.CommentOnRecipeParams) { //nolint:dupl // handler boilerplate
 	var body api.CommentOnRecipeJSONRequestBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -66,7 +66,7 @@ func (srv *server) GetRecipeComments(c *gin.Context, id int, params api.GetRecip
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.UpdateRecipeCommentParams) {
+func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.UpdateRecipeCommentParams) { //nolint:dupl // handler boilerplate
 	var body api.UpdateRecipeCommentJSONRequestBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -97,7 +97,7 @@ func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.Update
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) DeleteRecipeComment(c *gin.Context, id int, params api.DeleteRecipeCommentParams) { //nolint:dupl,lll // handler boilerplate
+func (srv *server) DeleteRecipeComment(c *gin.Context, id int, params api.DeleteRecipeCommentParams) {
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

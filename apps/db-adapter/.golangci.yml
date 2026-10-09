@@ -60,6 +60,8 @@ linters:
     goconst:
       min-len: 2
       min-occurrences: 3
+      ignore-string-values:
+        - '^(id[12]?|props|msg|description|\w+Id)$' # cypher parameter names and json response keys
     gocritic:
       enabled-tags:
         - diagnostic
@@ -127,6 +129,7 @@ linters:
       - path: (.+)_test\.go
         linters:
           - dupl
+          - goconst
           - mnd
           - lll
 

@@ -29,7 +29,7 @@ func TestCreatePerson(t *testing.T) {
 		mockResult := new(memgraphMock.Result)
 		mockResult.On("Single", mock.Anything).Return(&neo4j.Record{
 			Values: []any{dbtype.Node{
-				Id: 1}},
+				Id: 1}}, //nolint:staticcheck // memgraph still returns the legacy Id
 			Keys: []string{"person"},
 		}, nil)
 		mockDriver := new(memgraphMock.DriverWithContext)
