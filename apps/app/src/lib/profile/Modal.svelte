@@ -88,7 +88,7 @@
 			<div class="divider"></div>
 		</div>
 		<ProfileHeader {person} {editorMode} onChange={handleDraftPersonChange} />
-		<MediaGallery {person} {editorMode} />
+		<MediaGallery {person} {editorMode} onChange={handleDraftPersonChange} />
 		<LifeEventsTimeline
 			person_life_events={person.life_events}
 			{editorMode}

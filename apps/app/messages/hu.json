@@ -168,5 +168,8 @@
 	"add_life_event": "Életesemény hozzadása",
 	"deleted_profiles": "Törölt profilok",
 	"managed_profiles": "Adminisztrált profilok",
-	"phone": "Telefon"
+	"phone": "Telefon",
+	"upload_failed": "A feltöltés sikertelen, kérjük próbáld újra",
+	"file_too_large": "A fájl túl nagy",
+	"unsupported_file_type": "Ez a fájltípus nem támogatott"
 }

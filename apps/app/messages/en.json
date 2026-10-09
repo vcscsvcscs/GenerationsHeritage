@@ -170,5 +170,8 @@
 	"zip_code": "Zip Code",
 	"add_life_event": "Add life-event",
 	"deleted_profiles": "Deleted profiles",
-	"managed_profiles": "Managed profiles"
+	"managed_profiles": "Managed profiles",
+	"upload_failed": "Upload failed, please try again",
+	"file_too_large": "The file is too large",
+	"unsupported_file_type": "This file type is not supported"
 }
