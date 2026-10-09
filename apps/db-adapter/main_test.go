@@ -31,13 +31,12 @@ func TestIntegration(t *testing.T) {
 		Hostname:     "memgraph",
 		ExposedPorts: []string{"7687/tcp", "7444/tcp"},
 		Image:        "memgraph/memgraph-mage:latest",
+		// ON_DISK_TRANSACTIONAL hides a vertex's edges after a property update (Memgraph bug); use in-memory.
 		Cmd: []string{
 			"--log-level=TRACE",
-			"--storage-mode=ON_DISK_TRANSACTIONAL",
+			"--storage-mode=IN_MEMORY_TRANSACTIONAL",
 			"--storage-snapshot-interval-sec=86400",
 			"--storage-snapshot-retention-count=60",
-			"--storage-property-store-compression-enabled=true",
-			"--storage-property-store-compression-level=mid",
 			"--storage-snapshot-on-exit=true",
 		},
 		Env: map[string]string{
