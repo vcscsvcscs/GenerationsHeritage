@@ -17,7 +17,7 @@ func CreateAdminRelationship(ctx context.Context, userId, adminId int) neo4j.Man
 			return nil, err
 		}
 
-		record, err := result.Single(ctx)
+		record, err := singleOrNotFound(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -44,6 +44,7 @@ func DeleteAdminRelationship(ctx context.Context, userId, adminId int) neo4j.Man
 	}
 }
 
+// GetAdminRelationship returns the Admin relationship from adminId to userId, or ErrNotFound if there is none.
 func GetAdminRelationship(ctx context.Context, userId, adminId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, GetAdminRelationshipCypherQuery, map[string]any{
@@ -54,7 +55,7 @@ func GetAdminRelationship(ctx context.Context, userId, adminId int) neo4j.Manage
 			return nil, err
 		}
 
-		record, err := result.Single(ctx)
+		record, err := singleOrNotFound(ctx, result)
 		if err != nil {
 			return nil, err
 		}

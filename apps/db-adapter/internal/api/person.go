@@ -87,7 +87,7 @@ func (srv *server) CreatePerson(c *gin.Context, params api.CreatePersonParams) {
 	c.JSON(http.StatusOK, createdPerson)
 }
 
-func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) { //nolint:dupl,lll // This just does not worth abstracting anymore
+func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByIdParams) { //nolint:lll // This just does not worth abstracting anymore
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -103,7 +103,7 @@ func (srv *server) GetPersonById(c *gin.Context, id int, params api.GetPersonByI
 	defer qCancel()
 	res, err := session.ExecuteRead(qctx, memgraph.GetPersonById(qctx, id))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}

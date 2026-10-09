@@ -14,7 +14,7 @@ func StructToMap(input any) map[string]any { //nolint:cyclop,gocyclo // this is 
 	result := make(map[string]any)
 	value := reflect.ValueOf(input)
 
-	if value.Kind() == reflect.Ptr {
+	if value.Kind() == reflect.Pointer {
 		if value.IsNil() {
 			return result
 		}
@@ -52,13 +52,13 @@ func StructToMap(input any) map[string]any { //nolint:cyclop,gocyclo // this is 
 		}
 
 		// Handle nil pointers
-		if fieldValue.Kind() == reflect.Ptr && fieldValue.IsNil() {
+		if fieldValue.Kind() == reflect.Pointer && fieldValue.IsNil() {
 			continue
 		}
 
 		// Dereference pointers
 		val := fieldValue
-		if fieldValue.Kind() == reflect.Ptr {
+		if fieldValue.Kind() == reflect.Pointer {
 			val = fieldValue.Elem()
 		}
 

@@ -78,7 +78,7 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
 		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(
-			map[string]any{"person": dbtype.Node{Id: 3}},
+			map[string]any{"person": dbtype.Node{Id: 3}}, //nolint:staticcheck // memgraph still returns the legacy Id
 			nil,
 		)
 		mockSession.On("Close", mock.Anything).Return(nil)
@@ -92,8 +92,8 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		c, _ := gin.CreateTestContext(w)
 
 		body := `{"invite_code": "test-code", "person": {"first_name": "test-person"}}`
-		c.Request = httptest.NewRequest(
-			http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
+		c.Request = httptest.NewRequestWithContext(
+			t.Context(), http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
 		)
 
 		srv.CreatePersonByGoogleIdAndInviteCode(c, "test-google-id")
@@ -109,8 +109,8 @@ func TestCreatePersonByGoogleIdAndInviteCode(t *testing.T) {
 		c, _ := gin.CreateTestContext(w)
 
 		body := `{"invalid_json":`
-		c.Request = httptest.NewRequest(
-			http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
+		c.Request = httptest.NewRequestWithContext(
+			t.Context(), http.MethodPost, "/person/google-id/invite-code", io.NopCloser(strings.NewReader(body)),
 		)
 
 		srv.CreatePersonByGoogleIdAndInviteCode(c, "test-google-id")
@@ -128,7 +128,7 @@ func TestCreatePersonByGoogleId(t *testing.T) {
 		mockDriver := new(memgraphMock.DriverWithContext)
 		mockDriver.On("NewSession", mock.Anything, mock.Anything).Return(mockSession)
 		mockSession.On("ExecuteWrite", mock.Anything, mock.Anything, mock.Anything).Return(
-			map[string]any{"person": dbtype.Node{Id: 3}}, nil,
+			map[string]any{"person": dbtype.Node{Id: 3}}, nil, //nolint:staticcheck // memgraph still returns the legacy Id
 		)
 		mockSession.On("Close", mock.Anything).Return(nil)
 

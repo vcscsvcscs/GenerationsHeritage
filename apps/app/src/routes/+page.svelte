@@ -2,8 +2,7 @@
 	import CreateRelationship from '$lib/relationship/Modal.svelte';
 	import { onMount } from 'svelte';
 	import { nodeTypes, edgeTypes } from '$lib/graph/model';
-	import { title, family_tree, select } from '$lib/paraglide/messages.js';
-	import type { RelationshipMenu } from '$lib/relationship/model.ts';
+	import { title, family_tree } from '$lib/paraglide/messages.js';
 	import AdminMenu from '$lib/admin/Modal.svelte';
 
 	import { SvelteFlowProvider, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
@@ -16,6 +15,9 @@
 
 	import type { components } from '$lib/api/api.gen';
 	import type { NodeMenu } from '$lib/graph/model';
+	import RecipeListModal from '$lib/recipe/RecipeListModal.svelte';
+	import CookbookModal from '$lib/recipe/CookbookModal.svelte';
+	import { cookbook, liked_recipes } from '$lib/paraglide/messages.js';
 
 	import { handleNodeClick } from '$lib/graph/node_click';
 
@@ -33,9 +35,12 @@
 	let selectedRelationship: Edge | undefined = $state(undefined);
 	let openPersonPanel = $state(false);
 	let openPersonMenu: NodeMenu | undefined = $state(undefined);
-	let with_out_spouse = $state(false);
 	let createRelationship = $state(false);
 	let adminMenu = $state(false);
+	let recipePersonId: number | null = $state(null);
+	let recipePersonName = $state('');
+	let showCookbook = $state(false);
+	let showLikedRecipes = $state(false);
 
 	let familyTreeDAG = new FamilyTree();
 	let layout = familyTreeDAG.getLayoutedElements(
@@ -49,18 +54,17 @@
 	let edges = $state.raw<Edge[]>([] as Edge[]);
 
 	let relationshipStart: number | null = $state(null);
-	let relationshipMenu = $state(undefined as RelationshipMenu | undefined);
 	let createPerson = $state(false);
 
 	let clientWidth: number | undefined = $state();
 	let clientHeight: number | undefined = $state();
 
-	let removePersonFromGraph = (id: any) => {
+	let removePersonFromGraph = (id: number) => {
 		nodes = nodes.filter((n) => n.data.id !== id);
 		edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
 	};
 
-	let delete_profile = (id: any) => {
+	let delete_profile = (id: number) => {
 		fetch('/api/person/' + id, {
 			method: 'DELETE',
 			headers: {
@@ -103,7 +107,7 @@
 					return;
 				}
 
-				delete_profile(node.data.id);
+				delete_profile(node.data.id as number);
 				openPersonMenu = undefined;
 			},
 			createRelationshipAndNode: () => {
@@ -126,7 +130,8 @@
 				openPersonMenu = undefined;
 			},
 			addRecipe: () => {
-				relationshipStart = Number(node.data.id);
+				recipePersonId = Number(node.data.id);
+				recipePersonName = [node.data.first_name, node.data.last_name].filter(Boolean).join(' ');
 				openPersonMenu = undefined;
 			},
 			id: String(node.data.id),
@@ -190,7 +195,7 @@
 		}
 	);
 
-	let handlePaneClick = ({ event }: { event: MouseEvent }) => {
+	let handlePaneClick = () => {
 		openPersonPanel = false;
 		openPersonMenu = undefined;
 	};
@@ -227,36 +232,17 @@
 			bind:nodes
 			bind:edges
 			onconnectend={handleConnectEnd}
-			onedgeclick={({ edge, event }: { edge: Edge; event: MouseEvent }) => {
+			onedgeclick={({ edge }: { edge: Edge }) => {
 				selectedRelationship = edge;
 				selectedRelationship.source = String(edge.source.replace('person', ''));
 				selectedRelationship.target = String(edge.target.replace('person', ''));
 			}}
 			onnodeclick={handleNodeClickFunc}
 			onnodecontextmenu={handleContextMenu}
-			onedgecontextmenu={({ edge, event }: { edge: Edge; event: MouseEvent }) => {
+			onedgecontextmenu={({ edge }: { edge: Edge }) => {
 				selectedRelationship = edge;
 				selectedRelationship.source = String(edge.source.replace('person', ''));
 				selectedRelationship.target = String(edge.target.replace('person', ''));
-				if (clientHeight === undefined || clientWidth === undefined) {
-					clientHeight = window.innerHeight;
-					clientWidth = window.innerWidth;
-				}
-				relationshipMenu = {
-					XUserId: data.id,
-					edge: selectedRelationship,
-					onClick: () => {
-						relationshipMenu = undefined;
-					},
-					deleteEdge: () => {
-						edges = edges.filter((e) => e.id !== edge.id);
-						relationshipMenu = undefined;
-					},
-					top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
-					left: event.clientX < clientWidth - 200 ? event.clientX : undefined,
-					right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
-					bottom: event.clientY >= clientHeight - 200 ? clientHeight - event.clientY : undefined
-				};
 			}}
 			onpaneclick={handlePaneClick}
 			class="!bg-base-200"
@@ -317,6 +303,35 @@
 			{#if openPersonMenu !== undefined}
 				<PersonMenu {...openPersonMenu!} />
 			{/if}
+			{#if recipePersonId !== null}
+				<RecipeListModal
+					personId={recipePersonId}
+					currentUserId={Number(data.id)}
+					personName={recipePersonName}
+					closeModal={() => {
+						recipePersonId = null;
+						recipePersonName = '';
+					}}
+				/>
+			{/if}
+			{#if showCookbook}
+				<CookbookModal
+					currentUserId={Number(data.id)}
+					closeModal={() => {
+						showCookbook = false;
+					}}
+				/>
+			{/if}
+			{#if showLikedRecipes}
+				<RecipeListModal
+					personId={-1}
+					currentUserId={Number(data.id)}
+					useMyRecipes={true}
+					closeModal={() => {
+						showLikedRecipes = false;
+					}}
+				/>
+			{/if}
 			{#if adminMenu}
 				<AdminMenu
 					createProfile={() => {
@@ -366,17 +381,33 @@
 								}
 							});
 					}}
-					removePersonFromGraph={removePersonFromGraph}
+					{removePersonFromGraph}
 				/>
 			{/if}
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
 
-<div class="absolute left-2 top-2 flex flex-row items-center gap-2">
+<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
 	<HamburgerIcon
 		open_admin_panel={() => {
 			adminMenu = !adminMenu;
 		}}
 	/>
+	<button
+		class="btn btn-sm btn-primary"
+		onclick={() => {
+			showCookbook = !showCookbook;
+		}}
+	>
+		{cookbook()}
+	</button>
+	<button
+		class="btn btn-sm btn-primary"
+		onclick={() => {
+			showLikedRecipes = !showLikedRecipes;
+		}}
+	>
+		{liked_recipes()}
+	</button>
 </div>

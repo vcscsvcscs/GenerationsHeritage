@@ -45,7 +45,7 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	try {
 		tokens = await google.validateAuthorizationCode(code, codeVerifier);
 	} catch (e) {
-		let already_loaded = event.cookies.get('already_loaded') ?? null;
+		const already_loaded = event.cookies.get('already_loaded') ?? null;
 		if (already_loaded !== null) {
 			event.cookies.delete('already_loaded', {
 				path: '/login/google/callback',
@@ -107,7 +107,7 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		}
 	}
 
-	let personP: PersonProperties = {
+	const personP: PersonProperties = {
 		google_id: sub,
 		first_name: first_name,
 		last_name: family_name,
@@ -137,7 +137,7 @@ async function register(event: RequestEvent) {
 	}
 
 	const data = await event.request.formData();
-	let parsedData: components['schemas']['PersonRegistration'] = {
+	const parsedData: components['schemas']['PersonRegistration'] = {
 		first_name: data.get('first_name'),
 		last_name: data.get('last_name'),
 		email: data.get('email'),
@@ -242,7 +242,7 @@ async function register(event: RequestEvent) {
 	}
 
 	const parsed_date = new Date(birth_date as string);
-	let personP: components['schemas']['PersonRegistration'] = {
+	const personP: components['schemas']['PersonRegistration'] = {
 		first_name: first_name_f as string,
 		last_name: last_name_f as string,
 		email: email as string,
@@ -270,7 +270,7 @@ async function register(event: RequestEvent) {
 		  }
 		| undefined = undefined;
 	if (!(invite_code.length > 0)) {
-		let response = await client.POST('/person/google/{google_id}', {
+		const response = await client.POST('/person/google/{google_id}', {
 			params: {
 				data: parsedData,
 				path: { google_id: google_id.toString() }
@@ -293,7 +293,7 @@ async function register(event: RequestEvent) {
 		}
 		responseData = response.data;
 	} else {
-		let response = await client.PATCH('/person/google/{google_id}', {
+		const response = await client.PATCH('/person/google/{google_id}', {
 			params: {
 				path: { google_id: google_id.toString() }
 			},

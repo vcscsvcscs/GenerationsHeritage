@@ -31,13 +31,12 @@ func TestIntegration(t *testing.T) {
 		Hostname:     "memgraph",
 		ExposedPorts: []string{"7687/tcp", "7444/tcp"},
 		Image:        "memgraph/memgraph-mage:latest",
+		// ON_DISK_TRANSACTIONAL hides a vertex's edges after a property update (Memgraph bug); use in-memory.
 		Cmd: []string{
 			"--log-level=TRACE",
-			"--storage-mode=ON_DISK_TRANSACTIONAL",
+			"--storage-mode=IN_MEMORY_TRANSACTIONAL",
 			"--storage-snapshot-interval-sec=86400",
 			"--storage-snapshot-retention-count=60",
-			"--storage-property-store-compression-enabled=true",
-			"--storage-property-store-compression-level=mid",
 			"--storage-snapshot-on-exit=true",
 		},
 		Env: map[string]string{
@@ -124,5 +123,32 @@ func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
 		t.Run("GetCommentsOnPerson", integration_tests.GetCommentsOnPersonTest(dbAdapterURI, client))
 		t.Run("PatchCommentOnPerson", integration_tests.PatchCommentOnPersonTest(dbAdapterURI, client))
 		t.Run("DeleteCommentOnPerson", integration_tests.DeleteCommentOnPersonTest(dbAdapterURI, client))
+		t.Run("CreateRecipeForPerson", integration_tests.CreateRecipeForPersonTest(dbAdapterURI, client))
+		t.Run("CreateRecipeForPersonForbidden", integration_tests.CreateRecipeForPersonForbiddenTest(dbAdapterURI, client))
+		t.Run("GetRecipesByPersonId", integration_tests.GetRecipesByPersonIdTest(dbAdapterURI, client))
+		t.Run("GetRecipe", integration_tests.GetRecipeTest(dbAdapterURI, client))
+		t.Run("UpdateRecipe", integration_tests.UpdateRecipeTest(dbAdapterURI, client))
+		t.Run("UpdateRecipeForbidden", integration_tests.UpdateRecipeForbiddenTest(dbAdapterURI, client))
+		t.Run("CommentOnRecipe", integration_tests.CommentOnRecipeTest(dbAdapterURI, client))
+		t.Run("GetRecipeComments", integration_tests.GetRecipeCommentsTest(dbAdapterURI, client))
+		t.Run("UpdateRecipeComment", integration_tests.UpdateRecipeCommentTest(dbAdapterURI, client))
+		t.Run("CommentOnRecipeUpsert", integration_tests.CommentOnRecipeUpsertTest(dbAdapterURI, client))
+		t.Run("DeleteRecipeComment", integration_tests.DeleteRecipeCommentTest(dbAdapterURI, client))
+		t.Run("MissingRecipeComment", integration_tests.MissingRecipeCommentTest(dbAdapterURI, client))
+		t.Run("CreateRecipeVariation", integration_tests.CreateRecipeVariationTest(dbAdapterURI, client))
+		t.Run("GetRecipeVariations", integration_tests.GetRecipeVariationsTest(dbAdapterURI, client))
+		t.Run("GetRecipeVariationsForbidden", integration_tests.GetRecipeVariationsForbiddenTest(dbAdapterURI, client))
+		t.Run("CreateRecipeRelationship", integration_tests.CreateRecipeRelationshipTest(dbAdapterURI, client))
+		t.Run("CreateRecipeRelationshipForbidden", integration_tests.CreateRecipeRelationshipForbiddenTest(dbAdapterURI, client))
+		t.Run("GetFamilyCookbook", integration_tests.GetFamilyCookbookTest(dbAdapterURI, client))
+		t.Run("DeleteRecipeRelationshipForbidden", integration_tests.DeleteRecipeRelationshipForbiddenTest(dbAdapterURI, client))
+		t.Run("CreatorUnlikingKeepsRecipe", integration_tests.CreatorUnlikingKeepsRecipeTest(dbAdapterURI, client))
+		t.Run("DeleteRecipeRelationship", integration_tests.DeleteRecipeRelationshipTest(dbAdapterURI, client))
+		t.Run("HardDeleteLiveRecipe", integration_tests.HardDeleteLiveRecipeTest(dbAdapterURI, client))
+		t.Run("SoftDeleteRecipeForbidden", integration_tests.SoftDeleteRecipeForbiddenTest(dbAdapterURI, client))
+		t.Run("SoftDeleteRecipe", integration_tests.SoftDeleteRecipeTest(dbAdapterURI, client))
+		t.Run("SoftDeleteRecipeTwice", integration_tests.SoftDeleteRecipeTwiceTest(dbAdapterURI, client))
+		t.Run("HardDeleteRecipe", integration_tests.HardDeleteRecipeTest(dbAdapterURI, client))
+		t.Run("GetAdminRelationshipStatus", integration_tests.GetAdminRelationshipStatusTest(dbAdapterURI, client))
 	}
 }

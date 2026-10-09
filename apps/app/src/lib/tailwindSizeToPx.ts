@@ -13,7 +13,7 @@ export function getRemInPixels(): number {
 	try {
 		const fontSize = getComputedStyle(document.documentElement).fontSize;
 		return parseFloat(fontSize);
-	} catch (e) {
+	} catch {
 		return 16; // Default to 16px if unable to get computed style
 	}
 }

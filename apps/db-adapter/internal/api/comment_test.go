@@ -102,7 +102,7 @@ func TestDeleteCommentOnPerson(t *testing.T) {
 		srv := mockServer(nil, nil, nil)
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodDelete, "/comment", http.NoBody)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/comment", http.NoBody)
 
 		params := api.DeleteCommentOnPersonParams{XUserID: 5}
 		srv.DeleteCommentOnPerson(c, 202, params)
@@ -115,7 +115,7 @@ func TestDeleteCommentOnPerson(t *testing.T) {
 		srv := mockServer(errors.New("delete error"), nil, nil)
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodDelete, "/comment", http.NoBody)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/comment", http.NoBody)
 
 		params := api.DeleteCommentOnPersonParams{XUserID: 6}
 		srv.DeleteCommentOnPerson(c, 303, params)
@@ -140,7 +140,7 @@ func TestGetCommentsOnPerson(t *testing.T) {
 
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/comment", http.NoBody)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/comment", http.NoBody)
 
 		params := api.GetCommentsOnPersonParams{XUserID: 7}
 		srv.GetCommentsOnPerson(c, 404, params)
@@ -153,7 +153,7 @@ func TestGetCommentsOnPerson(t *testing.T) {
 		srv := mockServer(nil, errors.New("access denied"), nil)
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/comment", http.NoBody)
+		c.Request = httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/comment", http.NoBody)
 
 		params := api.GetCommentsOnPersonParams{XUserID: 8}
 		srv.GetCommentsOnPerson(c, 505, params)

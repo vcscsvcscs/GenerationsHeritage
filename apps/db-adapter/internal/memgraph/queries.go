@@ -167,3 +167,124 @@ var DeleteCommentCypherQuery string
 //
 //go:embed queries/comments_on_profile.cypher
 var CommentsOnProfileCypherQuery string
+
+// Requires personId, Recipe, Relationship parameters.
+//
+// returns recipe, relationship
+//
+//go:embed queries/create_recipe_with_relationship.cypher
+var CreateRecipeWithRelationshipCypherQuery string
+
+// Requires id, userId parameters.
+//
+// returns entries (recipe, relationship, created, can_edit) of the recipes liked or created by id
+//
+//go:embed queries/get_recipes_by_person_id.cypher
+var GetRecipesByPersonIdCypherQuery string
+
+// Requires id, props parameters.
+//
+// returns recipe
+//
+//go:embed queries/update_recipe.cypher
+var UpdateRecipeCypherQuery string
+
+// Requires id parameter.
+//
+// returns labels, recipe
+//
+//go:embed queries/soft_delete_recipe.cypher
+var SoftDeleteRecipeCypherQuery string
+
+// Requires id parameter.
+//
+// returns labels
+//
+//go:embed queries/get_recipe_labels.cypher
+var GetRecipeLabelsCypherQuery string
+
+// Requires recipeId, userId parameters.
+//
+// returns recipe, can_edit
+//
+//go:embed queries/get_recipe_by_id.cypher
+var GetRecipeByIdCypherQuery string
+
+// Requires id parameter.
+//
+//go:embed queries/hard_delete_recipe.cypher
+var HardDeleteRecipeCypherQuery string
+
+// Requires personId, recipeId, Relationship parameters.
+//
+// returns relationship
+//
+//go:embed queries/create_recipe_relationship.cypher
+var CreateRecipeRelationshipCypherQuery string
+
+// Requires personId, recipeId parameters.
+//
+//go:embed queries/delete_recipe_relationship.cypher
+var DeleteRecipeRelationshipCypherQuery string
+
+// Requires recipeId, userId parameters.
+// Returns r (recipe) if user is allowed to manage it.
+//
+//go:embed queries/could_manage_recipe.cypher
+var CouldManageRecipeCypherQuery string
+
+// Requires id parameter. Distance is embedded via fmt.Sprintf.
+//
+// returns entries (recipe, added_by, relationship, can_edit)
+//
+//go:embed queries/get_family_cookbook.cypher
+var GetFamilyCookbookCypherQueryTemplate string
+
+// Requires recipeId, userId parameters. Distance is embedded via fmt.Sprintf.
+// Returns r (recipe) if user is allowed to see it: the recipe is liked or created by the user,
+// by a family member up to MaxCookbookDistance hops away, or by a person the user is admin of.
+//
+//go:embed queries/could_see_recipe.cypher
+var CouldSeeRecipeCypherQueryTemplate string
+
+// Requires originalRecipeId, creatorId, RecipeProperties, VariationProperties, LikesProperties parameters.
+//
+// returns recipe, variation_relationship (notes, created_at), likes_relationship
+//
+//go:embed queries/create_recipe_variation.cypher
+var CreateRecipeVariationCypherQuery string
+
+// Requires recipeId parameter.
+//
+// returns variation, variation_relationship (notes, created_at), creator
+//
+//go:embed queries/get_recipe_variations.cypher
+var GetRecipeVariationsCypherQuery string
+
+// Requires personId, recipeId, Comment parameters.
+//
+// returns comment (message, sent_at, edited), commenter
+//
+//go:embed queries/comment_on_recipe.cypher
+var CommentOnRecipeCypherQuery string
+
+// Requires recipeId parameter.
+//
+// returns comments (array with commenter info)
+//
+//go:embed queries/get_recipe_comments.cypher
+var GetRecipeCommentsCypherQuery string
+
+// Requires personId, recipeId, message, edited parameters.
+//
+// returns comment, commenter
+//
+//go:embed queries/update_recipe_comment.cypher
+var UpdateRecipeCommentCypherQuery string
+
+// Requires personId, recipeId parameters.
+//
+// returns deleted
+//
+//go:embed queries/delete_recipe_comment.cypher
+var DeleteRecipeCommentCypherQuery string

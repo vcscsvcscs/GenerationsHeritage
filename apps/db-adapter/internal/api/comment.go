@@ -77,7 +77,7 @@ func (srv *server) EditComment(c *gin.Context, id int, params api.EditCommentPar
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) DeleteCommentOnPerson(c *gin.Context, id int, params api.DeleteCommentOnPersonParams) {
+func (srv *server) DeleteCommentOnPerson(c *gin.Context, id int, params api.DeleteCommentOnPersonParams) { //nolint:lll // handler boilerplate
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
@@ -95,7 +95,7 @@ func (srv *server) DeleteCommentOnPerson(c *gin.Context, id int, params api.Dele
 	c.JSON(http.StatusOK, gin.H{"msg": "Comment deleted successfully"})
 }
 
-func (srv *server) GetCommentsOnPerson(c *gin.Context, id int, params api.GetCommentsOnPersonParams) { //nolint:dupl,lll // This just does not worth abstracting anymore
+func (srv *server) GetCommentsOnPerson(c *gin.Context, id int, params api.GetCommentsOnPersonParams) { //nolint:lll // This just does not worth abstracting anymore
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 
