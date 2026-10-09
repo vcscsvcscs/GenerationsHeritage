@@ -1,8 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { client } from '$lib/api/client';
+import { MEDIA_KEY_PATTERN } from '$lib/server/media';
 import type { RequestEvent } from './$types';
-
-const KEY_PATTERN = /^people\/(\d+)\/[0-9a-f-]{36}\.[a-z0-9]{1,8}$/;
 
 function byteRange(range: R2Range, size: number): [number, number] {
 	if ('suffix' in range) {
@@ -24,7 +23,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
-	const match = KEY_PATTERN.exec(event.params.key);
+	const match = MEDIA_KEY_PATTERN.exec(event.params.key);
 	if (!match) {
 		return new Response(null, { status: 404 });
 	}
