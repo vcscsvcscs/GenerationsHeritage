@@ -8,6 +8,8 @@
 	import LifeEventsTimeline from './LifeEventsTimeline.svelte';
 	import OtherDetails from './OtherDetails.svelte';
 	import type { components } from '$lib/api/api.gen.js';
+	import { deleteUnreferencedMedia } from './uploadMedia';
+	import { savePerson } from './savePerson';
 
 	let {
 		closeModal = () => {},
@@ -21,6 +23,7 @@
 
 	let editorMode = $state(false);
 	let draftPerson = $state({} as components['schemas']['PersonProperties']);
+	const removedMedia = new Set<string>();
 
 	editorMode = false;
 
@@ -41,6 +44,7 @@
 		closeModal();
 		editorMode = false;
 		draftPerson = {};
+		removedMedia.clear();
 	}
 
 	function toggleEdit() {
@@ -50,30 +54,16 @@
 	async function save() {
 		try {
 			console.debug('Saving person data:', draftPerson);
-			const response = await fetch(`/api/person/${person.id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(draftPerson)
-			});
-
-			if (!response.ok) {
-				console.error('Error saving person data, status: ', response.status, (await response.json()));
-				alert('Error saving person data, status: ' + response.status + (await response.json()));
+			const failure = await savePerson(person.id, draftPerson);
+			if (failure) {
+				console.error(failure);
+				alert(failure);
 				return;
 			}
 
-			if (response.status === 200) {
-				person = { ...person, ...draftPerson };
-				const data = (await response.json()) as {
-					person?: components['schemas']['Person'];
-				};
-			} else {
-				const errorDetails = await response.json();
-				console.error('Error details:', errorDetails);
-				alert(`Error saving person data, status: ${response.status} ${JSON.stringify(errorDetails)}`);
-			}
+			person = { ...person, ...draftPerson };
+			await deleteUnreferencedMedia(person.id!, removedMedia, person);
+			removedMedia.clear();
 		} catch (error) {
 			alert('An unexpected error occurred: ' + error);
 		}
@@ -87,8 +77,18 @@
 			<ModalButtons {editorMode} onClose={close} onSave={save} onToggleEdit={toggleEdit} />
 			<div class="divider"></div>
 		</div>
-		<ProfileHeader {person} {editorMode} onChange={handleDraftPersonChange} />
-		<MediaGallery {person} {editorMode} onChange={handleDraftPersonChange} />
+		<ProfileHeader
+			{person}
+			{editorMode}
+			onChange={handleDraftPersonChange}
+			onRemoveMedia={(url) => removedMedia.add(url)}
+		/>
+		<MediaGallery
+			{person}
+			{editorMode}
+			onChange={handleDraftPersonChange}
+			onRemoveMedia={(url) => removedMedia.add(url)}
+		/>
 		<LifeEventsTimeline
 			person_life_events={person.life_events}
 			{editorMode}

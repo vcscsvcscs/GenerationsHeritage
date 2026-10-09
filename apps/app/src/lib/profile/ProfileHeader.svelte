@@ -35,6 +35,7 @@
 	};
 	export let editorMode = false;
 	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	export let onRemoveMedia: (url: string) => void = () => {};
 	let new_invite_code: string | undefined;
 
 	let pictureInput: HTMLInputElement;
@@ -56,7 +57,8 @@
 		uploadingPicture = true;
 		picturePreview = URL.createObjectURL(picture);
 		try {
-			const url = await uploadMedia(person.id, picture);
+			const url = await uploadMedia(person.id, picture, 'profile_picture');
+			if (person.profile_picture) onRemoveMedia(person.profile_picture);
 			person.profile_picture = url;
 			onChange('profile_picture', url);
 		} catch (error) {
