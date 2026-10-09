@@ -171,7 +171,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get recipes by person ID */
+        /** Get the recipes a person likes or created by person ID */
         get: operations["getRecipesByPersonId"];
         put?: never;
         /** Create a recipe and link it to a person */
@@ -295,7 +295,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get a recipe by ID */
+        get: operations["getRecipe"];
         put?: never;
         post?: never;
         /** Soft delete a recipe by ID */
@@ -332,9 +333,9 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create a relationship with an existing recipe */
+        /** Like an existing recipe */
         post: operations["createRecipeRelationship"];
-        /** Delete a relationship with a recipe */
+        /** Remove a like from a recipe */
         delete: operations["deleteRecipeRelationship"];
         options?: never;
         head?: never;
@@ -606,7 +607,10 @@ export interface components {
         CookbookEntry: {
             recipe?: components["schemas"]["Recipe"];
             added_by?: components["schemas"]["OptimizedPersonNode"];
-            relationship?: components["schemas"]["Likes"];
+            /** @description Likes relationship of added_by, null if added_by only created the recipe */
+            relationship?: components["schemas"]["Likes"] | null;
+            /** @description Whether the requesting user may update or delete the recipe */
+            can_edit?: boolean;
         };
         Cookbook: {
             entries?: components["schemas"]["CookbookEntry"][];
@@ -617,7 +621,9 @@ export interface components {
         RecipeComment: {
             comment?: {
                 message?: string;
+                /** @description Unix timestamp in seconds */
                 sent_at?: number;
+                /** @description Unix timestamp in seconds */
                 edited?: number | null;
             };
             commenter?: components["schemas"]["OptimizedPersonNode"];
@@ -627,10 +633,7 @@ export interface components {
         };
         RecipeVariation: {
             variation?: components["schemas"]["Recipe"];
-            v?: {
-                notes?: string | null;
-                created_at?: number;
-            };
+            variation_relationship?: components["schemas"]["VariationRelationship"];
             creator?: components["schemas"]["OptimizedPersonNode"];
         };
         Admin: {
@@ -669,6 +672,33 @@ export interface components {
         Messages: {
             people?: components["schemas"]["OptimizedPersonNode"][];
             comments?: components["schemas"]["Comment"][];
+        };
+        RecipeEntry: {
+            recipe?: components["schemas"]["Recipe"];
+            /** @description Likes relationship of the person, null if the person only created the recipe */
+            relationship?: components["schemas"]["Likes"] | null;
+            /** @description Whether the person created the recipe */
+            created?: boolean;
+            /** @description Whether the requesting user may update or delete the recipe */
+            can_edit?: boolean;
+        };
+        PersonRecipes: {
+            entries?: components["schemas"]["RecipeEntry"][];
+        };
+        RecipeDetails: {
+            recipe?: components["schemas"]["Recipe"];
+            /** @description Whether the requesting user may update or delete the recipe */
+            can_edit?: boolean;
+        };
+        RecipeRelationshipInput: {
+            /** @description Person that likes the recipe, defaults to the requesting user */
+            person_id?: number;
+            relationship?: components["schemas"]["LikesProperties"];
+        };
+        VariationRelationship: {
+            notes?: string | null;
+            /** @description Unix timestamp in seconds */
+            created_at?: number;
         };
     };
     responses: never;
@@ -1490,10 +1520,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        recipeRelations?: components["schemas"]["Likes"][];
-                        recipes?: components["schemas"]["Recipe"][];
-                    };
+                    "application/json": components["schemas"]["PersonRecipes"];
                 };
             };
             /** @description Bad request */
@@ -2161,6 +2188,63 @@ export interface operations {
             };
         };
     };
+    getRecipe: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-User-ID": number;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recipe retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Recipe not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+        };
+    };
     softDeleteRecipe: {
         parameters: {
             query?: never;
@@ -2194,6 +2278,17 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Recipe not found or already soft deleted */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2264,6 +2359,17 @@ export interface operations {
                     };
                 };
             };
+            /** @description Recipe not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -2319,6 +2425,28 @@ export interface operations {
                     };
                 };
             };
+            /** @description Recipe not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Recipe has not been soft deleted */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -2345,12 +2473,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    id: number;
-                    relationship: {
-                        schema?: components["schemas"]["LikesProperties"];
-                    };
-                };
+                "application/json": components["schemas"]["RecipeRelationshipInput"];
             };
         };
         responses: {
@@ -2597,6 +2720,17 @@ export interface operations {
                     };
                 };
             };
+            /** @description Comment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -2658,6 +2792,17 @@ export interface operations {
                     };
                 };
             };
+            /** @description Comment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -2700,10 +2845,8 @@ export interface operations {
                 content: {
                     "application/json": {
                         recipe?: components["schemas"]["Recipe"];
-                        variation_relationship?: {
-                            notes?: string;
-                            created_at?: number;
-                        };
+                        variation_relationship?: components["schemas"]["VariationRelationship"];
+                        likes_relationship?: components["schemas"]["Likes"];
                     };
                 };
             };
