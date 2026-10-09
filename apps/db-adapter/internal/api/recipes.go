@@ -27,12 +27,36 @@ func (srv *server) SoftDeleteRecipe(c *gin.Context, id int, params api.SoftDelet
 	defer qCancel()
 	_, err := session.ExecuteWrite(qctx, memgraph.SoftDeleteRecipe(qctx, id))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"description": "Recipe soft deleted"})
+}
+
+func (srv *server) GetRecipe(c *gin.Context, id int, params api.GetRecipeParams) {
+	session := srv.createSessionWithTimeout(c.Request.Context())
+	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
+
+	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer acancel()
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
+
+		return
+	}
+
+	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
+	defer qCancel()
+	res, err := session.ExecuteRead(qctx, memgraph.GetRecipe(qctx, id, params.XUserID))
+	if err != nil {
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
 func (srv *server) UpdateRecipe(c *gin.Context, id int, params api.UpdateRecipeParams) {
@@ -58,7 +82,7 @@ func (srv *server) UpdateRecipe(c *gin.Context, id int, params api.UpdateRecipeP
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.UpdateRecipe(qctx, id, recipe))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}
@@ -82,7 +106,7 @@ func (srv *server) HardDeleteRecipe(c *gin.Context, id int, params api.HardDelet
 	defer qCancel()
 	_, err := session.ExecuteWrite(qctx, memgraph.HardDeleteRecipe(qctx, id))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}

@@ -1152,7 +1152,7 @@
         },
         "/person/{id}/recipes": {
             "get": {
-                "summary": "Get recipes by person ID",
+                "summary": "Get the recipes a person likes or created by person ID",
                 "operationId": "getRecipesByPersonId",
                 "parameters": [
                     {
@@ -1178,21 +1178,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "recipeRelations": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Likes"
-                                            }
-                                        },
-                                        "recipes": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Recipe"
-                                            }
-                                        }
-                                    }
+                                    "$ref": "#/components/schemas/PersonRecipes"
                                 }
                             }
                         }
@@ -2219,6 +2205,85 @@
             }
         },
         "/recipe/{id}": {
+            "get": {
+                "summary": "Get a recipe by ID",
+                "operationId": "getRecipe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "X-User-ID",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recipe retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecipeDetails"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recipe not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "patch": {
                 "summary": "Update a recipe by ID",
                 "operationId": "updateRecipe",
@@ -2291,6 +2356,21 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Recipe not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "content": {
@@ -2350,6 +2430,21 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recipe not found or already soft deleted",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2437,6 +2532,36 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Recipe not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Recipe has not been soft deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "content": {
@@ -2457,7 +2582,7 @@
         },
         "/recipe/{id}/relationship": {
             "post": {
-                "summary": "Create a relationship with an existing recipe",
+                "summary": "Like an existing recipe",
                 "operationId": "createRecipeRelationship",
                 "parameters": [
                     {
@@ -2482,24 +2607,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "object",
-                                "required": [
-                                    "id",
-                                    "relationship"
-                                ],
-                                "properties": {
-                                    "id": {
-                                        "type": "integer"
-                                    },
-                                    "relationship": {
-                                        "type": "object",
-                                        "properties": {
-                                            "schema": {
-                                                "$ref": "#/components/schemas/LikesProperties"
-                                            }
-                                        }
-                                    }
-                                }
+                                "$ref": "#/components/schemas/RecipeRelationshipInput"
                             }
                         }
                     }
@@ -2563,7 +2671,7 @@
                 }
             },
             "delete": {
-                "summary": "Delete a relationship with a recipe",
+                "summary": "Remove a like from a recipe",
                 "operationId": "deleteRecipeRelationship",
                 "parameters": [
                     {
@@ -2869,6 +2977,21 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Comment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "content": {
@@ -2925,6 +3048,21 @@
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3015,15 +3153,10 @@
                                             "$ref": "#/components/schemas/Recipe"
                                         },
                                         "variation_relationship": {
-                                            "type": "object",
-                                            "properties": {
-                                                "notes": {
-                                                    "type": "string"
-                                                },
-                                                "created_at": {
-                                                    "type": "integer"
-                                                }
-                                            }
+                                            "$ref": "#/components/schemas/VariationRelationship"
+                                        },
+                                        "likes_relationship": {
+                                            "$ref": "#/components/schemas/Likes"
                                         }
                                     }
                                 }
@@ -3908,7 +4041,17 @@
                         "$ref": "#/components/schemas/OptimizedPersonNode"
                     },
                     "relationship": {
-                        "$ref": "#/components/schemas/Likes"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Likes"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Likes relationship of added_by, null if added_by only created the recipe"
+                    },
+                    "can_edit": {
+                        "type": "boolean",
+                        "description": "Whether the requesting user may update or delete the recipe"
                     }
                 }
             },
@@ -3944,11 +4087,13 @@
                                 "type": "string"
                             },
                             "sent_at": {
-                                "type": "integer"
+                                "type": "integer",
+                                "description": "Unix timestamp in seconds"
                             },
                             "edited": {
                                 "type": "integer",
-                                "nullable": true
+                                "nullable": true,
+                                "description": "Unix timestamp in seconds"
                             }
                         }
                     },
@@ -3974,17 +4119,8 @@
                     "variation": {
                         "$ref": "#/components/schemas/Recipe"
                     },
-                    "v": {
-                        "type": "object",
-                        "properties": {
-                            "notes": {
-                                "type": "string",
-                                "nullable": true
-                            },
-                            "created_at": {
-                                "type": "integer"
-                            }
-                        }
+                    "variation_relationship": {
+                        "$ref": "#/components/schemas/VariationRelationship"
                     },
                     "creator": {
                         "$ref": "#/components/schemas/OptimizedPersonNode"
@@ -4104,6 +4240,79 @@
                         "items": {
                             "$ref": "#/components/schemas/Comment"
                         }
+                    }
+                }
+            },
+            "RecipeEntry": {
+                "type": "object",
+                "properties": {
+                    "recipe": {
+                        "$ref": "#/components/schemas/Recipe"
+                    },
+                    "relationship": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Likes"
+                            }
+                        ],
+                        "nullable": true,
+                        "description": "Likes relationship of the person, null if the person only created the recipe"
+                    },
+                    "created": {
+                        "type": "boolean",
+                        "description": "Whether the person created the recipe"
+                    },
+                    "can_edit": {
+                        "type": "boolean",
+                        "description": "Whether the requesting user may update or delete the recipe"
+                    }
+                }
+            },
+            "PersonRecipes": {
+                "type": "object",
+                "properties": {
+                    "entries": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecipeEntry"
+                        }
+                    }
+                }
+            },
+            "RecipeDetails": {
+                "type": "object",
+                "properties": {
+                    "recipe": {
+                        "$ref": "#/components/schemas/Recipe"
+                    },
+                    "can_edit": {
+                        "type": "boolean",
+                        "description": "Whether the requesting user may update or delete the recipe"
+                    }
+                }
+            },
+            "RecipeRelationshipInput": {
+                "type": "object",
+                "properties": {
+                    "person_id": {
+                        "type": "integer",
+                        "description": "Person that likes the recipe, defaults to the requesting user"
+                    },
+                    "relationship": {
+                        "$ref": "#/components/schemas/LikesProperties"
+                    }
+                }
+            },
+            "VariationRelationship": {
+                "type": "object",
+                "properties": {
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "integer",
+                        "description": "Unix timestamp in seconds"
                     }
                 }
             }

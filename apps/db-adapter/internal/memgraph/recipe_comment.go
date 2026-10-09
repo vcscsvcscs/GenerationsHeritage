@@ -2,7 +2,6 @@ package memgraph
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
@@ -60,17 +59,20 @@ func UpdateRecipeComment(
 	personId, recipeId int,
 	message string,
 ) neo4j.ManagedTransactionWork {
+	edited := time.Now().Unix()
+
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdateRecipeCommentCypherQuery, map[string]any{
 			"personId": personId,
 			"recipeId": recipeId,
 			"message":  message,
+			"edited":   edited,
 		})
 		if err != nil {
 			return nil, err
 		}
 
-		record, err := result.Single(ctx)
+		record, err := singleOrNotFound(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -89,8 +91,8 @@ func DeleteRecipeComment(ctx context.Context, personId, recipeId int) neo4j.Mana
 			return nil, err
 		}
 
-		if result.Peek(ctx) {
-			return nil, fmt.Errorf("record was returned when it wasn't supposed to happen")
+		if _, err := singleOrNotFound(ctx, result); err != nil {
+			return nil, err
 		}
 
 		return nil, nil

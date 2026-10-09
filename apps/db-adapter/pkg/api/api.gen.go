@@ -95,9 +95,14 @@ type Cookbook struct {
 
 // CookbookEntry defines model for CookbookEntry.
 type CookbookEntry struct {
-	AddedBy      *OptimizedPersonNode `json:"added_by,omitempty"`
-	Recipe       *Recipe              `json:"recipe,omitempty"`
-	Relationship *Likes               `json:"relationship,omitempty"`
+	AddedBy *OptimizedPersonNode `json:"added_by,omitempty"`
+
+	// CanEdit Whether the requesting user may update or delete the recipe
+	CanEdit *bool   `json:"can_edit,omitempty"`
+	Recipe  *Recipe `json:"recipe,omitempty"`
+
+	// Relationship Likes relationship of added_by, null if added_by only created the recipe
+	Relationship *Likes `json:"relationship"`
 }
 
 // FamilyRelationship defines model for FamilyRelationship.
@@ -263,6 +268,11 @@ type PersonProperties struct {
 // PersonPropertiesBiologicalSex defines model for PersonProperties.BiologicalSex.
 type PersonPropertiesBiologicalSex string
 
+// PersonRecipes defines model for PersonRecipes.
+type PersonRecipes struct {
+	Entries *[]RecipeEntry `json:"entries,omitempty"`
+}
+
 // PersonRegistration defines model for PersonRegistration.
 type PersonRegistration struct {
 	BiologicalSex    *PersonRegistrationBiologicalSex `json:"biological_sex,omitempty"`
@@ -289,9 +299,12 @@ type Recipe struct {
 // RecipeComment defines model for RecipeComment.
 type RecipeComment struct {
 	Comment *struct {
+		// Edited Unix timestamp in seconds
 		Edited  *int    `json:"edited"`
 		Message *string `json:"message,omitempty"`
-		SentAt  *int    `json:"sent_at,omitempty"`
+
+		// SentAt Unix timestamp in seconds
+		SentAt *int `json:"sent_at,omitempty"`
 	} `json:"comment,omitempty"`
 	Commenter *OptimizedPersonNode `json:"commenter,omitempty"`
 }
@@ -304,6 +317,26 @@ type RecipeCommentInput struct {
 // RecipeComments defines model for RecipeComments.
 type RecipeComments struct {
 	Comments *[]RecipeComment `json:"comments,omitempty"`
+}
+
+// RecipeDetails defines model for RecipeDetails.
+type RecipeDetails struct {
+	// CanEdit Whether the requesting user may update or delete the recipe
+	CanEdit *bool   `json:"can_edit,omitempty"`
+	Recipe  *Recipe `json:"recipe,omitempty"`
+}
+
+// RecipeEntry defines model for RecipeEntry.
+type RecipeEntry struct {
+	// CanEdit Whether the requesting user may update or delete the recipe
+	CanEdit *bool `json:"can_edit,omitempty"`
+
+	// Created Whether the person created the recipe
+	Created *bool   `json:"created,omitempty"`
+	Recipe  *Recipe `json:"recipe,omitempty"`
+
+	// Relationship Likes relationship of the person, null if the person only created the recipe
+	Relationship *Likes `json:"relationship"`
 }
 
 // RecipeProperties defines model for RecipeProperties.
@@ -328,14 +361,18 @@ type RecipeProperties struct {
 	Photo *string `json:"photo"`
 }
 
+// RecipeRelationshipInput defines model for RecipeRelationshipInput.
+type RecipeRelationshipInput struct {
+	// PersonId Person that likes the recipe, defaults to the requesting user
+	PersonId     *int             `json:"person_id,omitempty"`
+	Relationship *LikesProperties `json:"relationship,omitempty"`
+}
+
 // RecipeVariation defines model for RecipeVariation.
 type RecipeVariation struct {
-	Creator *OptimizedPersonNode `json:"creator,omitempty"`
-	V       *struct {
-		CreatedAt *int    `json:"created_at,omitempty"`
-		Notes     *string `json:"notes"`
-	} `json:"v,omitempty"`
-	Variation *Recipe `json:"variation,omitempty"`
+	Creator               *OptimizedPersonNode   `json:"creator,omitempty"`
+	Variation             *Recipe                `json:"variation,omitempty"`
+	VariationRelationship *VariationRelationship `json:"variation_relationship,omitempty"`
 }
 
 // Relationship defines model for Relationship.
@@ -346,6 +383,13 @@ type Relationship struct {
 	Properties *FamilyRelationship `json:"properties,omitempty"`
 	Start      *int                `json:"start,omitempty"`
 	Type       *string             `json:"type"`
+}
+
+// VariationRelationship defines model for VariationRelationship.
+type VariationRelationship struct {
+	// CreatedAt Unix timestamp in seconds
+	CreatedAt *int    `json:"created_at,omitempty"`
+	Notes     *string `json:"notes"`
 }
 
 // DbtypeRelationship defines model for dbtypeRelationship.
@@ -488,6 +532,11 @@ type SoftDeleteRecipeParams struct {
 	XUserID int `json:"X-User-ID"`
 }
 
+// GetRecipeParams defines parameters for GetRecipe.
+type GetRecipeParams struct {
+	XUserID int `json:"X-User-ID"`
+}
+
 // UpdateRecipeParams defines parameters for UpdateRecipe.
 type UpdateRecipeParams struct {
 	XUserID int `json:"X-User-ID"`
@@ -522,14 +571,6 @@ type HardDeleteRecipeParams struct {
 type DeleteRecipeRelationshipParams struct {
 	PersonId int `form:"personId" json:"personId"`
 	XUserID  int `json:"X-User-ID"`
-}
-
-// CreateRecipeRelationshipJSONBody defines parameters for CreateRecipeRelationship.
-type CreateRecipeRelationshipJSONBody struct {
-	Id           int `json:"id"`
-	Relationship struct {
-		Schema *LikesProperties `json:"schema,omitempty"`
-	} `json:"relationship"`
 }
 
 // CreateRecipeRelationshipParams defines parameters for CreateRecipeRelationship.
@@ -624,7 +665,7 @@ type UpdateRecipeCommentJSONRequestBody = RecipeCommentInput
 type CommentOnRecipeJSONRequestBody = RecipeCommentInput
 
 // CreateRecipeRelationshipJSONRequestBody defines body for CreateRecipeRelationship for application/json ContentType.
-type CreateRecipeRelationshipJSONRequestBody CreateRecipeRelationshipJSONBody
+type CreateRecipeRelationshipJSONRequestBody = RecipeRelationshipInput
 
 // CreateRecipeVariationJSONRequestBody defines body for CreateRecipeVariation for application/json ContentType.
 type CreateRecipeVariationJSONRequestBody CreateRecipeVariationJSONBody
@@ -700,7 +741,7 @@ type ServerInterface interface {
 	// Hard delete a person by ID
 	// (DELETE /person/{id}/hard-delete)
 	HardDeletePerson(c *gin.Context, id int, params HardDeletePersonParams)
-	// Get recipes by person ID
+	// Get the recipes a person likes or created by person ID
 	// (GET /person/{id}/recipes)
 	GetRecipesByPersonId(c *gin.Context, id int, params GetRecipesByPersonIdParams)
 	// Create a recipe and link it to a person
@@ -712,6 +753,9 @@ type ServerInterface interface {
 	// Soft delete a recipe by ID
 	// (DELETE /recipe/{id})
 	SoftDeleteRecipe(c *gin.Context, id int, params SoftDeleteRecipeParams)
+	// Get a recipe by ID
+	// (GET /recipe/{id})
+	GetRecipe(c *gin.Context, id int, params GetRecipeParams)
 	// Update a recipe by ID
 	// (PATCH /recipe/{id})
 	UpdateRecipe(c *gin.Context, id int, params UpdateRecipeParams)
@@ -730,10 +774,10 @@ type ServerInterface interface {
 	// Hard delete a recipe by ID
 	// (DELETE /recipe/{id}/hard-delete)
 	HardDeleteRecipe(c *gin.Context, id int, params HardDeleteRecipeParams)
-	// Delete a relationship with a recipe
+	// Remove a like from a recipe
 	// (DELETE /recipe/{id}/relationship)
 	DeleteRecipeRelationship(c *gin.Context, id int, params DeleteRecipeRelationshipParams)
-	// Create a relationship with an existing recipe
+	// Like an existing recipe
 	// (POST /recipe/{id}/relationship)
 	CreateRecipeRelationship(c *gin.Context, id int, params CreateRecipeRelationshipParams)
 	// Create a variation of a recipe
@@ -1918,6 +1962,57 @@ func (siw *ServerInterfaceWrapper) SoftDeleteRecipe(c *gin.Context) {
 	siw.Handler.SoftDeleteRecipe(c, id, params)
 }
 
+// GetRecipe operation middleware
+func (siw *ServerInterfaceWrapper) GetRecipe(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetRecipeParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-User-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-User-ID")]; found {
+		var XUserID int
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-User-ID, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-User-ID", valueList[0], &XUserID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-User-ID: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XUserID = XUserID
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-User-ID is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetRecipe(c, id, params)
+}
+
 // UpdateRecipe operation middleware
 func (siw *ServerInterfaceWrapper) UpdateRecipe(c *gin.Context) {
 
@@ -2717,6 +2812,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.POST(options.BaseURL+"/person/:id/recipes", wrapper.CreateRecipeForPerson)
 	router.POST(options.BaseURL+"/person_and_relationship/:id", wrapper.CreatePersonAndRelationship)
 	router.DELETE(options.BaseURL+"/recipe/:id", wrapper.SoftDeleteRecipe)
+	router.GET(options.BaseURL+"/recipe/:id", wrapper.GetRecipe)
 	router.PATCH(options.BaseURL+"/recipe/:id", wrapper.UpdateRecipe)
 	router.DELETE(options.BaseURL+"/recipe/:id/comment", wrapper.DeleteRecipeComment)
 	router.GET(options.BaseURL+"/recipe/:id/comment", wrapper.GetRecipeComments)

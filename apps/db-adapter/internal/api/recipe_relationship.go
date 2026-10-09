@@ -19,8 +19,14 @@ func (srv *server) DeleteRecipeRelationship(
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
-	if err := auth.CouldSeePersonsProfile(actx, session, params.PersonId, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access: %v", err)})
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
+
+		return
+	}
+
+	if err := auth.CouldManagePersonUnknownAdmin(actx, session, params.PersonId, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this person: %v", err)})
 
 		return
 	}
@@ -52,8 +58,19 @@ func (srv *server) CreateRecipeRelationship(
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
-	if err := auth.CouldSeePersonsProfile(actx, session, body.Id, params.XUserID); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access: %v", err)})
+	personId := params.XUserID
+	if body.PersonId != nil {
+		personId = *body.PersonId
+	}
+
+	if err := auth.CouldSeeRecipe(actx, session, id, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this recipe: %v", err)})
+
+		return
+	}
+
+	if err := auth.CouldManagePersonUnknownAdmin(actx, session, personId, params.XUserID); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this person: %v", err)})
 
 		return
 	}
@@ -61,7 +78,7 @@ func (srv *server) CreateRecipeRelationship(
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.CreateRecipeRelationship(
-		qctx, body.Id, id, body.Relationship.Schema,
+		qctx, personId, id, body.Relationship,
 	))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})

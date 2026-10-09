@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) CommentOnRecipe(c *gin.Context, id int, params api.CommentOnRecipeParams) { //nolint:dupl // handler boilerplate
+func (srv *server) CommentOnRecipe(c *gin.Context, id int, params api.CommentOnRecipeParams) {
 	var body api.CommentOnRecipeJSONRequestBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -66,7 +66,7 @@ func (srv *server) GetRecipeComments(c *gin.Context, id int, params api.GetRecip
 	c.JSON(http.StatusOK, res)
 }
 
-func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.UpdateRecipeCommentParams) { //nolint:dupl // handler boilerplate
+func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.UpdateRecipeCommentParams) {
 	var body api.UpdateRecipeCommentJSONRequestBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
@@ -89,7 +89,7 @@ func (srv *server) UpdateRecipeComment(c *gin.Context, id int, params api.Update
 	defer qCancel()
 	res, err := session.ExecuteWrite(qctx, memgraph.UpdateRecipeComment(qctx, params.XUserID, id, body.Message))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}
@@ -113,7 +113,7 @@ func (srv *server) DeleteRecipeComment(c *gin.Context, id int, params api.Delete
 	defer qCancel()
 	_, err := session.ExecuteWrite(qctx, memgraph.DeleteRecipeComment(qctx, params.XUserID, id))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}

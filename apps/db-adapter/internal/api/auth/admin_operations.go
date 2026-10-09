@@ -61,8 +61,9 @@ func CouldManageRecipe(ctx context.Context, session neo4j.SessionWithContext, re
 }
 
 // CouldSeeRecipe checks whether a user has permission to view a recipe.
-// A user can see a recipe if they created it, are an admin of the creator,
-// or are a family member of the creator.
+// A user can see a recipe if it is liked or created by themselves, by a family member within
+// memgraph.MaxCookbookDistance hops (so every recipe in their family cookbook is viewable),
+// or by a person they are admin of.
 func CouldSeeRecipe(ctx context.Context, session neo4j.SessionWithContext, recipeId, xUserID int) error {
 	_, err := session.ExecuteRead(ctx, memgraph.CouldSeeRecipe(ctx, recipeId, xUserID))
 	return err

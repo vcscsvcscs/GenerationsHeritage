@@ -11,7 +11,7 @@ import (
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 )
 
-func (srv *server) GetRecipesByPersonId( //nolint:dupl // handler boilerplate, not worth abstracting
+func (srv *server) GetRecipesByPersonId(
 	c *gin.Context, id int, params api.GetRecipesByPersonIdParams,
 ) {
 	session := srv.createSessionWithTimeout(c.Request.Context())
@@ -27,7 +27,7 @@ func (srv *server) GetRecipesByPersonId( //nolint:dupl // handler boilerplate, n
 
 	qctx, qCancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer qCancel()
-	res, err := session.ExecuteRead(qctx, memgraph.GetRecipesByPersonId(qctx, id))
+	res, err := session.ExecuteRead(qctx, memgraph.GetRecipesByPersonId(qctx, id, params.XUserID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 
@@ -52,7 +52,7 @@ func (srv *server) CreateRecipeForPerson(
 
 	actx, acancel := context.WithTimeout(c.Request.Context(), srv.dbOpTimeout)
 	defer acancel()
-	if err := auth.CouldSeePersonsProfile(actx, session, id, params.XUserID); err != nil {
+	if err := auth.CouldManagePersonUnknownAdmin(actx, session, id, params.XUserID); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": fmt.Sprintf("User does not have access to this person: %v", err)})
 
 		return

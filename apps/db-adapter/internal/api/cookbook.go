@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +11,8 @@ import (
 )
 
 func (srv *server) GetFamilyCookbook(c *gin.Context, params api.GetFamilyCookbookParams) {
-	if params.Distance < 1 || params.Distance > 10 {
-		c.JSON(http.StatusBadRequest, gin.H{"msg": "distance must be between 1 and 10"})
+	if params.Distance < 1 || params.Distance > memgraph.MaxCookbookDistance {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": fmt.Sprintf("distance must be between 1 and %d", memgraph.MaxCookbookDistance)})
 
 		return
 	}

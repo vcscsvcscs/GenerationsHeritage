@@ -19,7 +19,7 @@ func CreateRecipeVariation(
 	convertedRecipe := StructToMap(recipeProps)
 	variationProperties := map[string]any{
 		"notes":      variationNotes,
-		"created_at": time.Now().UnixMilli(),
+		"created_at": time.Now().Unix(),
 	}
 
 	convertedLikes := map[string]any{}
@@ -73,9 +73,14 @@ func GetRecipeVariations(ctx context.Context, recipeId int) neo4j.ManagedTransac
 	}
 }
 
+// CouldSeeRecipe checks whether a user may view a recipe: it must be liked or created by the user,
+// by a family member within MaxCookbookDistance hops, or by a person the user is admin of.
+// This keeps every recipe listed in the family cookbook viewable.
 func CouldSeeRecipe(ctx context.Context, recipeId, userId int) neo4j.ManagedTransactionWork {
+	query := fmt.Sprintf(CouldSeeRecipeCypherQueryTemplate, MaxCookbookDistance)
+
 	return func(tx neo4j.ManagedTransaction) (any, error) {
-		result, err := tx.Run(ctx, CouldSeeRecipeCypherQuery, map[string]any{
+		result, err := tx.Run(ctx, query, map[string]any{
 			"recipeId": recipeId,
 			"userId":   userId,
 		})

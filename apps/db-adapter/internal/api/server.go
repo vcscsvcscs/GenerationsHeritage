@@ -2,10 +2,13 @@ package api
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/internal/memgraph"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/gin/healthcheck"
 	"go.uber.org/zap"
@@ -42,6 +45,18 @@ func New(
 
 func (srv *server) HealthCheck(c *gin.Context) {
 	srv.health.HealthCheckHandler(c)
+}
+
+// dbErrorStatus maps errors returned by memgraph queries to the matching HTTP status code.
+func dbErrorStatus(err error) int {
+	switch {
+	case errors.Is(err, memgraph.ErrNotFound):
+		return http.StatusNotFound
+	case errors.Is(err, memgraph.ErrRecipeNotDeleted):
+		return http.StatusConflict
+	default:
+		return http.StatusInternalServerError
+	}
 }
 
 // Helper function to create a session with timeout

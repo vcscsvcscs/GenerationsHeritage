@@ -3,6 +3,7 @@ package memgraph
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/vcscsvcscs/GenerationsHeritage/apps/db-adapter/pkg/api"
@@ -35,10 +36,16 @@ func CreateRecipeForPerson(
 	}
 }
 
-func GetRecipesByPersonId(ctx context.Context, personId int) neo4j.ManagedTransactionWork {
+// MaxCookbookDistance is the largest number of relationship hops the family cookbook (and recipe visibility) reaches.
+const MaxCookbookDistance = 10
+
+// GetRecipesByPersonId retrieves the recipes a person likes or created,
+// flagging for each whether userId is allowed to edit it.
+func GetRecipesByPersonId(ctx context.Context, personId, userId int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, GetRecipesByPersonIdCypherQuery, map[string]any{
-			"id": personId,
+			"id":     personId,
+			"userId": userId,
 		})
 		if err != nil {
 			return nil, err
@@ -53,7 +60,27 @@ func GetRecipesByPersonId(ctx context.Context, personId int) neo4j.ManagedTransa
 	}
 }
 
-func UpdateRecipe(ctx context.Context, id int, recipe *api.RecipeProperties) neo4j.ManagedTransactionWork { //nolint:dupl,lll // mirrors UpdatePerson
+// GetRecipe retrieves a recipe, flagging whether userId is allowed to edit it.
+func GetRecipe(ctx context.Context, recipeId, userId int) neo4j.ManagedTransactionWork {
+	return func(tx neo4j.ManagedTransaction) (any, error) {
+		result, err := tx.Run(ctx, GetRecipeByIdCypherQuery, map[string]any{
+			"recipeId": recipeId,
+			"userId":   userId,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		record, err := singleOrNotFound(ctx, result)
+		if err != nil {
+			return nil, err
+		}
+
+		return record.AsMap(), nil
+	}
+}
+
+func UpdateRecipe(ctx context.Context, id int, recipe *api.RecipeProperties) neo4j.ManagedTransactionWork { //nolint:lll // mirrors UpdatePerson
 	convertedRecipe := StructToMap(recipe)
 	return func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, UpdateRecipeCypherQuery, map[string]any{
@@ -64,7 +91,7 @@ func UpdateRecipe(ctx context.Context, id int, recipe *api.RecipeProperties) neo
 			return nil, err
 		}
 
-		record, err := result.Single(ctx)
+		record, err := singleOrNotFound(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +114,7 @@ func SoftDeleteRecipe(ctx context.Context, id int) neo4j.ManagedTransactionWork 
 			return nil, err
 		}
 
-		record, err := result.Single(ctx)
+		record, err := singleOrNotFound(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -96,8 +123,27 @@ func SoftDeleteRecipe(ctx context.Context, id int) neo4j.ManagedTransactionWork 
 	}
 }
 
+// HardDeleteRecipe permanently removes a soft deleted recipe.
+// It returns ErrNotFound if there is no such recipe and ErrRecipeNotDeleted if it is still live.
 func HardDeleteRecipe(ctx context.Context, id int) neo4j.ManagedTransactionWork {
 	return func(tx neo4j.ManagedTransaction) (any, error) {
+		labelsResult, err := tx.Run(ctx, GetRecipeLabelsCypherQuery, map[string]any{
+			"id": id,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		labelsRecord, err := singleOrNotFound(ctx, labelsResult)
+		if err != nil {
+			return nil, err
+		}
+
+		value, _ := labelsRecord.Get("labels")
+		if labels, _ := value.([]any); !slices.Contains(labels, any("DeletedRecipe")) {
+			return nil, ErrRecipeNotDeleted
+		}
+
 		result, err := tx.Run(ctx, HardDeleteRecipeCypherQuery, map[string]any{
 			"id": id,
 		})
@@ -184,8 +230,10 @@ func CouldManageRecipe(ctx context.Context, recipeId, userId int) neo4j.ManagedT
 	}
 }
 
-// GetFamilyCookbook retrieves all recipes from family members within a given distance.
+// GetFamilyCookbook retrieves all recipes liked or created by family members within a given distance.
 // Distance is the number of relationship hops to traverse.
+// Every recipe appears once, attributed (added_by and relationship) to the first of: the user, the
+// recipe's creator, the family member with the lowest id.
 func GetFamilyCookbook(ctx context.Context, userId, distance int) neo4j.ManagedTransactionWork {
 	// Cypher does not support parameterized variable-length relationship bounds,
 	// so we build the query with the distance embedded safely as an integer.
