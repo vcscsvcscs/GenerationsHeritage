@@ -28,6 +28,38 @@
 >
 	<Handle
 		class="customHandle"
+		id="spouse-left"
+		{isValidConnection}
+		position={Position.Left}
+		isConnectable={true}
+		type="source"
+	/>
+	<Handle
+		class="customHandle"
+		id="spouse-right"
+		{isValidConnection}
+		position={Position.Right}
+		isConnectable={true}
+		type="source"
+	/>
+	<Handle
+		class="customHandle"
+		id="spouse-left"
+		{isValidConnection}
+		position={Position.Left}
+		isConnectable={true}
+		type="target"
+	/>
+	<Handle
+		class="customHandle"
+		id="spouse-right"
+		{isValidConnection}
+		position={Position.Right}
+		isConnectable={true}
+		type="target"
+	/>
+	<Handle
+		class="customHandle"
 		id="child"
 		{isValidConnection}
 		isConnectable={true}
@@ -81,7 +113,7 @@
 	/>
 
 	<div class="avatar mb-2" style="z-index: 2; cursor: pointer;">
-		<div class={"w-24 rounded-full border-0 ring-offset-1"+nodeColor}>
+		<div class={'w-24 rounded-full border-0 ring-offset-1' + nodeColor}>
 			<img
 				src={data.profile_picture || 'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
 				alt="Picture of {data.last_name} {data.first_name}"
@@ -90,7 +122,7 @@
 	</div>
 
 	<div class="px-2 text-center" style="z-index: 2; cursor: pointer;">
-		<h2 class="text-sm leading-tight font-semibold">
+		<h2 class="text-sm font-semibold leading-tight">
 			{data.first_name}
 			{data.middle_name ? data.middle_name : ''}
 			{data.last_name}

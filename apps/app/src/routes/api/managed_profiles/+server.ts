@@ -1,7 +1,6 @@
 import { client } from '$lib/api/client';
 import { redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
-import { json } from 'stream/consumers';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	if (event.locals.session === null) {

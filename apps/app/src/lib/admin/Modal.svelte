@@ -15,13 +15,13 @@
 	let {
 		closeModal,
 		editProfile = () => {},
-		onChange = () => {},
+		removePersonFromGraph = () => {},
 		addRelationship = () => {},
 		createProfile = () => {},
 		createRelationshipAndProfile = () => {}
 	} = $props<{
 		closeModal: () => void;
-		onChange?: () => void;
+		removePersonFromGraph?: (id: any) => void;
 		addRelationship?: (id: number) => void;
 		createRelationshipAndProfile?: (id: number) => void;
 		editProfile?: (id: number) => void;
@@ -65,7 +65,7 @@
 		})
 			.then((response) => {
 				if (response.ok) {
-					onChange();
+					removePersonFromGraph(id);
 					managed_profiles_list.forEach((profile) => {
 						if (profile.id === id) {
 							profile.label = ['DeletedPerson'];
@@ -90,7 +90,6 @@
 		})
 			.then((response) => {
 				if (response.ok) {
-					onChange();
 					managed_profiles_list = managed_profiles_list.filter((profile) => profile.id !== id);
 					return;
 				} else {
@@ -105,8 +104,8 @@
 
 <div class="modal modal-open z-8">
 	<div class="modal-box w-full max-w-xl gap-4">
-		<div class="bg-base-100 sticky top-0 z-5">
-			<ModalButtons onClose={closeModal} {createProfile} />
+		<div class="bg-base-100 z-5 sticky top-0">
+			<ModalButtons onClose={closeModal} createProfile={()=>{createProfile();closeModal()}} />
 			<div class="divider"></div>
 		</div>
 		<ul class="list bg-base-100 rounded-box shadow-md">
@@ -143,14 +142,6 @@
 							{create_relationship_and_person()}
 						</button>
 					{/if}
-					<button
-						class="btn btn-secondary btn-sm"
-						onclick={() => {
-							editProfile(profile.id!);
-						}}
-					>
-						{edit()}
-					</button>
 					{#if profile.label?.includes('DeletedPerson')}
 						<button
 							class="btn btn-error btn-sm"
@@ -162,11 +153,17 @@
 						</button>
 					{:else}
 						<button
+							class="btn btn-secondary btn-sm"
+							onclick={() => {
+								editProfile(profile.id!);
+							}}>
+							{edit()}
+						</button>
+						<button
 							class="btn btn-error btn-sm"
 							onclick={() => {
 								deleteProfile(profile.id!);
-							}}
-						>
+							}}>
 							{delete_profile()}
 						</button>
 					{/if}

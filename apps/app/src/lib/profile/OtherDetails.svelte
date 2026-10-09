@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { callMessageFunction } from '$lib/i18n';
 	import type { MessageKeys } from '$lib/i18n';
+	import { add_note, notes, theme } from '$lib/paraglide/messages';
 	import type { components } from '$lib/api/api.gen';
 
 	export let person: components['schemas']['PersonProperties'];
@@ -29,7 +30,8 @@
 		'notes',
 		'phone',
 		'audios',
-		'google_id'
+		'google_id',
+		'invite_code'
 	];
 	let newNote = {
 		title: " ",
@@ -37,15 +39,60 @@
 	};
 </script>
 
-<div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-	{#each person.notes??[] as note}
-		<div class="card bg-base-100 shadow-sm">
-			<div class="card-body">
-				<h2 class="card-title">{note.title}</h2>
-				<p>{note.note}</p>
+<div class="mt-5 flex flex-col gap-2 justify-center items-center">
+	{#each person.notes ?? [] as note, i}
+		<div class="card bg-base-100 shadow-sm relative w-full max-w-xl">
+			<div class="card-body p-4 w-full">
+				{#if editorMode}
+					<input
+						type="text"
+						class="input input-bordered input-sm w-full mb-2"
+						placeholder={theme()}
+						bind:value={note.title}
+						oninput={() => onChange('notes', person.notes)}
+					/>
+					<textarea
+						class="textarea textarea-bordered textarea-sm w-full"
+						placeholder={notes()}
+						bind:value={note.note}
+						oninput={() => onChange('notes', person.notes)}
+					></textarea>
+					<button
+						type="button"
+						class="absolute top-2 right-2 btn btn-xs btn-ghost text-error ml-2"
+						aria-label="Remove note"
+						onclick={() => {
+							person.notes = (person.notes ?? []).filter((_, idx) => idx !== i);
+							onChange('notes', person.notes);
+						}}
+					>
+						&#10005;
+					</button>
+				{:else}
+					<h2 class="card-title">{note.title}</h2>
+					<p class="text-sm text-gray-500">{note.date}</p>
+					<p>{note.note}</p>
+				{/if}
 			</div>
 		</div>
 	{/each}
+	{#if editorMode}
+		<button
+			class="btn btn-accent btn-sm w-auto self-start"
+			onclick={() => {
+				const now = new Date();
+				const formattedDate = now.getFullYear() + '-' +
+					String(now.getMonth() + 1).padStart(2, '0') + '-' +
+					String(now.getDate()).padStart(2, '0');
+				person.notes = [...(person.notes ?? []), { title: '', note: '', date: formattedDate }];
+				onChange('notes', person.notes);
+			}}
+		>
+			{add_note()}
+		</button>
+	{/if}
+</div>
+<div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
 	{#each Object.entries(person) as [key, value]}
 		{#if !skipFields.includes(key) && ((value !== undefined && value !== null) || editorMode)}
 			<div>

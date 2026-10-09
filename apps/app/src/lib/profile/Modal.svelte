@@ -30,7 +30,9 @@
 	) {
 		draftPerson[field] = value;
 		if (field === 'invite_code') {
-			save();
+			save().then(() => {
+				editorMode = true;
+			});
 			return;
 		}
 	}
@@ -47,6 +49,7 @@
 
 	async function save() {
 		try {
+			console.debug('Saving person data:', draftPerson);
 			const response = await fetch(`/api/person/${person.id}`, {
 				method: 'PATCH',
 				headers: {
@@ -56,7 +59,8 @@
 			});
 
 			if (!response.ok) {
-				alert('Error saving person data, status: ' + response.status);
+				console.error('Error saving person data, status: ', response.status, (await response.json()));
+				alert('Error saving person data, status: ' + response.status + (await response.json()));
 				return;
 			}
 
@@ -67,12 +71,8 @@
 				};
 			} else {
 				const errorDetails = await response.json();
-				alert(
-					'Error saving person data, status: ' +
-						response.status +
-						' ' +
-						JSON.stringify(errorDetails)
-				);
+				console.error('Error details:', errorDetails);
+				alert(`Error saving person data, status: ${response.status} ${JSON.stringify(errorDetails)}`);
 			}
 		} catch (error) {
 			alert('An unexpected error occurred: ' + error);
@@ -82,8 +82,8 @@
 </script>
 
 <div class="modal modal-open" transition:fade>
-	<div class="modal-box max-h-screen w-full max-h-80 max-w-5xl overflow-y-auto">
-		<div class="bg-base-100 sticky top-0 z-7">
+	<div class="modal-box max-h-80 max-h-screen w-full max-w-5xl overflow-y-auto">
+		<div class="bg-base-100 z-7 sticky top-0">
 			<ModalButtons {editorMode} onClose={close} onSave={save} onToggleEdit={toggleEdit} />
 			<div class="divider"></div>
 		</div>

@@ -54,6 +54,12 @@
 
 	let clientWidth: number | undefined = $state();
 	let clientHeight: number | undefined = $state();
+
+	let removePersonFromGraph = (id: any) => {
+		nodes = nodes.filter((n) => n.data.id !== id);
+		edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
+	};
+
 	let delete_profile = (id: any) => {
 		fetch('/api/person/' + id, {
 			method: 'DELETE',
@@ -63,8 +69,7 @@
 		})
 			.then((response) => {
 				if (response.ok) {
-					nodes = nodes.filter((n) => n.data.id !== id);
-					edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
+					removePersonFromGraph(id);
 				} else {
 					alert('Error deleting person');
 				}
@@ -149,7 +154,7 @@
 		);
 		edges = [...newLayout.Edges];
 		nodes = [...newLayout.Nodes];
-	};
+	}
 
 	let handleNodeClickFunc = handleNodeClick(
 		(
@@ -157,8 +162,8 @@
 				id: number | undefined;
 			}
 		) => {
-			openPersonPanel = true;
 			selectedPerson = { ...person, id: String(person.id) };
+			openPersonPanel = true;
 			fetch('/api/person/' + person.id, {
 				method: 'GET',
 				headers: {
@@ -180,6 +185,7 @@
 						};
 						selectedPerson.id = String(person.id);
 					}
+					console.debug('Fetched person data:', data);
 				});
 		}
 	);
@@ -273,7 +279,7 @@
 					onOnlyPersonCreation={() => {
 						createPerson = false;
 					}}
-					onCreation={(node,edges) => {
+					onCreation={(node, edges) => {
 						onCreation([node], edges);
 						createPerson = false;
 					}}
@@ -355,19 +361,19 @@
 									};
 									selectedPerson.id = String(id);
 									openPersonPanel = true;
-								}else {
+								} else {
 									alert('Error fetching person data');
 								}
 							});
 					}}
-					onChange={() => {}}
+					removePersonFromGraph={removePersonFromGraph}
 				/>
 			{/if}
 		</SvelteFlow>
 	</SvelteFlowProvider>
 </div>
 
-<div class="absolute top-2 left-2 flex flex-row items-center gap-2">
+<div class="absolute left-2 top-2 flex flex-row items-center gap-2">
 	<HamburgerIcon
 		open_admin_panel={() => {
 			adminMenu = !adminMenu;
