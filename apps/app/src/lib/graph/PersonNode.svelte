@@ -4,7 +4,6 @@
 	import { Handle, Position, type NodeProps } from '@xyflow/svelte';
 	import type { components } from '$lib/api/api.gen';
 	import { isValidConnection } from './connection.js';
-	type $$Props = NodeProps;
 
 	export let data: NodeProps['data'] & components['schemas']['PersonProperties'];
 
@@ -122,7 +121,7 @@
 	</div>
 
 	<div class="px-2 text-center" style="z-index: 2; cursor: pointer;">
-		<h2 class="text-sm font-semibold leading-tight">
+		<h2 class="text-sm leading-tight font-semibold">
 			{data.first_name}
 			{data.middle_name ? data.middle_name : ''}
 			{data.last_name}

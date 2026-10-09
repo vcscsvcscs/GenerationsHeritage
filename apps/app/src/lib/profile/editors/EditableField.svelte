@@ -2,9 +2,12 @@
 	import type { components } from '$lib/api/api.gen';
 
 	export let key: keyof components['schemas']['PersonProperties'];
-	export let value: any;
+	export let value: string | number | boolean | null | undefined;
 	export let editorMode = false;
-	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	export let onChange: <K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
+	) => void;
 	let numberField: HTMLInputElement;
 	let textField: HTMLTextAreaElement;
 	let checkboxField: HTMLInputElement;

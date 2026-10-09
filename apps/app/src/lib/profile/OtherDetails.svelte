@@ -6,7 +6,10 @@
 
 	export let person: components['schemas']['PersonProperties'];
 	export let editorMode = false;
-	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	export let onChange: <K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
+	) => void;
 	const skipFields = [
 		'id',
 		'first_name',
@@ -33,20 +36,16 @@
 		'google_id',
 		'invite_code'
 	];
-	let newNote = {
-		title: " ",
-		note: ""
-	};
 </script>
 
-<div class="mt-5 flex flex-col gap-2 justify-center items-center">
+<div class="mt-5 flex flex-col items-center justify-center gap-2">
 	{#each person.notes ?? [] as note, i}
-		<div class="card bg-base-100 shadow-sm relative w-full max-w-xl">
-			<div class="card-body p-4 w-full">
+		<div class="card bg-base-100 relative w-full max-w-xl shadow-sm">
+			<div class="card-body w-full p-4">
 				{#if editorMode}
 					<input
 						type="text"
-						class="input input-bordered input-sm w-full mb-2"
+						class="input input-bordered input-sm mb-2 w-full"
 						placeholder={theme()}
 						bind:value={note.title}
 						oninput={() => onChange('notes', person.notes)}
@@ -59,7 +58,7 @@
 					></textarea>
 					<button
 						type="button"
-						class="absolute top-2 right-2 btn btn-xs btn-ghost text-error ml-2"
+						class="btn btn-xs btn-ghost text-error absolute top-2 right-2 ml-2"
 						aria-label="Remove note"
 						onclick={() => {
 							person.notes = (person.notes ?? []).filter((_, idx) => idx !== i);
@@ -81,8 +80,11 @@
 			class="btn btn-accent btn-sm w-auto self-start"
 			onclick={() => {
 				const now = new Date();
-				const formattedDate = now.getFullYear() + '-' +
-					String(now.getMonth() + 1).padStart(2, '0') + '-' +
+				const formattedDate =
+					now.getFullYear() +
+					'-' +
+					String(now.getMonth() + 1).padStart(2, '0') +
+					'-' +
 					String(now.getDate()).padStart(2, '0');
 				person.notes = [...(person.notes ?? []), { title: '', note: '', date: formattedDate }];
 				onChange('notes', person.notes);
@@ -104,7 +106,7 @@
 								<textarea
 									bind:value={person[key as keyof components['schemas']['PersonProperties']]}
 									class="textarea textarea-bordered textarea-sm w-full"
-									oninput={(e) =>
+									oninput={() =>
 										onChange(
 											key as keyof components['schemas']['PersonProperties'],
 											String(person[key as keyof components['schemas']['PersonProperties']])
@@ -127,7 +129,7 @@
 								type="checkbox"
 								class="checkbox checkbox-primary"
 								bind:value={person[key as keyof components['schemas']['PersonProperties']]}
-								onchange={(e) =>
+								onchange={() =>
 									onChange(
 										key as keyof components['schemas']['PersonProperties'],
 										Boolean(person[key as keyof components['schemas']['PersonProperties']])
@@ -138,7 +140,7 @@
 								type="number"
 								class="input input-bordered input-sm w-full"
 								bind:value={person[key as keyof components['schemas']['PersonProperties']]}
-								oninput={(e) =>
+								oninput={() =>
 									onChange(
 										key as keyof components['schemas']['PersonProperties'],
 										Number(person[key as keyof components['schemas']['PersonProperties']])

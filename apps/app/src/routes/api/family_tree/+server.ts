@@ -36,14 +36,15 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
-	var graphToReturn: components['schemas']['FamilyTree'] = {
+	const graphToReturn: components['schemas']['FamilyTree'] = {
 		people: [],
 		relationships: response.data.relationships
 	};
 	for (const person of response.data.people) {
-		let newPerson = person;
+		const newPerson = person;
 
 		if (newPerson.profile_picture !== null && newPerson.profile_picture !== undefined) {
+			// profile_picture is returned unchanged
 		}
 
 		if (graphToReturn.people !== undefined) {
