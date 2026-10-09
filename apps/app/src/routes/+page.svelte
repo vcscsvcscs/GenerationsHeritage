@@ -328,6 +328,7 @@
 			{#if recipePersonId !== null}
 				<RecipeListModal
 					personId={recipePersonId}
+					currentUserId={Number(data.id)}
 					personName={recipePersonName}
 					closeModal={() => {
 						recipePersonId = null;
@@ -337,6 +338,7 @@
 			{/if}
 			{#if showCookbook}
 				<CookbookModal
+					currentUserId={Number(data.id)}
 					closeModal={() => {
 						showCookbook = false;
 					}}
@@ -345,6 +347,7 @@
 			{#if showLikedRecipes}
 				<RecipeListModal
 					personId={-1}
+					currentUserId={Number(data.id)}
 					useMyRecipes={true}
 					closeModal={() => {
 						showLikedRecipes = false;

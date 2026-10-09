@@ -178,5 +178,21 @@
 	"origin": "Eredet",
 	"phone": "Telefon",
 	"rating": "Értékelés",
-	"view_recipes": "Receptek"
+	"view_recipes": "Receptek",
+	"comments": "Hozzászólások",
+	"add_comment": "Hozzászólás írása",
+	"post_comment": "Közzététel",
+	"no_comments": "Még nincsenek hozzászólások",
+	"comment_edited": "szerkesztve",
+	"delete_action": "Törlés",
+	"delete_recipe": "Recept törlése",
+	"delete_recipe_confirm": "Törli ezt a receptet? Mások többé nem látják majd.",
+	"variations": "Változatok",
+	"no_variations": "Még nincsenek változatok",
+	"new_variation": "Új változat",
+	"variation_notes": "Miben tér el?",
+	"variation_by": "készítette: {name}",
+	"error_generic": "Valami hiba történt. Kérjük, próbálja újra.",
+	"error_unauthorized": "Nincs hozzáférése ehhez, vagy lejárt a munkamenet. Kérjük, jelentkezzen be újra.",
+	"error_not_found": "Nem található. Lehet, hogy törölték."
 }

@@ -2,22 +2,25 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { close, cookbook, recipe, no_recipes } from '$lib/paraglide/messages';
+	import { getCookbook, getPersonRecipes } from './api';
+	import { errorMessage } from './errors';
+	import { canEdit, likedRecipeIds, personName } from './model';
+	import type { CookbookEntry } from './model';
 	import RecipeModal from './RecipeModal.svelte';
 
 	let {
+		currentUserId = null,
 		closeModal
 	}: {
+		currentUserId?: number | null;
 		closeModal: () => void;
 	} = $props();
 
-	let entries: Array<{
-		recipe: { Id: number; Props: Record<string, unknown> };
-		added_by: { id: number; first_name?: string; last_name?: string; profile_picture?: string };
-		relationship: Record<string, unknown>;
-	}> = $state([]);
-	let likedRecipeIds: Set<number> = $state(new Set());
+	let entries: CookbookEntry[] = $state([]);
+	let likedIds: Set<number> = $state(new Set());
 	let isLoading = $state(true);
-	let selectedEntry: { id: number; props: Record<string, unknown> } | undefined = $state(undefined);
+	let error: string | null = $state(null);
+	let selectedEntry: CookbookEntry | undefined = $state(undefined);
 
 	onMount(() => {
 		fetchCookbook();
@@ -26,55 +29,41 @@
 
 	async function fetchCookbook() {
 		isLoading = true;
-		try {
-			const response = await fetch('/api/cookbook?distance=5');
-			if (response.ok) {
-				const data = await response.json();
-				entries = data?.entries ?? [];
-			}
-		} catch (e) {
-			console.error('Error fetching cookbook:', e);
-		} finally {
-			isLoading = false;
+		error = null;
+		const result = await getCookbook(5);
+		if (result.ok) {
+			entries = (result.data.entries ?? []).filter((e) => e.recipe?.Id !== undefined);
+		} else {
+			error = errorMessage(result.status);
 		}
+		isLoading = false;
 	}
 
 	async function fetchMyLikedRecipes() {
-		try {
-			const response = await fetch('/api/recipe/person/me');
-			if (response.ok) {
-				const data = (await response.json()) as { recipes?: Array<{ Id: number }> };
-				likedRecipeIds = new Set((data?.recipes ?? []).map((r) => r.Id));
-			}
-		} catch (e) {
-			console.error('Error fetching liked recipes:', e);
-		}
-	}
-
-	function getPersonName(person: { first_name?: string; last_name?: string }): string {
-		return [person.first_name, person.last_name].filter(Boolean).join(' ') || '?';
+		const result = await getPersonRecipes('me');
+		if (result.ok) likedIds = likedRecipeIds(result.data.entries);
 	}
 
 	function handleLikeToggle(recipeId: number, liked: boolean) {
-		if (liked) {
-			likedRecipeIds.add(recipeId);
-		} else {
-			likedRecipeIds.delete(recipeId);
-		}
-		likedRecipeIds = new Set(likedRecipeIds);
+		const next = new Set(likedIds);
+		if (liked) next.add(recipeId);
+		else next.delete(recipeId);
+		likedIds = next;
 	}
 </script>
 
-{#if selectedEntry}
+{#if selectedEntry?.recipe?.Id !== undefined}
+	{@const selectedId = selectedEntry.recipe.Id}
 	<RecipeModal
-		recipeData={selectedEntry.props}
-		recipeId={selectedEntry.id}
-		editable={false}
-		liked={likedRecipeIds.has(selectedEntry.id)}
+		recipeId={selectedId}
+		initial={{ recipe: selectedEntry.recipe.Props ?? {}, canEdit: canEdit(selectedEntry) }}
+		{currentUserId}
+		liked={likedIds.has(selectedId)}
 		closeModal={() => {
 			selectedEntry = undefined;
 		}}
-		onLikeToggle={(liked) => handleLikeToggle(selectedEntry!.id, liked)}
+		onSaved={fetchCookbook}
+		onLikeToggle={(liked) => handleLikeToggle(selectedId, liked)}
 	/>
 {:else}
 	<div class="modal modal-open" transition:fade>
@@ -89,6 +78,10 @@
 				<div class="divider"></div>
 			</div>
 
+			{#if error}
+				<div class="alert alert-error alert-soft mx-2 mb-2 py-2 text-sm" role="alert">{error}</div>
+			{/if}
+
 			{#if isLoading}
 				<div class="flex justify-center p-8">
 					<span class="loading loading-spinner loading-lg"></span>
@@ -97,20 +90,20 @@
 				<p class="text-base-content/60 p-8 text-center">{no_recipes()}</p>
 			{:else}
 				<div class="flex flex-col gap-2 p-2">
-					{#each entries as entry}
+					{#each entries as entry (entry.recipe?.Id)}
 						<button
 							class="card bg-base-200 hover:bg-base-300 w-full cursor-pointer text-left shadow-sm transition-colors"
 							onclick={() => {
-								selectedEntry = { id: entry.recipe.Id, props: entry.recipe.Props };
+								selectedEntry = entry;
 							}}
 						>
 							<div class="card-body p-4">
 								<div class="flex items-center justify-between">
 									<div class="flex items-center gap-2">
 										<h4 class="card-title text-base">
-											{entry.recipe.Props?.name ?? recipe()}
+											{entry.recipe?.Props?.name ?? recipe()}
 										</h4>
-										{#if likedRecipeIds.has(entry.recipe.Id)}
+										{#if entry.recipe?.Id !== undefined && likedIds.has(entry.recipe.Id)}
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												viewBox="0 0 24 24"
@@ -131,20 +124,20 @@
 												class="h-6 w-6 rounded-full"
 											/>
 										{/if}
-										<span>{getPersonName(entry.added_by)}</span>
+										<span>{personName(entry.added_by)}</span>
 									</div>
 								</div>
 								<div class="text-base-content/60 flex gap-3 text-sm">
-									{#if entry.recipe.Props?.category}
+									{#if entry.recipe?.Props?.category}
 										<span class="badge badge-outline badge-sm">
 											{entry.recipe.Props.category}
 										</span>
 									{/if}
-									{#if entry.recipe.Props?.origin}
+									{#if entry.recipe?.Props?.origin}
 										<span>{entry.recipe.Props.origin}</span>
 									{/if}
 								</div>
-								{#if entry.recipe.Props?.description}
+								{#if entry.recipe?.Props?.description}
 									<p class="mt-1 line-clamp-2 text-sm">{entry.recipe.Props.description}</p>
 								{/if}
 							</div>

@@ -9,44 +9,36 @@
 		no_recipes,
 		save,
 		cancel,
-		recipe,
-		description,
-		origin,
-		category,
-		ingredients,
-		instructions,
-		notes,
-		add
+		recipe
 	} from '$lib/paraglide/messages';
+	import { createRecipe, getPersonRecipes } from './api';
+	import { errorMessage } from './errors';
+	import { canEdit, cleanDraft, emptyDraft, isLiked } from './model';
+	import type { RecipeEntry } from './model';
+	import RecipeFields from './RecipeFields.svelte';
 	import RecipeModal from './RecipeModal.svelte';
 
 	let {
 		personId,
 		personName = '',
 		useMyRecipes = false,
+		currentUserId = null,
 		closeModal
 	}: {
 		personId: number;
 		personName?: string;
 		useMyRecipes?: boolean;
+		currentUserId?: number | null;
 		closeModal: () => void;
 	} = $props();
 
-	let recipeList: Array<{ Id: number; Props: Record<string, unknown> }> = $state([]);
+	let entries: RecipeEntry[] = $state([]);
 	let isLoading = $state(true);
+	let busy = $state(false);
+	let error: string | null = $state(null);
 	let showCreateForm = $state(false);
-	let selectedRecipe: { id: number; props: Record<string, unknown> } | undefined =
-		$state(undefined);
-
-	let newRecipe = $state({
-		name: '',
-		origin: '',
-		category: '',
-		description: '',
-		ingredients: [''],
-		instructions: [''],
-		notes: ''
-	});
+	let selectedEntry: RecipeEntry | undefined = $state(undefined);
+	let draft = $state(emptyDraft());
 
 	onMount(() => {
 		fetchRecipes();
@@ -54,76 +46,46 @@
 
 	async function fetchRecipes() {
 		isLoading = true;
-		try {
-			const endpoint = useMyRecipes ? '/api/recipe/person/me' : `/api/recipe/person/${personId}`;
-			const response = await fetch(endpoint);
-			if (response.ok) {
-				const data = (await response.json()) as {
-					recipes?: Array<{ Id: number; Props: Record<string, unknown> }>;
-				};
-				recipeList = data?.recipes ?? [];
-			}
-		} catch (e) {
-			console.error('Error fetching recipes:', e);
-		} finally {
-			isLoading = false;
+		const result = await getPersonRecipes(useMyRecipes ? 'me' : personId);
+		if (result.ok) {
+			entries = (result.data.entries ?? []).filter((e) => e.recipe?.Id !== undefined);
+			error = null;
+		} else {
+			error = errorMessage(result.status);
 		}
+		isLoading = false;
 	}
 
-	async function createRecipe() {
-		const cleanRecipe = {
-			...newRecipe,
-			ingredients: newRecipe.ingredients.filter((i) => i.trim() !== ''),
-			instructions: newRecipe.instructions.filter((i) => i.trim() !== '')
-		};
-
-		try {
-			const response = await fetch(`/api/recipe/person/${personId}`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					recipe: cleanRecipe,
-					relationship: { favourite: true, like_it: true }
-				})
-			});
-			if (response.ok) {
-				showCreateForm = false;
-				newRecipe = {
-					name: '',
-					origin: '',
-					category: '',
-					description: '',
-					ingredients: [''],
-					instructions: [''],
-					notes: ''
-				};
-				await fetchRecipes();
-			} else {
-				alert('Error creating recipe');
-			}
-		} catch (e) {
-			alert('Error creating recipe: ' + e);
+	async function submitRecipe() {
+		if (busy || draft.name.trim() === '') return;
+		busy = true;
+		error = null;
+		const result = await createRecipe(personId, cleanDraft(draft), {
+			favourite: true,
+			like_it: true
+		});
+		if (result.ok) {
+			showCreateForm = false;
+			draft = emptyDraft();
+			await fetchRecipes();
+		} else {
+			error = errorMessage(result.status);
 		}
-	}
-
-	function addIngredient() {
-		newRecipe.ingredients = [...newRecipe.ingredients, ''];
-	}
-
-	function addInstruction() {
-		newRecipe.instructions = [...newRecipe.instructions, ''];
+		busy = false;
 	}
 </script>
 
-{#if selectedRecipe}
+{#if selectedEntry?.recipe?.Id !== undefined}
 	<RecipeModal
-		recipeData={selectedRecipe.props}
-		recipeId={selectedRecipe.id}
-		editable={true}
+		recipeId={selectedEntry.recipe.Id}
+		initial={{ recipe: selectedEntry.recipe.Props ?? {}, canEdit: canEdit(selectedEntry) }}
+		{currentUserId}
+		liked={isLiked(selectedEntry)}
 		closeModal={() => {
-			selectedRecipe = undefined;
+			selectedEntry = undefined;
 		}}
 		onSaved={fetchRecipes}
+		onLikeToggle={useMyRecipes ? fetchRecipes : undefined}
 	/>
 {:else}
 	<div class="modal modal-open" transition:fade>
@@ -151,101 +113,21 @@
 				<div class="divider"></div>
 			</div>
 
+			{#if error}
+				<div class="alert alert-error alert-soft mx-2 mb-2 py-2 text-sm" role="alert">{error}</div>
+			{/if}
+
 			{#if showCreateForm}
-				<!-- Create Recipe Form -->
 				<div class="flex flex-col gap-3 p-2">
-					<div>
-						<span class="label font-semibold">{recipe()}</span>
-						<input type="text" class="input input-bordered w-full" bind:value={newRecipe.name} />
-					</div>
-					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-						<div>
-							<span class="label font-semibold">{origin()}</span>
-							<input
-								type="text"
-								class="input input-bordered w-full"
-								bind:value={newRecipe.origin}
-							/>
-						</div>
-						<div>
-							<span class="label font-semibold">{category()}</span>
-							<input
-								type="text"
-								class="input input-bordered w-full"
-								bind:value={newRecipe.category}
-							/>
-						</div>
-					</div>
-					<div>
-						<span class="label font-semibold">{description()}</span>
-						<textarea
-							class="textarea textarea-bordered w-full"
-							rows="2"
-							bind:value={newRecipe.description}
-						></textarea>
-					</div>
-					<div>
-						<span class="label font-semibold">{ingredients()}</span>
-						{#each newRecipe.ingredients as _, i}
-							<div class="mb-1 flex items-center gap-2">
-								<input
-									type="text"
-									class="input input-bordered input-sm flex-1"
-									bind:value={newRecipe.ingredients[i]}
-								/>
-								<button
-									class="btn btn-xs btn-ghost text-error"
-									onclick={() => {
-										newRecipe.ingredients = newRecipe.ingredients.filter((_, idx) => idx !== i);
-									}}
-								>
-									&#10005;
-								</button>
-							</div>
-						{/each}
-						<button class="btn btn-accent btn-xs mt-1" onclick={addIngredient}>
-							{add()}
-						</button>
-					</div>
-					<div>
-						<span class="label font-semibold">{instructions()}</span>
-						{#each newRecipe.instructions as __, i}
-							<div class="mb-1 flex items-center gap-2">
-								<span class="w-6 font-mono text-sm">{i + 1}.</span>
-								<textarea
-									class="textarea textarea-bordered textarea-sm flex-1"
-									bind:value={newRecipe.instructions[i]}
-								></textarea>
-								<button
-									class="btn btn-xs btn-ghost text-error"
-									onclick={() => {
-										newRecipe.instructions = newRecipe.instructions.filter((_, idx) => idx !== i);
-									}}
-								>
-									&#10005;
-								</button>
-							</div>
-						{/each}
-						<button class="btn btn-accent btn-xs mt-1" onclick={addInstruction}>
-							{add()}
-						</button>
-					</div>
-					<div>
-						<span class="label font-semibold">{notes()}</span>
-						<textarea
-							class="textarea textarea-bordered w-full"
-							rows="2"
-							bind:value={newRecipe.notes}
-						></textarea>
-					</div>
+					<RecipeFields bind:draft />
 					<div class="mt-2 flex justify-end gap-2">
 						<button class="btn btn-ghost btn-sm" onclick={() => (showCreateForm = false)}>
 							{cancel()}
 						</button>
 						<button
 							class="btn btn-primary btn-sm"
-							onclick={createRecipe}
-							disabled={!newRecipe.name}
+							onclick={submitRecipe}
+							disabled={busy || draft.name.trim() === ''}
 						>
 							{save()}
 						</button>
@@ -255,30 +137,43 @@
 				<div class="flex justify-center p-8">
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
-			{:else if recipeList.length === 0}
+			{:else if entries.length === 0}
 				<p class="text-base-content/60 p-8 text-center">{no_recipes()}</p>
 			{:else}
-				<!-- Recipe List -->
 				<div class="flex flex-col gap-2 p-2">
-					{#each recipeList as r}
+					{#each entries as entry (entry.recipe?.Id)}
 						<button
 							class="card bg-base-200 hover:bg-base-300 w-full cursor-pointer text-left shadow-sm transition-colors"
 							onclick={() => {
-								selectedRecipe = { id: r.Id, props: r.Props };
+								selectedEntry = entry;
 							}}
 						>
 							<div class="card-body p-4">
-								<h4 class="card-title text-base">{r.Props?.name ?? recipe()}</h4>
-								<div class="text-base-content/60 flex gap-3 text-sm">
-									{#if r.Props?.category}
-										<span class="badge badge-outline badge-sm">{r.Props.category}</span>
-									{/if}
-									{#if r.Props?.origin}
-										<span>{r.Props.origin}</span>
+								<div class="flex items-center gap-2">
+									<h4 class="card-title text-base">{entry.recipe?.Props?.name ?? recipe()}</h4>
+									{#if isLiked(entry)}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 24 24"
+											fill="currentColor"
+											class="text-error h-4 w-4"
+										>
+											<path
+												d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"
+											/>
+										</svg>
 									{/if}
 								</div>
-								{#if r.Props?.description}
-									<p class="mt-1 line-clamp-2 text-sm">{r.Props.description}</p>
+								<div class="text-base-content/60 flex gap-3 text-sm">
+									{#if entry.recipe?.Props?.category}
+										<span class="badge badge-outline badge-sm">{entry.recipe.Props.category}</span>
+									{/if}
+									{#if entry.recipe?.Props?.origin}
+										<span>{entry.recipe.Props.origin}</span>
+									{/if}
+								</div>
+								{#if entry.recipe?.Props?.description}
+									<p class="mt-1 line-clamp-2 text-sm">{entry.recipe.Props.description}</p>
 								{/if}
 							</div>
 						</button>

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
 	import {
 		close,
 		edit,
 		back,
 		save,
+		cancel,
 		recipe,
 		description,
 		origin,
@@ -12,116 +14,137 @@
 		ingredients,
 		instructions,
 		notes,
-		add,
-		favourite
+		favourite,
+		delete_recipe,
+		delete_recipe_confirm,
+		delete_action,
+		loading
 	} from '$lib/paraglide/messages';
-	import type { components } from '$lib/api/api.gen';
+	import { deleteRecipe, getRecipe, likeRecipe, unlikeRecipe, updateRecipe } from './api';
+	import { errorMessage } from './errors';
+	import { canEdit as entryCanEdit, cleanDraft, toDraft } from './model';
+	import type { RecipeProperties } from './model';
+	import RecipeFields from './RecipeFields.svelte';
+	import RecipeComments from './RecipeComments.svelte';
+	import RecipeVariations from './RecipeVariations.svelte';
+
+	type View = { id: number; props: RecipeProperties; canEdit: boolean };
 
 	let {
-		recipeData,
 		recipeId,
-		editable = false,
+		initial,
+		currentUserId = null,
 		liked = false,
 		closeModal,
 		onSaved,
 		onLikeToggle
 	}: {
-		recipeData: components['schemas']['RecipeProperties'];
-		recipeId: number | undefined;
-		editable?: boolean;
+		recipeId: number;
+		initial?: { recipe: RecipeProperties; canEdit: boolean };
+		currentUserId?: number | null;
 		liked?: boolean;
 		closeModal: () => void;
 		onSaved?: () => void;
 		onLikeToggle?: (liked: boolean) => void;
 	} = $props();
 
+	let trail: View[] = $state([]);
+	let current: View | null = $state(
+		initial ? { id: recipeId, props: initial.recipe, canEdit: initial.canEdit } : null
+	);
+	let isLoading = $state(initial === undefined);
+	let error: string | null = $state(null);
 	let editorMode = $state(false);
+	let confirmingDelete = $state(false);
+	let busy = $state(false);
 	let isLiked = $state(liked);
-	let likeLoading = $state(false);
-	let draft = $state({
-		...recipeData,
-		ingredients: recipeData.ingredients ?? [],
-		instructions: recipeData.instructions ?? []
+	let draft = $state(toDraft(initial?.recipe));
+
+	const rootActive = $derived(trail.length === 0);
+
+	async function open(id: number) {
+		isLoading = true;
+		error = null;
+		const result = await getRecipe(id);
+		if (result.ok && result.data.recipe?.Id !== undefined) {
+			if (current) trail = [...trail, current];
+			current = {
+				id: result.data.recipe.Id,
+				props: result.data.recipe.Props ?? {},
+				canEdit: entryCanEdit(result.data)
+			};
+		} else {
+			error = errorMessage(result.ok ? 404 : result.status);
+		}
+		isLoading = false;
+	}
+
+	onMount(() => {
+		if (initial === undefined) open(recipeId);
 	});
 
+	function goBack() {
+		current = trail[trail.length - 1] ?? null;
+		trail = trail.slice(0, -1);
+		editorMode = false;
+		confirmingDelete = false;
+		error = null;
+	}
+
 	function toggleEdit() {
-		if (!editorMode) {
-			draft = {
-				...recipeData,
-				ingredients: recipeData.ingredients ?? [],
-				instructions: recipeData.instructions ?? []
-			};
-		}
+		if (!editorMode && current) draft = toDraft(current.props);
 		editorMode = !editorMode;
+		error = null;
 	}
 
 	async function handleSave() {
-		if (!recipeId) return;
-		try {
-			const response = await fetch(`/api/recipe/${recipeId}`, {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(draft)
-			});
-			if (response.ok) {
-				Object.assign(recipeData, draft);
-				editorMode = false;
-				onSaved?.();
-			} else {
-				alert('Error saving recipe');
-			}
-		} catch (e) {
-			alert('Error saving recipe: ' + e);
+		if (!current || busy || draft.name.trim() === '') return;
+		busy = true;
+		error = null;
+		const updated = { ...current.props, ...cleanDraft(draft) };
+		const result = await updateRecipe(current.id, updated);
+		if (result.ok) {
+			current = { ...current, props: updated };
+			editorMode = false;
+			onSaved?.();
+		} else {
+			error = errorMessage(result.status);
+		}
+		busy = false;
+	}
+
+	async function handleDelete() {
+		if (!current || busy) return;
+		busy = true;
+		error = null;
+		const result = await deleteRecipe(current.id);
+		busy = false;
+		if (!result.ok && result.status !== 404) {
+			error = errorMessage(result.status);
+			confirmingDelete = false;
+			return;
+		}
+		confirmingDelete = false;
+		onSaved?.();
+		if (rootActive) {
+			closeModal();
+		} else {
+			goBack();
 		}
 	}
 
 	async function toggleLike() {
-		if (!recipeId || likeLoading) return;
-		likeLoading = true;
-		try {
-			if (isLiked) {
-				const response = await fetch(`/api/recipe/${recipeId}/relationship?personId=me`, {
-					method: 'DELETE'
-				});
-				if (response.ok) {
-					isLiked = false;
-					onLikeToggle?.(false);
-				}
-			} else {
-				const response = await fetch(`/api/recipe/${recipeId}/relationship`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						id: 0,
-						relationship: { schema: { like_it: true } }
-					})
-				});
-				if (response.ok) {
-					isLiked = true;
-					onLikeToggle?.(true);
-				}
-			}
-		} catch (e) {
-			console.error('Error toggling like:', e);
-		} finally {
-			likeLoading = false;
+		if (busy) return;
+		busy = true;
+		error = null;
+		const result = isLiked ? await unlikeRecipe(recipeId) : await likeRecipe(recipeId);
+		if (result.ok) {
+			isLiked = !isLiked;
+			onLikeToggle?.(isLiked);
+		} else {
+			error = errorMessage(result.status);
 		}
-	}
-
-	function addIngredient() {
-		draft.ingredients = [...draft.ingredients, ''];
-	}
-
-	function removeIngredient(index: number) {
-		draft.ingredients = draft.ingredients.filter((_, i) => i !== index);
-	}
-
-	function addInstruction() {
-		draft.instructions = [...draft.instructions, ''];
-	}
-
-	function removeInstruction(index: number) {
-		draft.instructions = draft.instructions.filter((_, i) => i !== index);
+		busy = false;
 	}
 </script>
 
@@ -130,13 +153,13 @@
 		<div class="bg-base-100 sticky top-0 z-7">
 			<div class="flex items-center justify-between p-2">
 				<div class="flex items-center gap-2">
-					<h3 class="text-lg font-bold">{recipeData.name ?? recipe()}</h3>
-					{#if onLikeToggle}
+					<h3 class="text-lg font-bold">{current?.props.name ?? recipe()}</h3>
+					{#if onLikeToggle && rootActive}
 						<button
 							class="btn btn-ghost btn-sm"
 							class:text-error={isLiked}
 							onclick={toggleLike}
-							disabled={likeLoading}
+							disabled={busy}
 							title={favourite()}
 						>
 							{#if isLiked}
@@ -170,13 +193,28 @@
 					{/if}
 				</div>
 				<div class="space-x-2">
-					{#if editable}
+					{#if !rootActive && !editorMode}
+						<button class="btn btn-ghost btn-sm" onclick={goBack}>{back()}</button>
+					{/if}
+					{#if current?.canEdit}
 						<button class="btn btn-secondary btn-sm" onclick={toggleEdit}>
 							{editorMode ? back() : edit()}
 						</button>
 						{#if editorMode}
-							<button class="btn btn-accent btn-sm" onclick={handleSave}>
+							<button
+								class="btn btn-accent btn-sm"
+								onclick={handleSave}
+								disabled={busy || draft.name.trim() === ''}
+							>
 								{save()}
+							</button>
+						{:else}
+							<button
+								class="btn btn-error btn-outline btn-sm"
+								onclick={() => (confirmingDelete = true)}
+								disabled={busy || confirmingDelete}
+							>
+								{delete_recipe()}
 							</button>
 						{/if}
 					{/if}
@@ -188,121 +226,93 @@
 			<div class="divider"></div>
 		</div>
 
-		<div class="flex flex-col gap-4 p-2">
-			<!-- Name -->
-			<div>
-				<span class="label font-semibold">{recipe()}</span>
-				{#if editorMode}
-					<input type="text" class="input input-bordered w-full" bind:value={draft.name} />
-				{:else}
-					<p class="text-lg">{recipeData.name ?? '-'}</p>
-				{/if}
-			</div>
+		{#if error}
+			<div class="alert alert-error alert-soft mx-2 mb-2 py-2 text-sm" role="alert">{error}</div>
+		{/if}
 
-			<!-- Origin & Category -->
-			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-				<div>
-					<span class="label font-semibold">{origin()}</span>
-					{#if editorMode}
-						<input type="text" class="input input-bordered w-full" bind:value={draft.origin} />
-					{:else}
-						<p>{recipeData.origin ?? '-'}</p>
-					{/if}
-				</div>
-				<div>
-					<span class="label font-semibold">{category()}</span>
-					{#if editorMode}
-						<input type="text" class="input input-bordered w-full" bind:value={draft.category} />
-					{:else}
-						<p>{recipeData.category ?? '-'}</p>
-					{/if}
+		{#if confirmingDelete}
+			<div class="alert alert-warning mx-2 mb-2 flex items-center justify-between" role="alert">
+				<span>{delete_recipe_confirm()}</span>
+				<div class="flex gap-2">
+					<button class="btn btn-ghost btn-sm" onclick={() => (confirmingDelete = false)}>
+						{cancel()}
+					</button>
+					<button class="btn btn-error btn-sm" onclick={handleDelete} disabled={busy}>
+						{delete_action()}
+					</button>
 				</div>
 			</div>
+		{/if}
 
-			<!-- Description -->
-			<div>
-				<span class="label font-semibold">{description()}</span>
-				{#if editorMode}
-					<textarea
-						class="textarea textarea-bordered w-full"
-						rows="3"
-						bind:value={draft.description}
-					></textarea>
-				{:else}
-					<p>{recipeData.description ?? '-'}</p>
-				{/if}
+		{#if isLoading}
+			<div class="flex justify-center p-8">
+				<span class="loading loading-spinner loading-lg" aria-label={loading()}></span>
 			</div>
-
-			<!-- Ingredients -->
-			<div>
-				<span class="label font-semibold">{ingredients()}</span>
+		{:else if current}
+			<div class="flex flex-col gap-4 p-2">
 				{#if editorMode}
-					{#each draft.ingredients ?? [] as _, i}
-						<div class="mb-1 flex items-center gap-2">
-							<input
-								type="text"
-								class="input input-bordered input-sm flex-1"
-								bind:value={draft.ingredients[i]}
-							/>
-							<button class="btn btn-xs btn-ghost text-error" onclick={() => removeIngredient(i)}>
-								&#10005;
-							</button>
+					<RecipeFields bind:draft />
+				{:else}
+					<div>
+						<span class="label font-semibold">{recipe()}</span>
+						<p class="text-lg">{current.props.name ?? '-'}</p>
+					</div>
+
+					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<div>
+							<span class="label font-semibold">{origin()}</span>
+							<p>{current.props.origin ?? '-'}</p>
 						</div>
-					{/each}
-					<button class="btn btn-accent btn-xs mt-1" onclick={addIngredient}>
-						{add()}
-					</button>
-				{:else if recipeData.ingredients && recipeData.ingredients.length > 0}
-					<ul class="list-disc pl-5">
-						{#each recipeData.ingredients as item}
-							<li>{item}</li>
-						{/each}
-					</ul>
-				{:else}
-					<p>-</p>
-				{/if}
-			</div>
-
-			<!-- Instructions -->
-			<div>
-				<span class="label font-semibold">{instructions()}</span>
-				{#if editorMode}
-					{#each draft.instructions ?? [] as __, i}
-						<div class="mb-1 flex items-center gap-2">
-							<span class="w-6 font-mono text-sm">{i + 1}.</span>
-							<textarea
-								class="textarea textarea-bordered textarea-sm flex-1"
-								bind:value={draft.instructions[i]}
-							></textarea>
-							<button class="btn btn-xs btn-ghost text-error" onclick={() => removeInstruction(i)}>
-								&#10005;
-							</button>
+						<div>
+							<span class="label font-semibold">{category()}</span>
+							<p>{current.props.category ?? '-'}</p>
 						</div>
-					{/each}
-					<button class="btn btn-accent btn-xs mt-1" onclick={addInstruction}>
-						{add()}
-					</button>
-				{:else if recipeData.instructions && recipeData.instructions.length > 0}
-					<ol class="list-decimal pl-5">
-						{#each recipeData.instructions as step}
-							<li class="mb-1">{step}</li>
-						{/each}
-					</ol>
-				{:else}
-					<p>-</p>
-				{/if}
-			</div>
+					</div>
 
-			<!-- Notes -->
-			<div>
-				<span class="label font-semibold">{notes()}</span>
-				{#if editorMode}
-					<textarea class="textarea textarea-bordered w-full" rows="2" bind:value={draft.notes}
-					></textarea>
-				{:else}
-					<p>{recipeData.notes ?? '-'}</p>
+					<div>
+						<span class="label font-semibold">{description()}</span>
+						<p>{current.props.description ?? '-'}</p>
+					</div>
+
+					<div>
+						<span class="label font-semibold">{ingredients()}</span>
+						{#if current.props.ingredients && current.props.ingredients.length > 0}
+							<ul class="list-disc pl-5">
+								{#each current.props.ingredients as item}
+									<li>{item}</li>
+								{/each}
+							</ul>
+						{:else}
+							<p>-</p>
+						{/if}
+					</div>
+
+					<div>
+						<span class="label font-semibold">{instructions()}</span>
+						{#if current.props.instructions && current.props.instructions.length > 0}
+							<ol class="list-decimal pl-5">
+								{#each current.props.instructions as step}
+									<li class="mb-1">{step}</li>
+								{/each}
+							</ol>
+						{:else}
+							<p>-</p>
+						{/if}
+					</div>
+
+					<div>
+						<span class="label font-semibold">{notes()}</span>
+						<p>{current.props.notes ?? '-'}</p>
+					</div>
+
+					{#key current.id}
+						<div class="divider my-0"></div>
+						<RecipeVariations recipeId={current.id} baseProps={current.props} onOpen={open} />
+						<div class="divider my-0"></div>
+						<RecipeComments recipeId={current.id} {currentUserId} />
+					{/key}
 				{/if}
 			</div>
-		</div>
+		{/if}
 	</div>
 </div>
