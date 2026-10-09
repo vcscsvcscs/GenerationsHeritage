@@ -13,7 +13,7 @@ export function parseFamilyTree(data: components['schemas']['FamilyTree']): Layo
 	}
 
 	const nodes: Node[] = data.people.map((person) => {
-		let newNode = { data: { ...person } } as Node;
+		const newNode = { data: { ...person } } as Node;
 		if (person.id !== null && person.id !== undefined) {
 			newNode.id = 'person' + person.id.toString();
 		}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { died } from './../paraglide/messages/en.js';
 	import { fade } from 'svelte/transition';
 
 	import ModalButtons from './ModalButtons.svelte';
@@ -27,9 +26,9 @@
 
 	editorMode = false;
 
-	function handleDraftPersonChange(
-		field: keyof components['schemas']['PersonProperties'],
-		value: any
+	function handleDraftPersonChange<K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
 	) {
 		draftPerson[field] = value;
 		if (field === 'invite_code') {

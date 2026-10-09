@@ -18,7 +18,7 @@
 
 	let {
 		closeModal,
-		onCreation = (newEdges: Edge[]) => {},
+		onCreation = () => {},
 		editorMode = false,
 		createRelationship = false,
 		startNode = undefined,

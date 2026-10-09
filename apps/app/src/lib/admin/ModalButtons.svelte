@@ -1,16 +1,5 @@
 <script lang="ts">
-	import {
-		add_relationship,
-		back,
-		biography,
-		close,
-		create,
-		create_person,
-		edit,
-		managed_profiles,
-		relation,
-		save
-	} from '$lib/paraglide/messages';
+	import { close, create_person, managed_profiles } from '$lib/paraglide/messages';
 	export let createProfile: () => void;
 	export let onClose: () => void;
 </script>

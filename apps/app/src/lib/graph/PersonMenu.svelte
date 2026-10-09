@@ -3,8 +3,7 @@
 	import {
 		add_relationship,
 		remove,
-		create_relationship_and_person,
-		add_administrator
+		create_relationship_and_person
 	} from '$lib/paraglide/messages';
 
 	export let id: string;

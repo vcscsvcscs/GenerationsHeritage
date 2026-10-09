@@ -4,7 +4,6 @@
 	import { Handle, Position, type NodeProps } from '@xyflow/svelte';
 	import type { components } from '$lib/api/api.gen';
 	import { isValidConnection } from './connection.js';
-	type $$Props = NodeProps;
 
 	export let data: NodeProps['data'] & components['schemas']['PersonProperties'];
 

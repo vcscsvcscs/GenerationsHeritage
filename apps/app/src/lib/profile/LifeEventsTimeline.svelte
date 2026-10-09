@@ -11,7 +11,10 @@
 
 	export let person_life_events: components['schemas']['PersonProperties']['life_events'];
 	export let editorMode = false;
-	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	export let onChange: <K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
+	) => void;
 
 	function updateEvent(index: number, key: 'from' | 'to' | 'description', value: string) {
 		if (!person_life_events) return;

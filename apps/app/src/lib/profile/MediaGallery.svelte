@@ -5,9 +5,9 @@
 
 	export let person: components['schemas']['PersonProperties'] & { id?: string };
 	export let editorMode = false;
-	export let onChange: (
-		field: keyof components['schemas']['PersonProperties'],
-		value: unknown
+	export let onChange: <K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
 	) => void = () => {};
 	export let onRemoveMedia: (url: string) => void = () => {};
 	let uploadModal = false;

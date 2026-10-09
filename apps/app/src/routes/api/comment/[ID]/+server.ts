@@ -8,7 +8,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
 		return redirect(302, '/login');
 	}
 
-	let message = (await event.request.json()) as components['schemas']['Message'];
+	const message = (await event.request.json()) as components['schemas']['Message'];
 	message.edited = null;
 	message.sent_at = new Date(Date.now()).toISOString();
 
@@ -76,7 +76,7 @@ export async function PATCH(event: RequestEvent): Promise<Response> {
 		return redirect(302, '/login');
 	}
 
-	let message = (await event.request.json()) as components['schemas']['Message'];
+	const message = (await event.request.json()) as components['schemas']['Message'];
 	message.edited = new Date(Date.now()).toISOString();
 
 	const response = await client.PATCH('/comment/{id}', {
