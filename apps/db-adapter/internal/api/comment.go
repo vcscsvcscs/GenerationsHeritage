@@ -95,7 +95,7 @@ func (srv *server) DeleteCommentOnPerson(c *gin.Context, id int, params api.Dele
 	c.JSON(http.StatusOK, gin.H{"msg": "Comment deleted successfully"})
 }
 
-func (srv *server) GetCommentsOnPerson(c *gin.Context, id int, params api.GetCommentsOnPersonParams) { //nolint:dupl,lll // This just does not worth abstracting anymore
+func (srv *server) GetCommentsOnPerson(c *gin.Context, id int, params api.GetCommentsOnPersonParams) { //nolint:lll // This just does not worth abstracting anymore
 	session := srv.createSessionWithTimeout(c.Request.Context())
 	defer closeSession(c.Request.Context(), srv.logger, session, srv.dbOpTimeout)
 

@@ -36,7 +36,7 @@ func GetPersonById(ctx context.Context, id int) neo4j.ManagedTransactionWork {
 			return nil, err
 		}
 
-		record, err := result.Single(ctx)
+		record, err := singleOrNotFound(ctx, result)
 		if err != nil {
 			return nil, err
 		}

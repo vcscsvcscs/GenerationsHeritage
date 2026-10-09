@@ -150,5 +150,6 @@ func IntegrationTestFlow(dbAdapterURI string) func(t *testing.T) {
 		t.Run("SoftDeleteRecipe", integration_tests.SoftDeleteRecipeTest(dbAdapterURI, client))
 		t.Run("SoftDeleteRecipeTwice", integration_tests.SoftDeleteRecipeTwiceTest(dbAdapterURI, client))
 		t.Run("HardDeleteRecipe", integration_tests.HardDeleteRecipeTest(dbAdapterURI, client))
+		t.Run("GetAdminRelationshipStatus", integration_tests.GetAdminRelationshipStatusTest(dbAdapterURI, client))
 	}
 }

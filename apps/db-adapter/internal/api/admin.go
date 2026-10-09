@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -29,7 +30,7 @@ func (srv *server) CreateAdminRelationship(c *gin.Context, id1, id2 int, params 
 
 	res, err := session.ExecuteWrite(qctx, memgraph.CreateAdminRelationship(qctx, id1, id2))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
+		c.JSON(dbErrorStatus(err), gin.H{"msg": err.Error()})
 
 		return
 	}
@@ -78,6 +79,19 @@ func (srv *server) GetAdminRelationship(c *gin.Context, id1, id2 int, params api
 	defer qCancel()
 
 	res, err := session.ExecuteRead(qctx, memgraph.GetAdminRelationship(qctx, id1, id2))
+	if errors.Is(err, memgraph.ErrNotFound) {
+		status := http.StatusForbidden
+		for _, id := range [...]int{id1, id2} {
+			if _, perr := session.ExecuteRead(qctx, memgraph.GetPersonById(qctx, id)); errors.Is(perr, memgraph.ErrNotFound) {
+				status = http.StatusNotFound
+			}
+		}
+
+		c.JSON(status, gin.H{"msg": fmt.Sprintf("person %d is not an admin of person %d", id2, id1)})
+
+		return
+	}
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": err.Error()})
 

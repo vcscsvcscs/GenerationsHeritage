@@ -1108,6 +1108,17 @@ export interface operations {
                     };
                 };
             };
+            /** @description Person not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -2000,6 +2011,28 @@ export interface operations {
                     };
                 };
             };
+            /** @description id2 is not an admin of id1 */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Person not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
             /** @description Internal server error */
             500: {
                 headers: {
@@ -2049,6 +2082,17 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        msg?: string;
+                    };
+                };
+            };
+            /** @description Person not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
