@@ -55,6 +55,34 @@ services:
       timeout: 5s
       retries: 3
       start_period: 0s
+  backup:
+    image: vcscsvcscs/gheritage-backup:latest
+    container_name: backup
+    restart: unless-stopped
+    depends_on:
+      memgraph:
+        condition: service_healthy
+    environment:
+      - TZ=Europe/Budapest
+      - MEMGRAPH_URI=bolt://memgraph:7687
+      - MEMGRAPH_USER=<USERNAME>
+      - MEMGRAPH_PASSWORD=<PASSWORD>
+      - S3_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+      - S3_BUCKET=<BUCKET>
+      - S3_ACCESS_KEY_ID=<ACCESS_KEY_ID>
+      - S3_SECRET_ACCESS_KEY=<SECRET_ACCESS_KEY>
+      - S3_REGION=auto
+      - S3_PREFIX=memgraph/
+      - BACKUP_SCHEDULE=0 3 * * *
+      - BACKUP_ON_START=false
+      - BACKUP_RETENTION_COUNT=30
+      # - BACKUP_AGE_RECIPIENT=<AGE_PUBLIC_KEY>
+    healthcheck:
+      test: ["CMD", "/backup", "healthcheck"]
+      interval: 5m
+      timeout: 10s
+      retries: 1
+      start_period: 30s
 volumes:
   mg_lib:
     driver: local

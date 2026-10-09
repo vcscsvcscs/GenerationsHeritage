@@ -1,0 +1,60 @@
+---
+# End-to-end test for the backup service: apps/backup/e2e/run.sh
+services:
+  memgraph-src:
+    image: "memgraph/memgraph-mage:latest"
+    command: ["--storage-mode=ON_DISK_TRANSACTIONAL"]
+    environment:
+      - MEMGRAPH_USER=memgraph
+      - MEMGRAPH_PASSWORD=memgraph
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'RETURN 0;' | mgconsole || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  memgraph-dst:
+    image: "memgraph/memgraph-mage:latest"
+    command: ["--storage-mode=ON_DISK_TRANSACTIONAL"]
+    environment:
+      - MEMGRAPH_USER=memgraph
+      - MEMGRAPH_PASSWORD=memgraph
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'RETURN 0;' | mgconsole || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data"]
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  mc:
+    image: minio/mc:latest
+    entrypoint: ["mc"]
+    environment:
+      - MC_HOST_m=http://minioadmin:minioadmin@minio:9000
+    depends_on:
+      minio:
+        condition: service_healthy
+  backup:
+    build: ./apps/backup
+    depends_on:
+      memgraph-src:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      - MEMGRAPH_URI=bolt://memgraph-src:7687
+      - MEMGRAPH_USER=memgraph
+      - MEMGRAPH_PASSWORD=memgraph
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET=gheritage-backups
+      - S3_ACCESS_KEY_ID=minioadmin
+      - S3_SECRET_ACCESS_KEY=minioadmin
+      - S3_PATH_STYLE=true
