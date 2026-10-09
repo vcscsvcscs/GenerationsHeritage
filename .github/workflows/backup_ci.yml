@@ -1,0 +1,46 @@
+name: Backup Continues Integration
+
+on:
+  workflow_call:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "apps/backup**"
+      - ".github/workflows/backup_ci.yml"
+      - ".github/workflows/go_test.yml"
+      - ".github/workflows/docker_build.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/backup**"
+      - ".github/workflows/backup_ci.yml"
+
+jobs:
+    golangci:
+        name: lint
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-go@v5
+            with:
+              go-version: '1.24'
+              cache: false
+          - name: golangci-lint
+            uses: golangci/golangci-lint-action@v7
+            with:
+              version: latest
+              working-directory: 'apps/backup'
+
+    test:
+        uses: ./.github/workflows/go_test.yml
+        needs: golangci
+        with:
+            working-directory: 'apps/backup'
+
+    build:
+        needs: test
+        uses: ./.github/workflows/docker_build.yml
+        with:
+            working-directory: 'apps/backup'
+            service-name: 'gheritage-backup'
+        secrets: inherit
