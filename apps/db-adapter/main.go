@@ -48,7 +48,7 @@ func init() { //nolint:gochecknoinits // this is a main package, init is ok
 	viper.SetDefault("HTTP_PORT", defaultHTTPPort)
 	viper.SetDefault("MEMGRAPH_URI", defaultMemgraphURI)
 	viper.SetDefault("MEMGRAPH_USER", defaultMemgraphUser)
-	viper.SetDefault("MEMGRAPH_PASS", defaultMemgraphPass)
+	viper.SetDefault("MEMGRAPH_PASSWORD", defaultMemgraphPass)
 	viper.SetDefault("PRODUCTION", defaultProduction)
 	viper.SetDefault("REQUEST_TIMEOUT", defaultRequestTimeout)
 	viper.SetDefault("DB_OP_TIMEOUT", defaultDBOpTimeout)
@@ -56,7 +56,7 @@ func init() { //nolint:gochecknoinits // this is a main package, init is ok
 	httpPort = viper.GetString("HTTP_PORT")
 	memgraphURI = viper.GetString("MEMGRAPH_URI")
 	memgraphUser = viper.GetString("MEMGRAPH_USER")
-	memgraphPass = viper.GetString("MEMGRAPH_PASS")
+	memgraphPass = viper.GetString("MEMGRAPH_PASSWORD")
 	production = viper.GetBool("PRODUCTION")
 	requestTimeout = time.Duration(viper.GetInt("REQUEST_TIMEOUT")) * time.Second
 	dbOpTimeout = time.Duration(viper.GetInt("DB_OP_TIMEOUT")) * time.Second
