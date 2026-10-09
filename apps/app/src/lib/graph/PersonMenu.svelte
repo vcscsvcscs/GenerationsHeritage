@@ -4,7 +4,6 @@
 		add_relationship,
 		remove,
 		create_relationship_and_person,
-		add_administrator,
 		view_recipes
 	} from '$lib/paraglide/messages';
 

@@ -21,7 +21,7 @@
 		createRelationshipAndProfile = () => {}
 	} = $props<{
 		closeModal: () => void;
-		removePersonFromGraph?: (id: any) => void;
+		removePersonFromGraph?: (id: number) => void;
 		addRelationship?: (id: number) => void;
 		createRelationshipAndProfile?: (id: number) => void;
 		editProfile?: (id: number) => void;

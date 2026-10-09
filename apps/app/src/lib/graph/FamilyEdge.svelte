@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { components } from '$lib/api/api.gen.ts';
-	import { child, spouse, parent, sibling } from '$lib/paraglide/messages';
 	import { getSmoothStepPath, BaseEdge, type EdgeProps, Position } from '@xyflow/svelte';
 
 	let {
@@ -23,15 +22,13 @@
 		data as components['schemas']['FamilyRelationship'] & { type: string }
 	).type.toLowerCase();
 
-	let edgeLabel: string = $state(edgeType);
-	let edgeColor: string = $state('stroke: gray;');
+	let edgeColor = 'stroke: gray;';
 	let srcPos: Position = $state(sourcePosition || Position.Bottom);
 	let tgtPos: Position = $state(targetPosition || Position.Top);
 
 	// Determine edge styling and positioning based on relationship type and handles
 	if (edgeType === 'spouse') {
 		edgeColor = 'stroke: red;';
-		edgeLabel = spouse();
 		// Use handle-based positioning for spouses
 		if (sourceHandleId === 'spouse-right') {
 			srcPos = Position.Right;
@@ -51,19 +48,16 @@
 		}
 	} else if (edgeType === 'child') {
 		edgeColor = 'stroke: blue;';
-		edgeLabel = child();
 		// Parent-child: from parent's bottom (child handle) to child's top (parent handle)
 		srcPos = Position.Bottom;
 		tgtPos = Position.Top;
 	} else if (edgeType === 'parent') {
 		edgeColor = 'stroke: blue;';
-		edgeLabel = parent();
 		// Parent relationship: from child (top) to parent (bottom)
 		srcPos = Position.Top;
 		tgtPos = Position.Bottom;
 	} else if (edgeType === 'sibling') {
 		edgeColor = 'stroke: orange;';
-		edgeLabel = sibling();
 		// Use handle-based positioning for siblings
 		if (sourceHandleId === 'spouse-right') {
 			srcPos = Position.Right;
@@ -83,7 +77,6 @@
 		}
 	} else {
 		edgeColor = 'stroke: gray;';
-		edgeLabel = edgeType;
 		// Keep original positions for unknown types
 		srcPos = sourcePosition || Position.Bottom;
 		tgtPos = targetPosition || Position.Top;
