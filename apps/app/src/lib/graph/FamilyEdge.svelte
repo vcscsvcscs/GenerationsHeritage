@@ -22,7 +22,7 @@
 		data as components['schemas']['FamilyRelationship'] & { type: string }
 	).type.toLowerCase();
 
-	let edgeColor = 'stroke: gray;';
+	let edgeColor: string = $state('stroke: gray;');
 	let srcPos: Position = $state(sourcePosition || Position.Bottom);
 	let tgtPos: Position = $state(targetPosition || Position.Top);
 
@@ -116,6 +116,7 @@
 	);
 
 	// Fix the style string formatting
+	// svelte-ignore state_referenced_locally
 	const finalStyle = `${edgeColor} stroke-width: 3; stroke-opacity: 0.8; ${style ?? ''}`;
 
 	const onEdgeClick = () => {

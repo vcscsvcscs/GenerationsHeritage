@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import {
-		add_relationship,
-		remove,
-		create_relationship_and_person,
-		add_administrator
-	} from '$lib/paraglide/messages';
+	import { remove } from '$lib/paraglide/messages';
 	import type { Edge } from '@xyflow/svelte';
 
 	export let edge: Edge;

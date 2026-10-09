@@ -194,5 +194,8 @@
 	"variation_by": "készítette: {name}",
 	"error_generic": "Valami hiba történt. Kérjük, próbálja újra.",
 	"error_unauthorized": "Nincs hozzáférése ehhez, vagy lejárt a munkamenet. Kérjük, jelentkezzen be újra.",
-	"error_not_found": "Nem található. Lehet, hogy törölték."
+	"error_not_found": "Nem található. Lehet, hogy törölték.",
+	"upload_failed": "A feltöltés sikertelen, kérjük próbáld újra",
+	"file_too_large": "A fájl túl nagy",
+	"unsupported_file_type": "Ez a fájltípus nem támogatott"
 }

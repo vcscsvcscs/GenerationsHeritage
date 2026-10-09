@@ -6,7 +6,10 @@
 
 	export let person: components['schemas']['PersonProperties'];
 	export let editorMode = false;
-	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	export let onChange: <K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
+	) => void;
 	const skipFields = [
 		'id',
 		'first_name',
@@ -33,10 +36,6 @@
 		'google_id',
 		'invite_code'
 	];
-	let newNote = {
-		title: ' ',
-		note: ''
-	};
 </script>
 
 <div class="mt-5 flex flex-col items-center justify-center gap-2">
@@ -107,7 +106,7 @@
 								<textarea
 									bind:value={person[key as keyof components['schemas']['PersonProperties']]}
 									class="textarea textarea-bordered textarea-sm w-full"
-									oninput={(e) =>
+									oninput={() =>
 										onChange(
 											key as keyof components['schemas']['PersonProperties'],
 											String(person[key as keyof components['schemas']['PersonProperties']])
@@ -130,7 +129,7 @@
 								type="checkbox"
 								class="checkbox checkbox-primary"
 								bind:value={person[key as keyof components['schemas']['PersonProperties']]}
-								onchange={(e) =>
+								onchange={() =>
 									onChange(
 										key as keyof components['schemas']['PersonProperties'],
 										Boolean(person[key as keyof components['schemas']['PersonProperties']])
@@ -141,7 +140,7 @@
 								type="number"
 								class="input input-bordered input-sm w-full"
 								bind:value={person[key as keyof components['schemas']['PersonProperties']]}
-								oninput={(e) =>
+								oninput={() =>
 									onChange(
 										key as keyof components['schemas']['PersonProperties'],
 										Number(person[key as keyof components['schemas']['PersonProperties']])

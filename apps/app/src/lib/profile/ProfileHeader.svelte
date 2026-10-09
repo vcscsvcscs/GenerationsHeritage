@@ -21,8 +21,12 @@
 		profile_picture,
 		create_invite_code,
 		invite_code,
-		phone
+		loading,
+		phone,
+		unsupported_file_type,
+		upload_failed
 	} from '$lib/paraglide/messages';
+	import { uploadMedia } from '$lib/profile/uploadMedia';
 	import { callMessageFunction } from '$lib/i18n';
 	import type { MessageKeys } from '$lib/i18n';
 
@@ -30,8 +34,44 @@
 		id?: string;
 	};
 	export let editorMode = false;
-	export let onChange: (field: keyof components['schemas']['PersonProperties'], value: any) => void;
+	export let onChange: <K extends keyof components['schemas']['PersonProperties']>(
+		field: K,
+		value: components['schemas']['PersonProperties'][K]
+	) => void;
+	export let onRemoveMedia: (url: string) => void = () => {};
 	let new_invite_code: string | undefined;
+
+	let pictureInput: HTMLInputElement;
+	let picturePreview: string | undefined;
+	let uploadingPicture = false;
+	let pictureError = '';
+
+	async function changePicture(e: Event) {
+		const input = e.target as HTMLInputElement;
+		const picture = input.files?.[0];
+		input.value = '';
+		if (!picture || person.id === undefined) return;
+		if (!picture.type.startsWith('image/')) {
+			pictureError = unsupported_file_type();
+			return;
+		}
+
+		pictureError = '';
+		uploadingPicture = true;
+		picturePreview = URL.createObjectURL(picture);
+		try {
+			const url = await uploadMedia(person.id, picture, 'profile_picture');
+			if (person.profile_picture) onRemoveMedia(person.profile_picture);
+			person.profile_picture = url;
+			onChange('profile_picture', url);
+		} catch (error) {
+			pictureError = error instanceof Error ? error.message : upload_failed();
+		} finally {
+			URL.revokeObjectURL(picturePreview);
+			picturePreview = undefined;
+			uploadingPicture = false;
+		}
+	}
 
 	let birth_date: HTMLInputElement;
 	let death_date: HTMLInputElement;
@@ -72,14 +112,36 @@
 <div class="flex flex-col gap-6 md:flex-row">
 	<div class="flex flex-shrink-0 flex-col items-center gap-2">
 		<img
-			src={person.profile_picture || 'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
+			src={picturePreview ||
+				person.profile_picture ||
+				'https://cdn-icons-png.flaticon.com/512/10628/10628885.png'}
 			alt={profile_picture()}
 			class="h-48 w-48 rounded-lg object-cover shadow-md"
+			class:opacity-50={uploadingPicture}
 		/>
-		{#if false}
-			<button class="btn btn-neutral btn-soft btn-xs" onclick={() => {}}>
-				{change_profile_picture()}
+		{#if editorMode}
+			<input
+				bind:this={pictureInput}
+				type="file"
+				accept="image/*"
+				class="hidden"
+				onchange={changePicture}
+			/>
+			<button
+				class="btn btn-neutral btn-soft btn-xs"
+				disabled={uploadingPicture}
+				onclick={() => pictureInput.click()}
+			>
+				{#if uploadingPicture}
+					<span class="loading loading-spinner loading-xs"></span>
+					{loading()}
+				{:else}
+					{change_profile_picture()}
+				{/if}
 			</button>
+			{#if pictureError}
+				<p role="alert" class="text-error text-xs">{pictureError}</p>
+			{/if}
 		{/if}
 	</div>
 	<div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">

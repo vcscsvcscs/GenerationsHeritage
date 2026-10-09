@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { client } from '$lib/api/client';
 import type { RequestEvent } from './$types';
 import type { components } from '$lib/api/api.gen';

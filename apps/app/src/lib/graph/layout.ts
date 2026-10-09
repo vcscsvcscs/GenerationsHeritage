@@ -1,7 +1,6 @@
 import dagre from '@dagrejs/dagre';
 import type { Layout } from './model';
 import type { Edge, Node } from '@xyflow/svelte';
-import { Position } from '@xyflow/svelte';
 
 export class FamilyTree extends dagre.graphlib.Graph {
 	constructor() {
@@ -109,28 +108,24 @@ export class FamilyTree extends dagre.graphlib.Graph {
 			const personHasChildren = childrenMap.has(person) && childrenMap.get(person)!.length > 0;
 			const spouseHasChildren = childrenMap.has(spouse) && childrenMap.get(spouse)!.length > 0;
 
-			let anchorNode, mobileNode, anchorId, mobileId;
+			let anchorNode, mobileNode, mobileId;
 			if (personHasChildren && !spouseHasChildren) {
 				anchorNode = personNode;
 				mobileNode = spouseNode;
-				anchorId = person;
 				mobileId = spouse;
 			} else if (!personHasChildren && spouseHasChildren) {
 				anchorNode = spouseNode;
 				mobileNode = personNode;
-				anchorId = spouse;
 				mobileId = person;
 			} else {
 				// Both or neither have children, use alphabetical order
 				if (person < spouse) {
 					anchorNode = personNode;
 					mobileNode = spouseNode;
-					anchorId = person;
 					mobileId = spouse;
 				} else {
 					anchorNode = spouseNode;
 					mobileNode = personNode;
-					anchorId = spouse;
 					mobileId = person;
 				}
 			}
@@ -171,11 +166,11 @@ export class FamilyTree extends dagre.graphlib.Graph {
 		});
 
 		// Create new edges
-		let newEdges: Edge[] = [];
+		const newEdges: Edge[] = [];
 		const processedSpouseEdges = new Set<string>();
 
 		edges.forEach((edge) => {
-			let newEdge = { ...edge };
+			const newEdge = { ...edge };
 
 			if (String(edge.data?.type).toLowerCase() === 'child') {
 				// Parent to child: source (parent) uses 'child' handle (bottom), target (child) uses 'parent' handle (top)

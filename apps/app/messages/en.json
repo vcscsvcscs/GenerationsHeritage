@@ -196,5 +196,8 @@
 	"variation_by": "by {name}",
 	"error_generic": "Something went wrong. Please try again.",
 	"error_unauthorized": "You do not have access to this, or your session has expired. Please log in again.",
-	"error_not_found": "Not found. It may have been deleted."
+	"error_not_found": "Not found. It may have been deleted.",
+	"upload_failed": "Upload failed, please try again",
+	"file_too_large": "The file is too large",
+	"unsupported_file_type": "This file type is not supported"
 }

@@ -2,8 +2,7 @@
 	import CreateRelationship from '$lib/relationship/Modal.svelte';
 	import { onMount } from 'svelte';
 	import { nodeTypes, edgeTypes } from '$lib/graph/model';
-	import { title, family_tree, select } from '$lib/paraglide/messages.js';
-	import type { RelationshipMenu } from '$lib/relationship/model.ts';
+	import { title, family_tree } from '$lib/paraglide/messages.js';
 	import AdminMenu from '$lib/admin/Modal.svelte';
 
 	import { SvelteFlowProvider, SvelteFlow, Controls, MiniMap } from '@xyflow/svelte';
@@ -36,7 +35,6 @@
 	let selectedRelationship: Edge | undefined = $state(undefined);
 	let openPersonPanel = $state(false);
 	let openPersonMenu: NodeMenu | undefined = $state(undefined);
-	let with_out_spouse = $state(false);
 	let createRelationship = $state(false);
 	let adminMenu = $state(false);
 	let recipePersonId: number | null = $state(null);
@@ -56,18 +54,17 @@
 	let edges = $state.raw<Edge[]>([] as Edge[]);
 
 	let relationshipStart: number | null = $state(null);
-	let relationshipMenu = $state(undefined as RelationshipMenu | undefined);
 	let createPerson = $state(false);
 
 	let clientWidth: number | undefined = $state();
 	let clientHeight: number | undefined = $state();
 
-	let removePersonFromGraph = (id: any) => {
+	let removePersonFromGraph = (id: number) => {
 		nodes = nodes.filter((n) => n.data.id !== id);
 		edges = edges.filter((e) => e.source !== 'person' + id && e.target !== 'person' + id);
 	};
 
-	let delete_profile = (id: any) => {
+	let delete_profile = (id: number) => {
 		fetch('/api/person/' + id, {
 			method: 'DELETE',
 			headers: {
@@ -110,7 +107,7 @@
 					return;
 				}
 
-				delete_profile(node.data.id);
+				delete_profile(node.data.id as number);
 				openPersonMenu = undefined;
 			},
 			createRelationshipAndNode: () => {
@@ -198,7 +195,7 @@
 		}
 	);
 
-	let handlePaneClick = ({ event }: { event: MouseEvent }) => {
+	let handlePaneClick = () => {
 		openPersonPanel = false;
 		openPersonMenu = undefined;
 	};
@@ -235,36 +232,17 @@
 			bind:nodes
 			bind:edges
 			onconnectend={handleConnectEnd}
-			onedgeclick={({ edge, event }: { edge: Edge; event: MouseEvent }) => {
+			onedgeclick={({ edge }: { edge: Edge }) => {
 				selectedRelationship = edge;
 				selectedRelationship.source = String(edge.source.replace('person', ''));
 				selectedRelationship.target = String(edge.target.replace('person', ''));
 			}}
 			onnodeclick={handleNodeClickFunc}
 			onnodecontextmenu={handleContextMenu}
-			onedgecontextmenu={({ edge, event }: { edge: Edge; event: MouseEvent }) => {
+			onedgecontextmenu={({ edge }: { edge: Edge }) => {
 				selectedRelationship = edge;
 				selectedRelationship.source = String(edge.source.replace('person', ''));
 				selectedRelationship.target = String(edge.target.replace('person', ''));
-				if (clientHeight === undefined || clientWidth === undefined) {
-					clientHeight = window.innerHeight;
-					clientWidth = window.innerWidth;
-				}
-				relationshipMenu = {
-					XUserId: data.id,
-					edge: selectedRelationship,
-					onClick: () => {
-						relationshipMenu = undefined;
-					},
-					deleteEdge: () => {
-						edges = edges.filter((e) => e.id !== edge.id);
-						relationshipMenu = undefined;
-					},
-					top: event.clientY < clientHeight - 200 ? event.clientY : undefined,
-					left: event.clientX < clientWidth - 200 ? event.clientX : undefined,
-					right: event.clientX >= clientWidth - 200 ? clientWidth - event.clientX : undefined,
-					bottom: event.clientY >= clientHeight - 200 ? clientHeight - event.clientY : undefined
-				};
 			}}
 			onpaneclick={handlePaneClick}
 			class="!bg-base-200"

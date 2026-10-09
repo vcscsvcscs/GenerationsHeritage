@@ -6,8 +6,8 @@ import { goto } from '$app/navigation';
 
 vi.mock('$lib/i18n', () => ({
 	i18n: {
-		route: vi.fn().mockImplementation((translatedPath: string) => ''),
-		resolveRoute: vi.fn().mockImplementation((path: string, lang?: string) => '')
+		route: vi.fn().mockImplementation(() => ''),
+		resolveRoute: vi.fn().mockImplementation(() => '')
 	}
 }));
 

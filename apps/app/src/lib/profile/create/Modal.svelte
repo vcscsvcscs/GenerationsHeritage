@@ -35,7 +35,7 @@
 	let {
 		closeModal = () => {},
 		onCreation,
-		onOnlyPersonCreation = (person: components['schemas']['Person']) => {},
+		onOnlyPersonCreation = () => {},
 		relationshipStartID
 	}: {
 		closeModal: () => void;
